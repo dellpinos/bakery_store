@@ -1,0 +1,121 @@
+{% extends 'network/layout.html' %}
+{% load static %}
+
+{% block title %}
+    {{ user_profile.username }}
+{% endblock %}
+
+{% block body %}
+
+    <h2 class="heading">{{ user_profile.username }}'s wall</h2>
+
+    <div class="profile__counters">
+        <p>Followers: <span id="followers">{{ count_followers }}</span></p>
+        <p>Following: <span id="following">{{ count_following }}</span></p>
+    </div>
+
+    {% if user != user_profile and user.is_authenticated%}
+        <div class="profile__btn-container">
+            {% if not already_followed %}
+                <button id="btn-follow-change" value="{{ user_profile.id }}" data-followed="0" class="btn">
+                    Follow
+                </button>
+            {% else %}
+                <button id="btn-follow-change" value="{{ user_profile.id }}" data-followed="1" class="btn">
+                    Unfollow
+                </button>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+    <ul id="posts-list" class="post__cards-list">
+
+        {% for post in page %}
+
+            <li id="post-container-{{ post.id }}" class="post__card">
+                <div class="post__card-username">
+                    <a href="{% url 'profile' post.user.username %}" class="post__card-username-link">{{ post.user.username }}</a>
+                    {% if post.is_edited %}
+                        {% comment %} <p id="post-date-{{ post.id }}"> - {{ post.updated_at_formatted }} (edited)</p> {% endcomment %}
+                        <p id="post-date-{{ post.id }}"> - {{ post.updated_at }} (edited)</p>
+                    {% else %}
+                        {% comment %} <p id="post-date-{{ post.id }}"> - {{ post.created_at_formatted  }}</p> {% endcomment %}
+                        <p id="post-date-{{ post.id }}"> - {{ post.created_at }}</p>
+                    {% endif %}
+                </div>
+                <p id="post-content-{{ post.id }}" class="post__content">{{ post.content }}</p>
+
+                {% if user.is_authenticated %}
+                    <div class="post__btns-container" id="post-btns-container-{{ post.id }}" data-id="{{ post.id }}">
+                        {% if not post.already_liked %}
+                            <button class="post__btn-like"  value="{{ post.id }}" data-liked="0">
+                                <p class="post__like-counter" data-id="{{ post.id }}">{{ post.likes_count }}</p>
+                                <img  src="{% static 'network/img/heart-empty.svg'%}" class="post__icons" width="100px" alt="Like button">
+                            </button>
+                        {% else %}
+                            <button class="post__btn-like" value="{{ post.id }}" data-liked="1">
+                                <p class="post__like-counter" data-id="{{ post.id }}">{{ post.likes_count }}</p>
+                                <img  src="{% static 'network/img/heart-full.svg'%}" class="post__icons" width="100px" alt="Unlike button">
+                            </button>
+                        {% endif %}
+                        {% if post.user == user %}
+                            <button class="post__btn-edit" data-id="{{ post.id }}">
+                                <img  src="{% static 'network/img/edit.svg'%}" class="post__icons" width="100px" alt="Edit post">
+                            </button>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <button class="post__btn-comments" value="{{ post.id }}">
+                            <p class="post__like-counter" data-id="{{ post.id }}">{{ post.comments_count }}</p>
+                            <img  src="{% static 'network/img/comment-white.svg'%}" class="post__icons" width="100px" alt="Read comments">
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="comments__container comments__container--hidden" data-id="{{ post.id }}">
+                        <ul class="comments__list" data-id="{{ post.id }}"></ul>
+                        <!-- Comments -->
+                    </div>
+                {% endif %}
+            </li>
+
+            {% empty %}
+            <p class="msg-empty" id="posts-empty-msg">There are no messages to show.</p>
+        {% endfor %}
+    </ul>
+
+    {% if page %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page.has_previous %}
+                <a href="?page=1">
+                    <img  src="{% static 'network/img/track-back.svg'%}" class="post__icons" width="100px" alt="First">
+                </a>
+                <a href="?page={{ page.previous_page_number }}">
+                    <img  src="{% static 'network/img/arrow-left.svg'%}" class="post__icons" width="100px" alt="Previuos">
+                </a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page.number }} of {{ page.paginator.num_pages }}
+            </span>
+    
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}">
+                    <img  src="{% static 'network/img/arrow-right.svg'%}" class="post__icons" width="100px" alt="Next">
+                </a>
+                <a href="?page={{ page.paginator.num_pages }}">
+                    <img  src="{% static 'network/img/track-next.svg'%}" class="post__icons" width="100px" alt="Last">
+                </a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
+{% endblock %}
+
+
+
+{% block script %}
+  <script src="{% static 'network/app.js' %}"></script>
+{% endblock %}
