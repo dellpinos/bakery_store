@@ -1,0 +1,27 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block title %}
+    All products
+{% endblock %}
+
+{% block body %}
+
+    <div>
+
+        <h3 class="heading">All Products</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        <ul class="products__list">
+            {% for product in products %}
+            <li class="products__item">
+                <p>{{ product.name }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    
+{% endblock %}

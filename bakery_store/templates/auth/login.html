@@ -14,7 +14,7 @@
     <div class="form__container--auth">
         <form action="{% url 'login' %}" method="post" class="form">
             {% csrf_token %}
-                <input autofocus class="form__input" type="text" name="username" placeholder="Username">
+                <input class="form__input" type="text" name="username" placeholder="Username">
                 <input class="form__input" type="password" name="password" placeholder="Password">
             <input class="btn" type="submit" value="Login">
             <p class="form__opts">Don't have an account? <a href="{% url 'register' %}"> Register here.</a></p>

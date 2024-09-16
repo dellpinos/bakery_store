@@ -1,0 +1,17 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block body %}
+
+    <h3 class="heading">Dashboard</h3>
+
+    {% if message %}
+        <div class="msg-error">{{ message }}</div>
+    {% endif %}
+
+
+    
+{% endblock %}

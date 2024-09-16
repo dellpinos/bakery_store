@@ -1,0 +1,42 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block title %}
+    New Ingredient
+{% endblock %}
+
+{% block body %}
+
+    <div>
+
+        <h3 class="heading">New Ingredient</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+        <div class="form__container">
+        
+            <form action="{% url 'new_product' %}" method="POST" class="form">
+                <div class="form__field">
+                    <label for="#">Name</label>
+                    <input type="text" placeholder="Product Name" class="form__input">
+                </div>
+                <div class="form__field">
+                    <label for="#">Total Price</label>
+                    <input type="number" placeholder="1400" class="form__input">
+                </div>
+                <div class="form__field">
+                    <label for="#">Production Time (days)</label>
+                    <input type="number" placeholder="5" class="form__input">
+                </div>
+                <div class="form__field">
+                    <label for="#">Image</label>
+                    <input type="text" placeholder="Product Name" class="form__input">
+                </div>
+                    <input type="button" value="Submit" class="btn">
+            </form>
+        </div>
+
+    </div>
+
+    
+{% endblock %}

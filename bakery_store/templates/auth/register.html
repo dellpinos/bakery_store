@@ -14,11 +14,11 @@
     <div class="form__container--auth">
         <form action="{% url 'register' %}" method="post" class="form">
             {% csrf_token %}
-                <input class="form__input" autofocus type="text" name="username" placeholder="Username">
+                <input class="form__input" type="text" name="username" placeholder="Username">
                 <input class="form__input" type="email" name="email" placeholder="Email Address">
                 <input class="form__input" type="password" name="password" placeholder="Password">
                 <input class="form__input" type="password" name="confirmation" placeholder="Confirm Password">
-            <input class="btn" type="submit" value="Register">
+            <input class="btn" type="submit" value="Create Account">
 
             <p class="form__opts">Already have an account? <a href="{% url 'login' %}"> Log In here.</a></p>
         </form>

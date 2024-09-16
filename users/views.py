@@ -6,7 +6,8 @@ from django.shortcuts import render
 from django.urls import reverse
 import re
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from users.models import User
 
 def login_view(request):
     if request.method == "POST":

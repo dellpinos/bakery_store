@@ -20,10 +20,11 @@
                 <h4>{{ item.name }}</h4>
                 <div class="product-card__img-container">
                     <img src="{{ item.image }}" alt="{{item.name}} Image" width="500" class="product-card__img">
-
                 </div>
-                <p class="product-card__text">{{ item.description }}</p>
-                <p class="product-card__price">${{ item.total_price }}</p>
+                <div class="flex-col">
+                    <p class="product-card__text">{{ item.description }}</p>
+                    <p class="product-card__price">${{ item.total_price }}</p>
+                </div>
                 
             </a>
         {% endfor %}
