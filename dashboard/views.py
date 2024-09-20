@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from products.models import Product, Category, Ingredient
 
 
@@ -15,21 +16,41 @@ def all_products(request):
 
     products = Product.objects.filter(seller_user=request.user).order_by("-created_at")
 
+    # Paginator
+    p = Paginator(products, 20)
+
+    if request.GET.get('page'):
+        # Get the page number from the request
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+
+    page = p.page(page_number)
+
     return render(request, "dashboard/products.html", {
-        "products": products
+        "page": page
     })
 
 @login_required
-def new_product(request):
+def all_ingredients(request):
 
-    if request.method == 'POST':
-        pass
+    ingredients = Ingredient.objects.filter(seller_user=request.user).order_by("-created_at")
+
+    # Paginator
+    p = Paginator(ingredients, 20)
+
+    if request.GET.get('page'):
+        # Get the page number from the request
+        page_number = request.GET.get('page')
     else:
+        page_number = 1
 
-        categories = Category.objects.all()
-        ingredients = Ingredient.objects.filter(seller_user=request.user).order_by("name")
-        
-        return render(request, "dashboard/create_product.html", {
-            "categories": categories,
-            "ingredients": ingredients
-        })
+    page = p.page(page_number)
+
+    return render(request, "dashboard/ingredients.html", {
+        "page": page
+    })
+
+
+
+

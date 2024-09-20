@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     <link href="{% static 'styles/app.css' %}" rel="stylesheet" />
     {% block script %}
-
+        <script src="{% static 'js/app.js' %}" type="module"></script>
     {% endblock %}
   </head>
   <body>
@@ -39,10 +39,13 @@
             <a href="{% url 'new_product' %}" class="sidebar__item {% if request.resolver_match.url_name == 'new_product' %}sidebar__item--active{% endif %}">
                 New Product
             </a>
+            <a href="{% url 'new_ingredient' %}" class="sidebar__item {% if request.resolver_match.url_name == 'new_ingredient' %}sidebar__item--active{% endif %}">
+                New Ingredient
+            </a>
             <a href="{% url 'dashboard_products' %}" class="sidebar__item {% if request.resolver_match.url_name == 'dashboard_products' %}sidebar__item--active{% endif %}">
                 My Products
             </a>
-            <a href="{% url 'dashboard_products' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">
+            <a href="{% url 'dashboard_ingredients' %}" class="sidebar__item {% if request.resolver_match.url_name == 'dashboard_ingredients' %}sidebar__item--active{% endif %}">
                 My Ingredients
             </a>
             <a href="{% url 'dashboard_products' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">
@@ -61,9 +64,6 @@
             {% endblock %}
         </main>
     </div>
-    <footer>
-        Martín del Pino
-    </footer>
   </body>
 </html>
 

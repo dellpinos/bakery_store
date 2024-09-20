@@ -16,44 +16,67 @@
         <div class="form__container">
         
             <form action="{% url 'new_product' %}" method="POST" class="form">
+            {% csrf_token %}
                 <div class="form__field">
-                    <label for="#">Name</label>
-                    <input type="text" placeholder="Product Name" class="form__input">
+                    <label for="name">Name</label>
+                    <input type="text" placeholder="Product Name" class="form__input" name="name" id="name">
                 </div>
                 <div class="form__field">
-                    <label for="#">Total Price</label>
-                    <input type="number" placeholder="1400" class="form__input">
+                    <label for="prod_time">Production Time (days)</label>
+                    <input type="number" placeholder="5" class="form__input" name="prod_time" id="prod_time">
                 </div>
                 <div class="form__field">
-                    <label for="#">Production Time (days)</label>
-                    <input type="number" placeholder="5" class="form__input">
+                    <label for="image">Image</label>
+                    <input type="text" placeholder="Product Name" class="form__input" name="image" id="image">
                 </div>
                 <div class="form__field">
-                    <label for="#">Image</label>
-                    <input type="text" placeholder="Product Name" class="form__input">
-                </div>
-                <div class="form__field">
-                    <label for="#">Categories</label>
-                    <select multiple class="form__input">
+                    <label for="categories">Categories - Hold Ctrl (Cmd on Mac) and click to select one or more options</label>
+                    <select multiple class="form__input" name="categories" id="categories">
                         {% for category in categories %}
                             <option value="{{ category.id}}">{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
+
                 <div class="form__field">
-                    <label for="#">Ingredients</label>
-                    <select multiple class="form__input">
-                        {% for ingredient in ingredients %}
-                            <option value="{{ ingredient.id}}">{{ ingredient.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="description">Description</label>
+                    <textarea type="text" placeholder="Product Description" class="form__input" rows="6" name="description" id="description"></textarea>
                 </div>
                 <div class="form__field">
-                    <label for="#">Description</label>
-                    <textarea type="text" placeholder="Product Description" class="form__input" rows="6"></textarea>
+                    <label for="price">Custom Price Adjustment (profit, labor, etc.)</label>
+                    <input type="number" placeholder="1400" class="form__input" name="price" id="price">
+                </div>
+
+                <div id="inputs-hidden-container"></div>
+
+
+                <div class="product-ingredient__form">
+                    <h4>Ingredients</h4>
+                    <div class="product-ingredient__inputs">
+                        <select name="#" id="create-product-ingredient" class="form__input form__input--ingredients">
+                            <option value="" disabled selected>-- Select --</option>
+                            {% for ingredient in ingredients %}
+
+                                <option value="{{ ingredient.id }}" data-size="{{ ingredient.size }}" data-measurement-unit="{{ ingredient.measurement_unit }}" data-price="{{ ingredient.price }}">{{ ingredient.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="product-ingredient__measure-field">
+                            <input type="number" class="form__input form__input--ingredients" placeholder="1400" id="create-product-quantity">
+                            <p id="create-product-unit-measurement">empty</p>
+                        </div>
+                    </div>
+                    <div class="product-ingredient__btn-container">
+                        <input type="button" class="btn" value="Add" id="create-product-submit">
+                    </div>
+                    <ul class="product-ingredient__items" id="create-product-items-list">
+                    </ul>
+                </div>
+                <div>
+                    <p id="create-product-total"></p>
+                    <p>Final Price</p>
                 </div>
                 
-                    <input type="button" value="Submit" class="btn">
+                <input type="submit" value="Submit" class="btn">
             </form>
         </div>
 

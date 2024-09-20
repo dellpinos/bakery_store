@@ -1,13 +1,13 @@
 {% extends "layouts/dashboard.html" %}
 
 {% block title %}
-    New Ingredient
+    Edit Ingredient
 {% endblock %}
 
 {% block body %}
 
     <div>
-        <h3 class="heading">New Ingredient</h3>
+        <h3 class="heading">Edit Ingredient</h3>
 
         {% if message %}
             <div class="msg-error">{{ message }}</div>
@@ -18,7 +18,7 @@
         {% endfor%}
         <div class="form__container">
         
-            <form action="{% url 'new_ingredient' %}" method="POST" class="form">
+            <form action="{% url 'edit_ingredient' ingredient %}" method="POST" class="form">
             {% csrf_token %}
                 <div class="form__field">
                     <label for="name">Name</label>
@@ -36,7 +36,7 @@
                     </div>
                     <div class="form__field">
                         <label for="measurement_unit">Unit Measurement</label>
-                        <input type="text" placeholder="gr, oz, lt" class="form__input" name="measurement_unit" id="measurement_unit" value="{{ body.measurement_unit }}" minlength="1" maxlength="15" required>
+                        <input type="text" placeholder="gr" class="form__input" name="measurement_unit" id="measurement_unit" value="{{ body.measurement_unit }}" minlength="1" maxlength="30" disabled required>
                     </div>
                     <div class="form__field">
                         <label for="price">Price</label>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <input type="submit" value="Submit" class="btn">
+                <input type="submit" value="Edit" class="btn">
             </form>
         </div>
 

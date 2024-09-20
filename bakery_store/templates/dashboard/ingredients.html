@@ -2,27 +2,27 @@
 {% load static %}
 
 {% block title %}
-    All products
+    All Ingredients
 {% endblock %}
 
 {% block body %}
 
     <div>
 
-        <h3 class="heading">All Products</h3>
+        <h3 class="heading">All Ingredients</h3>
 
         {% if message %}
             <div class="msg-error">{{ message }}</div>
         {% endif %}
 
         <ul class="content__list">
-            {% for product in page %}
+            {% for ingredient in page %}
             <li class="content__item">
-                    <p>{{ product.name }} - ${{ product.total_price }}</p>
+                    <p>{{ ingredient.name }} - ${{ ingredient.price }}</p>
 
                 <div class="content__item-btns">
-                    <button id="product-list-availability" >Enabled</button>
-                    <a href="#">
+                    <button id="ingredient-list-availability" >Enabled</button>
+                    <a href="{% url 'edit_ingredient' ingredient.id %}">
                         <img src="{% static 'img/edit-white.svg'%}" class="content__edit" alt="Edit Icon">
                     </a>
 

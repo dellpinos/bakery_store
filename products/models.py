@@ -19,8 +19,8 @@ class Ingredient(models.Model):
     name = models.CharField(max_length=120)
     description = models.CharField(max_length=550, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    unit = models.FloatField()
-    unit_measure = models.CharField(max_length=30)
+    size = models.FloatField()
+    measurement_unit = models.CharField(max_length=30)
     availability = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     seller_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ingredients")
@@ -30,13 +30,13 @@ class Ingredient(models.Model):
             "id": self.id,
             "name": self.name,
             "price": self.price,
-            "unit": self.unit,
-            "unit_measure": self.unit_measure,
+            "unit": self.size,
+            "measurement_unit": self.measurement_unit,
             "availability": self.availability
         }
     
     def __str__(self):
-        return f"The ingredient id: {self.id}, name: {self.name}, price: {self.price} - quantity: {self.unit}{self.unit_measure}, availability: {self.availability}"
+        return f"The ingredient id: {self.id}, name: {self.name}, price: {self.price} - quantity: {self.size}{self.measurement_unit}, availability: {self.availability}"
 
 
 class Product(models.Model):
