@@ -22,7 +22,7 @@
             {% csrf_token %}
                 <div class="form__field">
                     <label for="name">Name</label>
-                    <input type="text" placeholder="Ingredient Name" class="form__input" name="name" id="name" value="{{ body.name }}" minlength="5" maxlength="120" required>
+                    <input type="text" placeholder="Ingredient Name" class="form__input" name="name" id="name" value="{{ body.name }}" minlength="3" maxlength="120" required>
                 </div>
                 <div class="form__field">
                     <label for="description">Description</label>
@@ -46,6 +46,14 @@
 
                 <input type="submit" value="Edit" class="btn">
             </form>
+
+        </div>
+        <div class="form__destroy-actions">
+            <p>Irreversible Actions</p>
+            <form action="{% url 'delete_ingredient' ingredient %}" class="form">
+                <input type="submit" value="Delete Ingredient" class="btn btn-delete">
+            </form>
+        
         </div>
 
     </div>

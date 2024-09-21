@@ -8,7 +8,6 @@
 {% block body %}
 
     <div>
-
         <h3 class="heading">All Ingredients</h3>
 
         {% if message %}
@@ -21,22 +20,18 @@
                     <p>{{ ingredient.name }} - ${{ ingredient.price }}</p>
 
                 <div class="content__item-btns">
-                    <button id="ingredient-list-availability" >Enabled</button>
+                    <button id="ingredient-list-availability" data-id="{{ ingredient.id }}">Enabled</button>
                     <a href="{% url 'edit_ingredient' ingredient.id %}">
                         <img src="{% static 'img/edit-white.svg'%}" class="content__edit" alt="Edit Icon">
                     </a>
-
                 </div>
-
             </li>
 
-
             {% empty %}
-                <p class="msg-empty">There are no messages to show.</p>
+                <p class="msg-empty">There are no ingredients to show.</p>
             {% endfor %}
         </ul>
     </div>
-
 
     {% if page|length > 0 %}
         <div class="pagination">

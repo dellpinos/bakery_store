@@ -18,6 +18,7 @@
     --green: #20c67a;
 
     --silver: #5f6368;
+    --mediumSilver: #9a9c9f;
     --lightSilver: #e0e0e0aa;
 
     --greenAlert: #1dc019;
@@ -151,7 +152,26 @@ textarea {
     font-size: 2rem;
     border-radius: 1.5rem;
     cursor: pointer;
-    transition: background-color .5s ease;
+    transition: background-color .8s ease, color .8s ease;
+}
+
+.btn-delete {
+    background-color: var(--redAlert);
+}
+
+.btn-delete:hover {
+    background-color: var(--black)!important;
+    color: var(--redAlert)!important;
+}
+
+.btn-disabled {
+    background-color: var(--lightSilver);
+    color: var(--lightSilver);
+    cursor: not-allowed;
+}
+.btn-disabled:hover {
+    background-color: var(--lightSilver);
+    cursor: not-allowed;
 }
 
 .btn:hover {
@@ -318,7 +338,6 @@ footer {
         font-size: 1.8rem;
         color: var(--darkGray);
     }
-
 }
 
 .form__input {
@@ -349,7 +368,21 @@ footer {
 
 .form__input--ingredients {
     text-align: center;
-    
+}
+
+.form__destroy-actions {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 5rem 0;
+    border-radius: 1rem;
+    border: 1px solid var(--redAlert);
+
+    > p {
+        color: var(--redAlert)
+    }
 }
 
 /* Pagination */
@@ -564,6 +597,27 @@ footer {
 
 /* Products Form */
 
+.product-create__price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--orange);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin: 5rem 0;
+}
+
+.product-create__price {
+    font-size: 6.5rem;
+    font-weight: 700;
+    font-family: var(--logoFont);
+    color: var(--yellow);
+}
+
+.product-create__price-text {
+    color: var(--white);
+}
 .product-ingredient__form {
     background-color: var(--orange-op);
     padding: 2rem;

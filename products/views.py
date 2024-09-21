@@ -11,7 +11,7 @@ from django.urls import reverse
 def ingredient_validation(body, new):
 
     errors = []
-    if len(body["name"]) < 5 or len(body["name"]) > 120 :
+    if len(body["name"]) < 3 or len(body["name"]) > 120 :
         errors.append('The name must be between 5 and 120 characters long.')
 
     if len(body["description"]) > 550:
@@ -91,7 +91,7 @@ def new_ingredient(request):
             )
             ingredient.save()
 
-            return HttpResponseRedirect(reverse("dashboard")) # Cambiar a my ingredients
+            return HttpResponseRedirect(reverse("dashboard_ingredients"))
 
     return render(request, "dashboard/create_ingredient.html", {
         "body": {
@@ -155,3 +155,16 @@ def edit_ingredient(request, ingredient):
         },
         "ingredient": ingredient
     })
+
+@login_required
+def delete_ingredient(request, ingredient):
+
+    ingredient_db = get_object_or_404(Ingredient, pk=ingredient)
+
+    # Auth
+    if request.user != ingredient_db.seller_user:
+        return HttpResponseRedirect(reverse("dashboard_ingredients"))
+    
+    ingredient_db.delete()
+    
+    return HttpResponseRedirect(reverse("dashboard_ingredients"))
