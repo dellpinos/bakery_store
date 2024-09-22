@@ -15,13 +15,18 @@
             <div class="msg-error">{{ message }}</div>
         {% endif %}
 
-        <ul class="content__list">
+        <ul class="content__list" id="dashboard-product-list">
             {% for product in page %}
             <li class="content__item">
                     <p>{{ product.name }} - ${{ product.total_price }}</p>
 
                 <div class="content__item-btns">
-                    <button id="product-list-availability" >Enabled</button>
+                    {% comment %} <button id="product-list-availability" >Enabled</button> {% endcomment %}
+                    {% if product.availability %}
+                        <button class="list-availability__btn content__btn-enabled" data-id="{{ product.id }}">Enabled</button>
+                    {% else %}
+                        <button class="list-availability__btn content__btn-disabled" data-id="{{ product.id }}">Disabled</button>
+                    {% endif %}
                     <a href="#">
                         <img src="{% static 'img/edit-white.svg'%}" class="content__edit" alt="Edit Icon">
                     </a>

@@ -16,6 +16,11 @@
             {% if message %}
                 <div class="msg-error">{{ message }}</div>
             {% endif %}
+
+            {% for error in errors %}
+                <div class="msg-error">{{ error }}</div>
+            {% endfor %}
+
             <div class="form__container">
             
                 <form action="{% url 'new_product' %}" method="POST" class="form">
@@ -50,7 +55,9 @@
                         <input type="number" placeholder="1400" class="form__input" name="price" id="price">
                     </div>
 
-                    <div id="inputs-hidden-container"></div>
+                    <div id="inputs-hidden-container">
+                        <input type="hidden" value="testing">
+                    </div>
 
 
                     <div class="product-ingredient__form">
@@ -59,7 +66,6 @@
                             <select name="#" id="create-product-ingredient" class="form__input form__input--ingredients">
                                 <option value="" disabled selected>-- Select --</option>
                                 {% for ingredient in ingredients %}
-
                                     <option value="{{ ingredient.id }}" data-size="{{ ingredient.size }}" data-measurement-unit="{{ ingredient.measurement_unit }}" data-price="{{ ingredient.price }}">{{ ingredient.name }}</option>
                                 {% endfor %}
                             </select>
@@ -69,7 +75,7 @@
                             </div>
                         </div>
                         <div class="product-ingredient__btn-container">
-                            <input type="button" class="btn btn-disabled" value="Add" id="create-product-submit">
+                            <input type="button" class="btn btn-disabled" value="Add" id="create-product-add">
                         </div>
                         <ul class="product-ingredient__items" id="create-product-items-list">
                         </ul>

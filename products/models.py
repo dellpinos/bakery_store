@@ -41,7 +41,7 @@ class Ingredient(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=120)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal_price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=500, null=True, blank=True)
     image = models.CharField(max_length=120, null=True, blank=True)
     production_time = models.IntegerField()
@@ -49,13 +49,13 @@ class Product(models.Model):
     availability = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     categories = models.ManyToManyField(Category, related_name='products')
-    ingredients = models.ManyToManyField(Ingredient, related_name='products')
+    # ingredients = models.ManyToManyField(Ingredient, related_name='products')
 
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
-            "total_price": self.total_price,
+            "subtotal_price": self.subtotal_price,
             "description": self.description,
             "image": self.image,
             "production_time": self.production_time,
@@ -65,7 +65,16 @@ class Product(models.Model):
         }
     
     def __str__(self):
-        return f"The product id: {self.id}, name: {self.name}, total price: {self.total_price}, seller: {self.seller_user}, availability: {self.availability}"
+        return f"The product id: {self.id}, name: {self.name}, total price: {self.subtotal_price}, seller: {self.seller_user}, availability: {self.availability}"
+
+class ProductIngredient(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="ingredients")
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="products")
+    quantity = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"The product {self.product.name} has the ingredient {self.ingredient.name} (quantity: {self.quantity})"
 
 # class CategoryProduct(models.Model):
 #     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='categories')
@@ -73,7 +82,3 @@ class Product(models.Model):
 #     created_at = models.DateTimeField(auto_now_add=True)
 
 
-# class ProductIngredient(models.Model):
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="ingredients")
-#     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="products")
-#     created_at = models.DateTimeField(auto_now_add=True)

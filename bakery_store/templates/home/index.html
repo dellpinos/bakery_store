@@ -15,7 +15,6 @@
     <div class="home__grid">
         {% for item in products %}
 
-
             <a href="#" class="product-card">
                 <h4>{{ item.name }}</h4>
                 <div class="product-card__img-container">
@@ -24,12 +23,11 @@
                 <div class="flex-col">
                     <p class="product-card__text">{{ item.description }}</p>
                     <p class="product-card__price">${{ item.total_price }}</p>
+                    <p>Production time: {{ item.production_time }} days</p>
                 </div>
                 
             </a>
         {% endfor %}
     </div>
 
-
-    
 {% endblock %}

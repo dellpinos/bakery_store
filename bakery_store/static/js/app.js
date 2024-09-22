@@ -11,9 +11,10 @@
         
         const ingredientSelector = document.querySelector('#create-product-ingredient');
         const quantity = document.querySelector('#create-product-quantity');
-        const btnSubmit = document.querySelector('#create-product-submit');
+        const btnAdd = document.querySelector('#create-product-add');
         const customPrice = document.querySelector('#price');
         const totalPrice = document.querySelector('#create-product-total');
+        const hiddenList = document.querySelector('#inputs-hidden-container');
 
         window.onload = function() {
             ingredientSelector.selectedIndex = 0;
@@ -22,9 +23,9 @@
 
         quantity.addEventListener('input', (e) => {
             if(e.target.value !== '' && ingredientSelector.selectedIndex !== 0) {
-                btnSubmit.classList.remove('btn-disabled');
+                btnAdd.classList.remove('btn-disabled');
             } else {
-                btnSubmit.classList.add('btn-disabled');
+                btnAdd.classList.add('btn-disabled');
             }
         });
         
@@ -33,7 +34,7 @@
             document.querySelector('#create-product-unit-measurement').textContent = option.dataset.measurementUnit;
 
             if(customPrice.value !== '') {
-                btnSubmit.classList.remove('btn-disabled');
+                btnAdd.classList.remove('btn-disabled');
             }
         });
 
@@ -44,7 +45,7 @@
             }
         });
 
-        btnSubmit.addEventListener('click', () => {
+        btnAdd.addEventListener('click', () => {
             if(option && quantity.value) {
                 const itemsList = document.querySelector('#create-product-items-list');
                 const data = {
@@ -52,25 +53,54 @@
                     name: option.textContent,
                     unit_measure: option.dataset.measurementUnit,
                     size: option.dataset.size,
-                    quantity: quantity.value
+                    quantity: quantity.value,
+                    id: option.value
                 }
     
                 if(itemCounter < 30) {
-                    const item = formatItem(data);
+                    // Add input hidden to HTML
+                    const filteredData = {
+                        id: data.id,
+                        quantity: data.quantity
+                    }
+                    const hidden = document.createElement('INPUT');
+                    hidden.type = 'hidden';
+                    hidden.value = JSON.stringify(filteredData);
+                    hiddenList.appendChild(hidden);
+                    hidden.name = `ingredient_data`;
+
+                    // Add ingredient
+                    const item = formatItem(data, hidden);
                     itemsList.appendChild(item);
                     itemCounter++;
+
+                    // Reset elements
                     ingredientSelector.selectedIndex = 0;
                     quantity.value = '';
                     document.querySelector('#create-product-unit-measurement').textContent = "empty";
                     option = undefined;
-                    btnSubmit.classList.add('btn-disabled');
+                    btnAdd.classList.add('btn-disabled');
                 } else {
                     alert('You cannot add more than 30 ingredients')
                 }
             }
         });
 
-        function formatItem(data) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function formatItem(data, hidden) {
 
             const actualCost = parseFloat(((data.quantity * data.price) / data.size).toFixed(2));
             const item = document.createElement('LI');
@@ -86,6 +116,7 @@
 
             item.addEventListener('click', (e) => {
                 e.target.remove();
+                hidden.remove();
                 ingredientsCost -= actualCost;
                 if(customPrice.value) {
                     totalPrice.textContent = '$' + (parseFloat(customPrice.value) + parseFloat(ingredientsCost)).toFixed(2);
@@ -102,21 +133,52 @@
 
 // Availability change
 (function() {
-    
-    if(document.querySelector('#ingredient-list-availability')){
+    // Ingredient page
+    if(document.querySelector('#dashboard-ingredient-list')){
+        const btns = document.querySelectorAll('.list-availability__btn');
 
+        btns.forEach( btn => {
+            const id = btn.dataset.id;
 
-        const btn = document.querySelector('#ingredient-list-availability');
-        const id = btn.dataset.id;
-
-        // Enviar request con el id y cambiar el estilo del botón
-        btn.addEventListener('click', () => {
-
+            btn.addEventListener('click', () => {
+                const url = `/api/ingredient_availability/${id}`;
+                changeAvailability(btn, url);
+            });
         });
-
-
-
-
     }
 
+    // // Product page
+    // if(document.querySelector('#dashboard-product-list')){
+    //     const btns = document.querySelectorAll('.list-availability__btn');
+
+    //     btns.forEach( btn => {
+    //         const id = btn.dataset.id;
+
+    //         btn.addEventListener('click', () => {
+    //             const url = `/api/ingredient_availability/${id}`;
+    //             changeAvailability(btn, url);
+    //         });
+    //     });
+    // }
+
+    async function changeAvailability(btn, url) {
+        try {
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if( result.item ) {
+                if(result.item.availability) {
+                    btn.classList.remove('content__btn-disabled');
+                    btn.classList.add('content__btn-enabled');
+                    btn.textContent = "Enabled";
+                } else {
+                    btn.classList.remove('content__btn-enabled');
+                    btn.classList.add('content__btn-disabled');
+                    btn.textContent = "Disabled";
+                }
+            }
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 })();

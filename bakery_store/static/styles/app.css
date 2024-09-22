@@ -506,16 +506,7 @@ footer {
     gap: 3rem;
     align-items: center;
 
-    > button {
-        background-color: green;/*  << <<< <<< <<<< <<<< */
-        border: none;
-        border-radius: .5rem;
-        padding: .5rem 1rem;
-        font-size: 1.6rem;
-        cursor: pointer;
-        color: white; /*  << <<< <<< <<<< <<<< */
-        font-weight: 700;
-    }
+
 
     > a {
         background-color: inherit;
@@ -527,6 +518,25 @@ footer {
         background-color: var(--darkOrange);
 
     }
+}
+
+.list-availability__btn {
+    border: none;
+    border-radius: .5rem;
+    padding: .5rem 1rem;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: var(--white);
+    font-weight: 700;
+}
+
+.content__btn-enabled {
+    background-color: var(--darkGreen);
+}
+
+.content__btn-disabled {
+    background-color: var(--redAlertDark);
+
 }
 
 .content__edit {

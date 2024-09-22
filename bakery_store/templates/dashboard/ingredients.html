@@ -14,21 +14,25 @@
             <div class="msg-error">{{ message }}</div>
         {% endif %}
 
-        <ul class="content__list">
+        <ul class="content__list" id="dashboard-ingredient-list">
             {% for ingredient in page %}
             <li class="content__item">
-                    <p>{{ ingredient.name }} - ${{ ingredient.price }}</p>
+                <p>{{ ingredient.name }} - ${{ ingredient.price }}</p>
 
                 <div class="content__item-btns">
-                    <button id="ingredient-list-availability" data-id="{{ ingredient.id }}">Enabled</button>
+                    {% comment %} {% if ingredient.availability %}
+                        <button class="list-availability__btn content__btn-enabled" data-id="{{ ingredient.id }}">Enabled</button>
+                    {% else %}
+                        <button class="list-availability__btn content__btn-disabled" data-id="{{ ingredient.id }}">Disabled</button>
+                    {% endif %} {% endcomment %}
                     <a href="{% url 'edit_ingredient' ingredient.id %}">
-                        <img src="{% static 'img/edit-white.svg'%}" class="content__edit" alt="Edit Icon">
+                        <img src="{% static 'img/edit-white.svg' %}" class="content__edit" alt="Edit Icon">
                     </a>
                 </div>
             </li>
 
             {% empty %}
-                <p class="msg-empty">There are no ingredients to show.</p>
+                <p class="msg-empty">There are no ingredients to show</p>
             {% endfor %}
         </ul>
     </div>
