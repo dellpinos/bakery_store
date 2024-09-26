@@ -32,6 +32,7 @@ def ingredient_validation(body, new):
             errors.append('The measurement unit must be between 1 and 15 characters long.')
 
     return errors
+    
 
 def product_validation(body, ingredients):
 
@@ -40,7 +41,7 @@ def product_validation(body, ingredients):
     if len(body["name"]) < 3 or len(body["name"]) > 120 :
         errors.append('The name must be between 5 and 120 characters long.')
 
-    if len(body["image"]) > 120:
+    if len(body["image"]) > 240:
         errors.append('Invalid URL format in image field.')
 
     if len(body["description"]) > 550:
@@ -59,6 +60,11 @@ def product_validation(body, ingredients):
     return errors
 
 ## Controllers ##
+
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+
 def home(request):
 
     products = Product.objects.order_by('-created_at')
@@ -82,17 +88,19 @@ def new_product(request):
     if request.method == 'POST':
 
         body = request.POST
+
+        print(body)
         ingredients = [json.loads(item) for item in body.getlist('ingredient_data')]
+        categories_list = body.getlist('categories')
 
         try:
             int(body["prod_time"])
             float(body["price"])
-            for category in body["categories"]:
+            for category in categories_list:
                 int(category)
             for ingredient in ingredients:
                 int(ingredient['id'])
                 float(ingredient['quantity'])
-
 
         except (ValueError):
             return render(request, "dashboard/create_product.html", {
@@ -103,6 +111,7 @@ def new_product(request):
 
         ingredients_db = []
         categories_db = []
+        categories_list_int = []
 
         for ingredient in ingredients:
             ingredient_db = get_object_or_404(Ingredient, pk=ingredient['id'])
@@ -117,23 +126,26 @@ def new_product(request):
 
             ingredients_db.append(ingredient_db)
 
-        for category in body["categories"]:
+        for category in categories_list:
+
             category_db = get_object_or_404(Category, pk=category)
 
             if not category_db:
                 errors.append('Invalid category')
 
             categories_db.append(category_db)
+            categories_list_int = [int(category) for category in categories_list]
 
         if len(errors) != 0:
 
             categories = Category.objects.all()
-            ingredients = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+            ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
             return render(request, "dashboard/create_product.html", {
                 "errors": errors,
                 "body": body,
-                "ingredient_list": ingredients,
-                "ingredients": ingredients,
+                "ingredient_list": ingredients_db,
+                "categories_list": categories_list_int,
+                "ingredients": ingredients_all,
                 "categories": categories
             })
         else:
@@ -172,6 +184,144 @@ def new_product(request):
             "categories": categories,
             "ingredients": ingredients
         })
+    
+@login_required
+def edit_product(request, product):
+
+    if request.method == 'POST':
+
+        body = request.POST
+        ingredients = [json.loads(item) for item in body.getlist('ingredient_data')]
+
+        categories_list = body.getlist('categories')
+
+        try:
+            int(body["prod_time"])
+            float(body["price"])
+            for category in categories_list:
+                int(category)
+            for ingredient in ingredients:
+                int(ingredient['id'])
+                float(ingredient['quantity'])
+
+        except (ValueError):
+            return render(request, "dashboard/create_product.html", {
+                "message": "Invalid value"
+            })
+        
+        errors = product_validation(body, ingredients)
+
+        ingredients_db = []
+        categories_db = []
+        categories_list_int = []
+
+        for ingredient in ingredients:
+            ingredient_db = get_object_or_404(Ingredient, pk=ingredient['id'])
+            ingredient_db.quantity = ingredient["quantity"]
+
+            if not ingredient_db:
+                errors.append('Invalid ingredient')
+
+            if ingredient_db.seller_user != request.user:
+                errors.append('Invalid ingredient')
+
+            ingredients_db.append(ingredient_db)
+
+        for category in categories_list:
+
+            category_db = get_object_or_404(Category, pk=category)
+
+            if not category_db:
+                errors.append('Invalid category')
+
+            categories_db.append(category_db)
+            categories_list_int = [int(category) for category in categories_list]
+
+        if len(errors) != 0:
+
+            categories = Category.objects.all()
+            ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+            return render(request, "dashboard/create_product.html", {
+                "errors": errors,
+                "product": body,
+                "ingredient_list": ingredients_db,
+                "categories_list": categories_list_int,
+                "ingredients": ingredients_all,
+                "categories": categories
+            })
+        else:
+
+
+            product_db = get_object_or_404(Product, pk=product, user=request.user)
+
+            product_db.name = body["name"]
+            product_db.subtotal_price = float(body["price"])
+            product_db.description = body["description"]
+            product_db.image = body["image"]
+            product_db.production_time = int(body["prod_time"])
+
+            product_db.save()
+
+            # Delete previous relationships
+            product_db.categories.clear()
+            ProductIngredient.objects.filter(product=product_db).delete()
+
+            for category in categories_db:
+                product_db.categories.add(category)
+
+            for ingredient in ingredients_db:
+
+                productIngredient = ProductIngredient(
+                    product = product_db,
+                    ingredient = ingredient,
+                    quantity = ingredient.quantity
+                )
+
+                productIngredient.save()
+
+
+            return HttpResponseRedirect(reverse("dashboard_products"))
+
+    else:
+
+        product = get_object_or_404(Product, pk=product, user=request.user)
+
+        ingredients_prev = []
+
+        for ingredient in product.ingredients.all():
+
+            ingredients_prev.append({
+                "id" : ingredient.ingredient.id,
+                "quantity" : ingredient.quantity,
+                "name" : ingredient.ingredient.name,
+                "size" : ingredient.ingredient.size,
+                "measurement_unit" : ingredient.ingredient.measurement_unit,
+                "price" : ingredient.ingredient.price 
+            })
+
+        categories_list_int = []
+
+        for cat in product.categories.all():
+            categories_list_int.append(int(cat.id))
+
+        categories = Category.objects.all()
+        ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+        
+        return render(request, "dashboard/edit_product.html", {
+            "categories": categories,
+            "product": product,
+            "ingredient_list": ingredients_prev,
+            "categories_list": categories_list_int,
+            "ingredients": ingredients_all,
+            "categories_prev": product.categories
+        })
+    
+
+    
+
+
+
+
     
 @login_required
 def new_ingredient(request):
@@ -222,7 +372,7 @@ def new_ingredient(request):
 @login_required
 def edit_ingredient(request, ingredient):
 
-    ingredient_db = get_object_or_404(Ingredient, pk=ingredient)
+    ingredient_db = get_object_or_404(Ingredient, pk=312) #################### <<<<< <<<
 
     # Auth
     if request.user != ingredient_db.seller_user:
@@ -255,7 +405,6 @@ def edit_ingredient(request, ingredient):
             ingredient_db.description = body["description"]
             ingredient_db.price = float(body["price"])
             ingredient_db.size = float(body["size"])
-            # ingredient_db.measurement_unit = body["measurement_unit"]
 
             ingredient_db.save()
 

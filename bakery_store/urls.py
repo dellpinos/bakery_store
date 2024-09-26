@@ -23,3 +23,5 @@ urlpatterns = [
     path('auth/', include("users.urls")),
     path('dashboard/', include("dashboard.urls"))
 ]
+
+handler404 = 'products.views.custom_404_view'

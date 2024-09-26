@@ -170,8 +170,8 @@ textarea {
     cursor: not-allowed;
 }
 .btn-disabled:hover {
-    background-color: var(--lightSilver);
-    cursor: not-allowed;
+    background-color: var(--lightSilver)!important;
+    cursor: not-allowed!important;
 }
 
 .btn:hover {
@@ -183,6 +183,10 @@ textarea {
     color: var(--silver);
     cursor: not-allowed;
     border: none;
+}
+
+.d-none {
+    display: none;
 }
 
 .flex {

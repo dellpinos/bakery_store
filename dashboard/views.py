@@ -16,6 +16,15 @@ def all_products(request):
 
     products = Product.objects.filter(seller_user=request.user).order_by("-created_at")
 
+    # Calculates total price
+    for product in products:
+        ingredients = product.ingredients.all()
+        product.total_price = float(product.subtotal_price)
+
+        for productIngredient in ingredients:
+            product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
+
+
     # Paginator
     p = Paginator(products, 20)
 

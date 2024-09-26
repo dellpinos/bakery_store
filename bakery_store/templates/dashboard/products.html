@@ -8,7 +8,6 @@
 {% block body %}
 
     <div>
-
         <h3 class="heading">All Products</h3>
 
         {% if message %}
@@ -27,14 +26,11 @@
                     {% else %}
                         <button class="list-availability__btn content__btn-disabled" data-id="{{ product.id }}">Disabled</button>
                     {% endif %}
-                    <a href="#">
+                    <a href="{% url 'edit_product' product.id %}">
                         <img src="{% static 'img/edit-white.svg'%}" class="content__edit" alt="Edit Icon">
                     </a>
-
                 </div>
-
             </li>
-
 
             {% empty %}
                 <p class="msg-empty">There are no products to show</p>
