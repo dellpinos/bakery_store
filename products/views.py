@@ -1,13 +1,11 @@
 from django.shortcuts import render
 from .models import Product, Category, Ingredient, ProductIngredient
 
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 import json
-from urllib.parse import urlparse
 
 
 
@@ -61,10 +59,6 @@ def product_validation(body, ingredients):
 
 ## Controllers ##
 
-def custom_404_view(request, exception):
-    return render(request, '404.html', status=404)
-
-
 def home(request):
 
     products = Product.objects.order_by('-created_at')
@@ -81,15 +75,57 @@ def home(request):
         "products": products
     })
 
+@login_required
+def show_product(request, product):
+
+        product = Product.objects.filter(pk=product, seller_user=request.user).first()
+        if product is None:
+            return HttpResponseRedirect(reverse("dashboard_products"))
+
+        ingredients_prev = []
+
+        for ingredient in product.ingredients.all():
+
+            ingredients_prev.append({
+                "id" : ingredient.ingredient.id,
+                "quantity" : ingredient.quantity,
+                "name" : ingredient.ingredient.name,
+                "size" : ingredient.ingredient.size,
+                "measurement_unit" : ingredient.ingredient.measurement_unit,
+                "price" : ingredient.ingredient.price 
+            })
+
+        categories_list_int = []
+
+        for cat in product.categories.all():
+            categories_list_int.append(int(cat.id))
+
+        categories = Category.objects.all()
+        ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+        
+        return render(request, "home/show_product.html", {
+            "categories": categories,
+            "product": product,
+            "ingredient_list": ingredients_prev,
+            "categories_list": categories_list_int,
+            "ingredients": ingredients_all,
+            "categories_prev": product.categories
+        })
+
 # Dashboard
+
+
+
+
+
+
+
 @login_required
 def new_product(request):
 
     if request.method == 'POST':
 
         body = request.POST
-
-        print(body)
         ingredients = [json.loads(item) for item in body.getlist('ingredient_data')]
         categories_list = body.getlist('categories')
 
@@ -114,7 +150,10 @@ def new_product(request):
         categories_list_int = []
 
         for ingredient in ingredients:
-            ingredient_db = get_object_or_404(Ingredient, pk=ingredient['id'])
+
+            ingredient_db = Ingredient.objects.filter(pk=ingredient['id']).first()
+            if ingredient_db is None:
+                return HttpResponseRedirect(reverse("dashboard_products"))
             
             ingredient_db.quantity = ingredient["quantity"]
 
@@ -128,9 +167,8 @@ def new_product(request):
 
         for category in categories_list:
 
-            category_db = get_object_or_404(Category, pk=category)
-
-            if not category_db:
+            category_db = Category.objects.filter(pk=category).first()
+            if category_db is None:
                 errors.append('Invalid category')
 
             categories_db.append(category_db)
@@ -176,7 +214,6 @@ def new_product(request):
             return HttpResponseRedirect(reverse("dashboard_products"))
 
     else:
-
         categories = Category.objects.all()
         ingredients = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
         
@@ -192,7 +229,6 @@ def edit_product(request, product):
 
         body = request.POST
         ingredients = [json.loads(item) for item in body.getlist('ingredient_data')]
-
         categories_list = body.getlist('categories')
 
         try:
@@ -216,10 +252,10 @@ def edit_product(request, product):
         categories_list_int = []
 
         for ingredient in ingredients:
-            ingredient_db = get_object_or_404(Ingredient, pk=ingredient['id'])
+            ingredient_db = Ingredient.objects.filter(pk=ingredient['id'], seller_user=request.user).first()
             ingredient_db.quantity = ingredient["quantity"]
 
-            if not ingredient_db:
+            if ingredient_db is None:
                 errors.append('Invalid ingredient')
 
             if ingredient_db.seller_user != request.user:
@@ -229,9 +265,8 @@ def edit_product(request, product):
 
         for category in categories_list:
 
-            category_db = get_object_or_404(Category, pk=category)
-
-            if not category_db:
+            category_db = Category.objects.filter(pk=category).first()
+            if category_db is None:
                 errors.append('Invalid category')
 
             categories_db.append(category_db)
@@ -251,8 +286,9 @@ def edit_product(request, product):
             })
         else:
 
-
-            product_db = get_object_or_404(Product, pk=product, user=request.user)
+            product_db = Product.objects.filter(pk=product, seller_user=request.user).first()
+            if product_db is None:
+                return HttpResponseRedirect(reverse("dashboard_products"))
 
             product_db.name = body["name"]
             product_db.subtotal_price = float(body["price"])
@@ -279,12 +315,13 @@ def edit_product(request, product):
 
                 productIngredient.save()
 
-
             return HttpResponseRedirect(reverse("dashboard_products"))
 
     else:
 
-        product = get_object_or_404(Product, pk=product, user=request.user)
+        product = Product.objects.filter(pk=product, seller_user=request.user).first()
+        if product is None:
+            return HttpResponseRedirect(reverse("dashboard_products"))
 
         ingredients_prev = []
 
@@ -317,12 +354,6 @@ def edit_product(request, product):
         })
     
 
-    
-
-
-
-
-    
 @login_required
 def new_ingredient(request):
 
@@ -372,10 +403,8 @@ def new_ingredient(request):
 @login_required
 def edit_ingredient(request, ingredient):
 
-    ingredient_db = get_object_or_404(Ingredient, pk=312) #################### <<<<< <<<
-
-    # Auth
-    if request.user != ingredient_db.seller_user:
+    ingredient_db = Ingredient.objects.filter(pk=ingredient, seller_user=request.user).first()
+    if ingredient_db is None:
         return HttpResponseRedirect(reverse("dashboard_ingredients"))
 
     if request.method == 'POST':
@@ -421,26 +450,28 @@ def edit_ingredient(request, ingredient):
         "ingredient": ingredient
     })
 
+# Hay que eliminar o limitar esta funcionalidad (que ocurre si el usuario elimina un ingrediente que es utilizado en productos)
 @login_required
 def delete_ingredient(request, ingredient):
 
-    ingredient_db = get_object_or_404(Ingredient, pk=ingredient)
 
-    # Auth
-    if request.user != ingredient_db.seller_user:
+    ingredient_db = Ingredient.objects.filter(pk=ingredient, seller_user=request.user).first()
+    if ingredient_db is None:
         return HttpResponseRedirect(reverse("dashboard_ingredients"))
     
     ingredient_db.delete()
     
     return HttpResponseRedirect(reverse("dashboard_ingredients"))
 
-# API
+## API ##
 
 @csrf_exempt
 @login_required
 def ingredient_availability(request, ingredient):
 
-    ingredient_db = get_object_or_404(Ingredient, pk=ingredient)
+    ingredient_db = Product.objects.filter(pk=ingredient, seller_user=request.user).first()
+    if ingredient_db is None:
+        return HttpResponseRedirect(reverse("dashboard_products"))
 
     # Auth
     if request.user != ingredient_db.seller_user:
@@ -462,10 +493,8 @@ def ingredient_availability(request, ingredient):
 @login_required
 def product_availability(request, product):
 
-    product_db = get_object_or_404(Product, pk=product)
-
-    # Auth
-    if request.user != product_db.seller_user:
+    product_db = Product.objects.filter(pk=product, seller_user=request.user).first()
+    if product_db is None:
         return JsonResponse(
             {"error" : "Forbidden"}, status=403
         )

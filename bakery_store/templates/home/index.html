@@ -15,7 +15,7 @@
     <div class="home__grid">
         {% for item in products %}
 
-            <a href="#" class="product-card">
+            <a href="{% url 'show_product' item.id %}" class="product-card">
                 <h4>{{ item.name }}</h4>
                 <div class="product-card__img-container">
                     <img src="{{ item.image }}" alt="{{item.name}} Image" width="500" class="product-card__img">

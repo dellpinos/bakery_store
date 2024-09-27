@@ -701,3 +701,22 @@ footer {
         color: var(--white);
     }
 }
+
+/* Show Products */
+
+.show_product__card {
+
+    margin: 0 auto;
+    background-color: var(--orange);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6rem;
+    border-radius: 1.5rem;
+    text-align: center;
+
+}
+
+.show_product__grid-products {
+
+}

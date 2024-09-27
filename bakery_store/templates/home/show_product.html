@@ -1,0 +1,39 @@
+{% extends "layouts/layout.html" %}
+
+{% block title %}
+    Show Product
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading">Show Product</h3>
+
+
+            {% if message %}
+                <div class="msg-error">{{ message }}</div>
+            {% endif %}
+
+            {% for error in errors %}
+                <div class="msg-error">{{ error }}</div>
+            {% endfor %}
+
+            <div class="show_product__card">
+
+                <h4>{{ product.name }}</h4>
+                <div class="product-card__img-container">
+                    <img src="{{ product.image }}" alt="{{product.name}} Image" width="500" class="product-card__img">
+                </div>
+                <div class="flex-col">
+                    <p class="product-card__text">{{ product.description }}</p>
+                    <p class="product-card__price">${{ product.subtotal_price }} <- - RECALCULAR</p>
+                    <p>Production time: {{ product.production_time }} days</p>
+                </div>
+                <div class="show_product__grid-products">
+                
+                </div>
+            </div>
+    </div>
+
+
+{% endblock %}
