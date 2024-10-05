@@ -72,6 +72,14 @@ class ProductIngredient(models.Model):
     quantity = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "ingredient": self.ingredient,
+            "quantity": self.quantity,
+            "created_at": self.created_at
+        }
+
     def __str__(self):
         return f"The product {self.product.name} has the ingredient {self.ingredient.name} (quantity: {self.quantity})"
 

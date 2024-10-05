@@ -95,6 +95,10 @@ textarea {
     color: var(--redAlert);
 }
 
+.mt-3 {
+    margin-top: 3rem;
+}
+
 .body-pos {
     position: relative;
     padding-top: 212px;
@@ -185,6 +189,18 @@ textarea {
 .btn:hover {
     background-color: var(--darkOrange);
 }
+
+.btn-white {
+    background-color: var(--ivory);
+    color: var(--orange);
+    box-shadow: 0 0 10px var(--ivory);
+}
+
+.btn-white:hover {
+    color: var(--ivory);
+    box-shadow: none;
+}
+
 
 .disabled {
     background-color: var(--lightSilver);
@@ -701,17 +717,6 @@ footer {
     text-shadow: 0 0 15px var(--darkYellow);
 }
 
-.product-card__btn {
-    background-color: var(--ivory);
-    color: var(--orange);
-    margin-top: 3rem;
-    box-shadow: 0 0 10px var(--ivory);
-}
-
-.product-card__btn:hover {
-    color: var(--ivory);
-    box-shadow: none;
-}
 
 
 
@@ -898,4 +903,83 @@ footer {
     width: 20rem;
 }
 
+.triangle {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: var(--darkOrange) transparent transparent transparent;
 
+
+}
+
+.cart {
+    position: absolute;
+    min-width: 45rem;
+    top: 6rem;
+    right: 1/2;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    background-color: var(--orange);
+    color: var(--white);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+
+    box-shadow: 0 0 6px 2px var(--darkOrange);
+
+}
+
+.cart__heading {
+
+}
+
+.cart__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.cart__item {
+    display: flex;
+
+    gap: 2rem;
+
+    > img {
+        width: 15rem;
+    }
+
+}
+
+.cart__desc {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1rem;
+
+
+    > p {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+    }
+
+}
+
+.cart__price {
+    font-size: 4.5rem;
+    font-weight: 700;
+    font-family: var(--logoFont);
+    text-shadow: 0 0 15px var(--darkYellow);
+}

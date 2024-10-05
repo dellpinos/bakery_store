@@ -219,3 +219,110 @@
         }
     }
 })();
+
+
+( function() {
+
+    // Cart
+
+    if(document.querySelector('#header-cart-icon')){
+
+        const counter = document.querySelector('#header-cart-icon');
+
+        
+        (async () => {
+            try {
+                const url = `/orders/api/cart/`;
+                
+                const response = await fetch(url);
+                const result = await response.json();
+                
+
+                if( counter.textContent > 0 ) {
+                    counter.textContent = result.response;
+                    
+                }
+
+                cartFormat(result);
+
+
+            } catch (error) {
+                throw Error('Something went wrong.')
+            }
+        })();
+
+
+    }
+
+    function cartFormat(data) {
+        
+        const list = document.querySelector('#cart-header-list');
+
+        if( data.response > 0 ) {
+            data.products.forEach(prod => {
+                const item = formatItem(prod);
+                list.appendChild(item);
+                
+            })
+            const cart = document.querySelector('#cart-header');
+            const cartButton = document.createElement('A');
+            // cartButton.href('#'); // << << << << << << ENLACE AL CHECKOUT
+
+            cartButton.classList.add("btn", "btn-white");
+            cartButton.textContent = "Checkout";
+            cart.appendChild(cartButton);
+        } else {
+            list.innerHTML = `
+                <p class="msg-empty">There are no products to show</p>
+            `;
+        }
+
+
+    }
+
+    function formatItem(product) {
+
+        const item = document.createElement('LI');
+        item.classList.add("cart__item");
+        item.innerHTML = `
+                <img src="${product.image}" alt="${product.name}">
+                <div class="cart__desc">
+                    <p>${product.name}</p>
+                    <p>$${product.price}</p>
+                    <p>Production time: ${product.production_time} days</p>
+                </div>
+        `;
+        return item;
+    }
+
+    if(document.querySelector('#btn-add-cart')){
+
+        const btn = document.querySelector('#btn-add-cart');
+        const productId = btn.dataset.product;
+
+        btn.addEventListener('click', async () => {
+
+
+            try {
+                const url = `/orders/api/cart/create/${productId}`;
+
+                const response = await fetch(url);
+                const result = await response.json();
+
+                console.log(result)
+                // Actualizar las notificaciones o informar al usuario si el status es 200 o 403
+
+
+            } catch (error) {
+                throw Error('Something went wrong.')
+            }
+
+
+
+
+        })
+
+
+
+    }
+})();

@@ -30,7 +30,7 @@
                     <p>{{ product.description }}</p>
                     <p class="product-card__price">${{ product.total_price }}</p>
                     <p>Production time: {{ product.production_time }} days</p>
-                    <a href="#" class="btn product-card__btn">Add to Cart</a>
+                    <button class="btn btn-white mt-3" id="btn-add-cart" data-product="{{ product.id }}">Add to Cart</button>
                 </div>
             </div>
             <div class="show-product__rel-container">

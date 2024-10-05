@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     <link href="{% static 'styles/app.css' %}" rel="stylesheet" />
     {% block script %}
-
+        <script src="{% static 'js/app.js' %}" type="module"></script>
     {% endblock %}
   </head>
   <body class="body-pos">
@@ -32,10 +32,48 @@
           {% comment %} <a href="#" class="header__nav-link {% if request.resolver_match.url_name == 'index' %}header__nav-link--active{% endif %}">All Posts</a> {% endcomment %}
 
           {% if user.is_authenticated %}
-            <a href="#" class="header__cart-icon-container">
+            {% comment %} <a href="{% url 'show_cart' %}" class="header__cart-icon-container"> {% endcomment %}
+            <buttom class="header__cart-icon-container">
                 <img src="{% static 'img/cart.svg' %}" alt="Cart Icon" class="header__cart-icon">
-                <p>1</p>
-            </a>
+                <p id="header-cart-icon" ></p>
+                <div class="triangle"></div>
+                <div class="cart" id="cart-header">
+
+                    <h3 class="cart__heading">Your cart</h3>
+                    <ul class="cart__list" id="cart-header-list">
+                        {% comment %} <li class="cart__item">
+                            <img src="https://recetinas.com/wp-content/uploads/2017/12/tarta-humeda-de-chocolate.jpg" alt="#">
+                            <div class="cart__desc">
+                                <p>Torta Nombre largo muy largo </p>
+                                <p>$15566</p>
+                                <p>4 dias</p>
+                            </div>
+                        </li>
+                        <li class="cart__item">
+                            <img src="https://recetinas.com/wp-content/uploads/2017/12/tarta-humeda-de-chocolate.jpg" alt="#">
+                            <div class="cart__desc">
+                                <p>Torta Nombre largo muy largo</p>
+                                <p>$15566</p>
+                                <p>4 dias</p>
+                            </div>
+                        </li>
+                        <li class="cart__item">
+                            <img src="https://recetinas.com/wp-content/uploads/2017/12/tarta-humeda-de-chocolate.jpg" alt="#">
+                            <div class="cart__desc">
+                                <p>Torta Nombre largo muy largo</p>
+                                <p>$15566</p>
+                                <p>4 dias</p>
+                            </div>
+                        </li> {% endcomment %}
+
+                    </ul>
+
+                    {% comment %} <p class="cart__price">$155</p> {% endcomment %}
+                    {% comment %} <button class="btn btn-white">Buy Items</button> {% endcomment %}
+
+
+                </div>
+            </buttom>
             <a href="{% url 'dashboard' %}" class="header__nav-link" >Dashboard</a>
             <a href="#" class="header__nav-link header__nav-link--logout">Log Out</a>
           {% else %}

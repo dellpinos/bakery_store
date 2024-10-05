@@ -17,3 +17,20 @@ class SellerTimeOff(models.Model):
     
     def __str__(self):
         return f"The user: {self.user} is free on date: {self.date}"
+    
+class Notification(models.Model):
+    
+    NOTIFICATION_TYPES = [
+        ('order', 'Order Notification'),
+        ('product', 'Product Notification'),
+        ('message', 'Message Notification'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.message}"
