@@ -1,0 +1,23 @@
+{% extends "layouts/layout.html" %}
+{% comment %} {% load static %} {% endcomment %}
+
+{% block title %}
+    Your Cart
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading"> Your Cart</h3>
+
+            {% if message %}
+                <div class="msg-error">{{ message }}</div>
+            {% endif %}
+
+            {% for error in errors %}
+                <div class="msg-error">{{ error }}</div>
+            {% endfor %}
+
+    </div>
+
+{% endblock %}

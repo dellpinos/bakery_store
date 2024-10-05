@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-import json
+import json, random
 
 
 
@@ -75,50 +75,97 @@ def home(request):
         "products": products
     })
 
-@login_required
+def random_product(request):
+
+    product_ids = list(Product.objects.values_list('id', flat=True))
+
+    # Verify if there are any products
+    if product_ids:
+        # Random ID select
+        random_id = random.choice(product_ids)
+        print(f'Random Product ID: {random_id}')
+    else:
+        print('No products found.')
+
+    product = Product.objects.filter(pk=random_id).first()
+
+    ingredients = product.ingredients.all()
+    product.total_price = float(product.subtotal_price)
+
+    for productIngredient in ingredients:
+        product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
+
+    # Looks for products by the same seller (limit: 3)
+    products = list(Product.objects.filter(seller_user = product.seller_user).exclude(pk=product.id).order_by('-created_at')[:3])
+
+    # Initialize with excluded IDs
+    excluded_ids = [product.id for product in products]
+    excluded_ids.append(product.id)
+
+    missing_products = 3 - len(products)
+
+    while missing_products > 0:
+            
+        # Find a product that does not appear in the excluded list.
+        new_product = Product.objects.exclude(pk__in=excluded_ids).order_by('-created_at').first()
+
+        # Break if there are no more products
+        if not new_product:
+            break
+
+        products.append(new_product)
+        excluded_ids.append(new_product.id)
+
+        missing_products -= 1
+
+    return render(request, "home/show_product.html", {
+        "product": product,
+        "related_products": products
+    })
+
+
 def show_product(request, product):
 
-        product = Product.objects.filter(pk=product, seller_user=request.user).first()
+        product = Product.objects.filter(pk=product).first()
         if product is None:
             return HttpResponseRedirect(reverse("dashboard_products"))
 
-        ingredients_prev = []
+        ingredients = product.ingredients.all()
+        product.total_price = float(product.subtotal_price)
 
-        for ingredient in product.ingredients.all():
+        for productIngredient in ingredients:
+            product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
-            ingredients_prev.append({
-                "id" : ingredient.ingredient.id,
-                "quantity" : ingredient.quantity,
-                "name" : ingredient.ingredient.name,
-                "size" : ingredient.ingredient.size,
-                "measurement_unit" : ingredient.ingredient.measurement_unit,
-                "price" : ingredient.ingredient.price 
-            })
+        # Looks for products by the same seller (limit: 3)
+        products = list(Product.objects.filter(seller_user = product.seller_user).exclude(pk=product.id).order_by('-created_at')[:3])
 
-        categories_list_int = []
+        # Initialize with excluded IDs
+        excluded_ids = [product.id for product in products]
+        excluded_ids.append(product.id)
 
-        for cat in product.categories.all():
-            categories_list_int.append(int(cat.id))
+        missing_products = 3 - len(products)
 
-        categories = Category.objects.all()
-        ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
-        
+        while missing_products > 0:
+                
+            # Find a product that does not appear in the excluded list.
+            new_product = Product.objects.exclude(pk__in=excluded_ids).order_by('-created_at').first()
+
+            # Break if there are no more products
+            if not new_product:
+                break
+
+            products.append(new_product)
+            excluded_ids.append(new_product.id)
+
+            missing_products -= 1
+            
         return render(request, "home/show_product.html", {
-            "categories": categories,
             "product": product,
-            "ingredient_list": ingredients_prev,
-            "categories_list": categories_list_int,
-            "ingredients": ingredients_all,
-            "categories_prev": product.categories
+            "related_products": products
         })
 
+
 # Dashboard
-
-
-
-
-
-
 
 @login_required
 def new_product(request):

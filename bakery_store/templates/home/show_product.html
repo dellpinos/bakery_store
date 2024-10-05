@@ -1,4 +1,5 @@
 {% extends "layouts/layout.html" %}
+{% load static %}
 
 {% block title %}
     Show Product
@@ -7,8 +8,7 @@
 {% block body %}
 
     <div>
-        <h3 class="heading">Show Product</h3>
-
+        <h3 class="heading">{{ product.seller_user.username }}'s Showcase</h3>
 
             {% if message %}
                 <div class="msg-error">{{ message }}</div>
@@ -18,22 +18,71 @@
                 <div class="msg-error">{{ error }}</div>
             {% endfor %}
 
-            <div class="show_product__card">
+            <div class="show-product__card">
+                <div>
+                    <h4 class="heading-xs">{{ product.name }}</h4>
+                    <div class="product-card__img-container">
+                        <img src="{{ product.image }}" alt="{{product.name}} Image" width="500" class="product-card__img">
+                    </div>
+                </div>
 
-                <h4>{{ product.name }}</h4>
-                <div class="product-card__img-container">
-                    <img src="{{ product.image }}" alt="{{product.name}} Image" width="500" class="product-card__img">
-                </div>
                 <div class="flex-col">
-                    <p class="product-card__text">{{ product.description }}</p>
-                    <p class="product-card__price">${{ product.subtotal_price }} <- - RECALCULAR</p>
+                    <p>{{ product.description }}</p>
+                    <p class="product-card__price">${{ product.total_price }}</p>
                     <p>Production time: {{ product.production_time }} days</p>
+                    <a href="#" class="btn product-card__btn">Add to Cart</a>
                 </div>
-                <div class="show_product__grid-products">
-                
+            </div>
+            <div class="show-product__rel-container">
+                <h3>Related Products</h3>
+                <div class="show-product__rel-grid">
+                    {% for item in related_products %}
+                        <a href="{% url 'show_product' item.id %}" class="show-product__rel-card">
+                            <h4>{{ item.name }}</h4>
+                            <div class="product-card__img-container">
+                                <img src="{{ item.image }}" alt="{{item.name}} Image" width="500" class="product-card__img">
+                            </div>
+                            <p class="product-card__text">{{ item.description }}</p>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="common-section">
+                <div >
+                    <div class="common-section__item-container">
+                        <img src="{% static 'img/cake1.svg' %}" alt="Cart Icon" class="common-section__item">
+                    </div>
+                        <p class="common-section__item-txt">Cakes</p>
+                </div>
+                <div >
+                    <div class="common-section__item-container">
+                        <img src="{% static 'img/croissant.svg' %}" alt="Cart Icon" class="common-section__item">
+                    </div>
+                    <p class="common-section__item-txt">Bakery</p>
+                </div>
+                <div >
+                    <div class="common-section__item-container">
+                        <img src="{% static 'img/cake2.svg' %}" alt="Cart Icon" class="common-section__item">
+                    </div>
+                    <p class="common-section__item-txt">Speciality Cakes</p>
+                </div>
+                <div >
+                    <div class="common-section__item-container">
+                        <img src="{% static 'img/cupcake.svg' %}" alt="Cart Icon" class="common-section__item">
+                    </div>
+                    <p class="common-section__item-txt">Cupcakes</p>
+                </div>
+            </div>
+
+            <div class="common-section">
+                <h2 class="common-section__heading">Surprise Selection!</h2>
+                <div class="common-section__item-container">
+                    <a href="{% url 'random_product' %}" >
+                        <img src="{% static 'img/box.svg' %}" alt="Cart Icon" class="common-section__item scale">
+                    </a>
                 </div>
             </div>
     </div>
-
 
 {% endblock %}
