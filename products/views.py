@@ -158,10 +158,25 @@ def show_product(request, product):
             excluded_ids.append(new_product.id)
 
             missing_products -= 1
-            
+
+            # User Cart
+            in_cart = False
+
+            if request.user.cart.get():
+                cart = request.user.cart.get()
+
+                products_cart = cart.products.all()
+
+                for prod in products_cart:
+                    if prod.id == product:
+                        in_cart = True
+
+
+
         return render(request, "home/show_product.html", {
             "product": product,
-            "related_products": products
+            "related_products": products,
+            "in_cart": in_cart
         })
 
 

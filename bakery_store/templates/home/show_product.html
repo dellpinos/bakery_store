@@ -30,7 +30,15 @@
                     <p>{{ product.description }}</p>
                     <p class="product-card__price">${{ product.total_price }}</p>
                     <p>Production time: {{ product.production_time }} days</p>
-                    <button class="btn btn-white mt-3" id="btn-add-cart" data-product="{{ product.id }}">Add to Cart</button>
+
+                    {% if user.is_authenticated and user != product.seller_user and in_cart %}
+                        <button class="btn btn-white mt-3" id="btn-add-cart" data-product="{{ product.id }}">Add to Cart</button>
+                    {% endif %}
+
+                    {% if not in_cart %}
+                        <p class="mt-3">This product is in your cart. You can update the quantity at checkout</p>
+                    {% endif %}
+
                 </div>
             </div>
             <div class="show-product__rel-container">

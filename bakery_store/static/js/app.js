@@ -225,59 +225,116 @@
 
     // Cart
 
+
+
+
     if(document.querySelector('#header-cart-icon')){
 
-        const counter = document.querySelector('#header-cart-icon');
+        const cartIcon = document.querySelector('#header-cart-btn');
 
-        
-        (async () => {
+        cartIcon.addEventListener('mouseover', () => {
+            document.querySelector('#cart-triangle').classList.remove('d-none');
+            document.querySelector('#cart-header').classList.remove('d-none');
+
+
+        })
+
+        cartIcon.addEventListener('mouseout', () => {
+            document.querySelector('#cart-triangle').classList.add('d-none');
+            document.querySelector('#cart-header').classList.add('d-none');
+
+        })
+
+        getCart();
+    }
+
+    if(document.querySelector('#btn-add-cart')){
+
+        const btn = document.querySelector('#btn-add-cart');
+        const productId = btn.dataset.product;
+
+        btn.addEventListener('click', handlerClick);
+
+        async function handlerClick() {
+
             try {
-                const url = `/orders/api/cart/`;
-                
+                const url = `/orders/api/cart/create/${productId}`;
+
                 const response = await fetch(url);
                 const result = await response.json();
-                
 
-                if( counter.textContent > 0 ) {
-                    counter.textContent = result.response;
-                    
+                if ( !result.error ) {
+                    // Deletes empty message
+                    if ( document.querySelector('.msg-empty')) {
+                        document.querySelector('.msg-empty').remove();
+
+                    }
+                    await getCart();
+
+                    btn.removeEventListener('click', handlerClick);
+
+                } else {
+                    console.log(result.error)
                 }
-
-                cartFormat(result);
-
 
             } catch (error) {
                 throw Error('Something went wrong.')
             }
-        })();
-
-
+        }
     }
 
+    async function getCart () {
+
+        const counter = document.querySelector('#header-cart-icon');
+        try {
+            const url = `/orders/api/cart/`;
+            
+            const response = await fetch(url);
+            const result = await response.json();
+            
+            if( result.response > 0 ) {
+                counter.textContent = result.response;
+            }
+
+            cartFormat(result);
+            return true;
+
+        } catch (error) {
+            throw Error('Something went wrong.')
+        }
+    };
+
     function cartFormat(data) {
-        
         const list = document.querySelector('#cart-header-list');
 
         if( data.response > 0 ) {
+
+            const cart = document.querySelector('#cart-header');
+
+            // Deletes previous elements
+            list.innerHTML = '';
+            if ( cart.querySelector('.btn')) {
+                cart.querySelector('.btn').remove();
+            }
+
             data.products.forEach(prod => {
                 const item = formatItem(prod);
                 list.appendChild(item);
                 
-            })
-            const cart = document.querySelector('#cart-header');
+            });
+
             const cartButton = document.createElement('A');
             // cartButton.href('#'); // << << << << << << ENLACE AL CHECKOUT
 
-            cartButton.classList.add("btn", "btn-white");
+            cartButton.classList.add("btn");
             cartButton.textContent = "Checkout";
             cart.appendChild(cartButton);
+
         } else {
             list.innerHTML = `
                 <p class="msg-empty">There are no products to show</p>
             `;
         }
-
-
     }
 
     function formatItem(product) {
@@ -295,34 +352,5 @@
         return item;
     }
 
-    if(document.querySelector('#btn-add-cart')){
 
-        const btn = document.querySelector('#btn-add-cart');
-        const productId = btn.dataset.product;
-
-        btn.addEventListener('click', async () => {
-
-
-            try {
-                const url = `/orders/api/cart/create/${productId}`;
-
-                const response = await fetch(url);
-                const result = await response.json();
-
-                console.log(result)
-                // Actualizar las notificaciones o informar al usuario si el status es 200 o 403
-
-
-            } catch (error) {
-                throw Error('Something went wrong.')
-            }
-
-
-
-
-        })
-
-
-
-    }
 })();

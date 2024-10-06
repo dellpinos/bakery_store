@@ -75,16 +75,18 @@ def create_cart(request, product):
     
     cart = Cart.objects.filter(user=request.user).first()
 
-    if product_db in cart.products.all():
-        return JsonResponse(
-            {"error" : "Product already in cart"}, status=403
-        )
-
     if cart is None:
         cart = Cart(
             user = request.user
         )
         cart.save()
+        
+    if product_db in cart.products.all():
+        return JsonResponse(
+            {"error" : "Product already in cart"}, status=403
+        )
+
+
 
     cart.products.add(product_db)
 

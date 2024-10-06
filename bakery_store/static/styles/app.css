@@ -210,7 +210,7 @@ textarea {
 }
 
 .d-none {
-    display: none;
+    display: none!important;
 }
 
 .flex {
@@ -903,17 +903,7 @@ footer {
     width: 20rem;
 }
 
-.triangle {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -10px;
-    border-width: 10px;
-    border-style: solid;
-    border-color: var(--darkOrange) transparent transparent transparent;
 
-
-}
 
 .cart {
     position: absolute;
@@ -923,18 +913,33 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 4rem;
-    background-color: var(--orange);
-    color: var(--white);
+    color: var(--lightGray);
     border-radius: 1rem;
     padding: 2rem;
     text-align: center;
-
+    
+    background-color: var(--ivory);
+    border: 3px solid var(--darkOrange);
     box-shadow: 0 0 6px 2px var(--darkOrange);
+
+
+
+
+
+}
+.cart__triangle {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: var(--darkOrange) transparent transparent transparent;
 
 }
 
 .cart__heading {
-
+    color: var(--orange);
 }
 
 .cart__list {
@@ -945,6 +950,9 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+
+    max-height: 50rem;
+    overflow-y: scroll;
 }
 
 .cart__item {
@@ -973,6 +981,7 @@ footer {
         text-overflow: ellipsis;
         -webkit-line-clamp: 1;
         line-clamp: 1;
+        text-align: start;
     }
 
 }
@@ -982,4 +991,30 @@ footer {
     font-weight: 700;
     font-family: var(--logoFont);
     text-shadow: 0 0 15px var(--darkYellow);
+}
+
+/* Estilos para navegadores WebKit (Chrome, Safari, Edge) */
+/* ::-webkit-scrollbar {
+    width: 6px;
+    margin: 2rem 0;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: #888;
+    border: 3px solid #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+} */
+
+/* Estilos para Firefox */
+* {
+    scrollbar-color: var(--orange) var(--ivory);
+    scrollbar-width: thin;
 }

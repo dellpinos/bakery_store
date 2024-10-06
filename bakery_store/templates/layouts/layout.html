@@ -33,11 +33,11 @@
 
           {% if user.is_authenticated %}
             {% comment %} <a href="{% url 'show_cart' %}" class="header__cart-icon-container"> {% endcomment %}
-            <buttom class="header__cart-icon-container">
+            <buttom class="header__cart-icon-container" id="header-cart-btn">
                 <img src="{% static 'img/cart.svg' %}" alt="Cart Icon" class="header__cart-icon">
                 <p id="header-cart-icon" ></p>
-                <div class="triangle"></div>
-                <div class="cart" id="cart-header">
+                <div class="cart__triangle d-none" id="cart-triangle"></div>
+                <div class="cart d-none" id="cart-header">
 
                     <h3 class="cart__heading">Your cart</h3>
                     <ul class="cart__list" id="cart-header-list">
