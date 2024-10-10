@@ -4,10 +4,10 @@ from products.models import Product
 
 
 class Order(models.Model):
-    buyer_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    buyer_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "orders")
+    total_amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     delivery_date = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add = True)
 
     def serialize(self):
         return {
@@ -20,13 +20,14 @@ class Order(models.Model):
 
 
 class OrderProduct(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="orders")
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="products") 
-    created_at = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, related_name = "orders")
+    quantity = models.IntegerField( default = 1 )
+    order = models.ForeignKey(Order, on_delete = models.CASCADE, related_name = "products")
+    created_at = models.DateTimeField(auto_now_add = True)
+
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cart")
-    products = models.ManyToManyField(Product, related_name='carts')
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "cart")
 
     def serialize(self):
         return {
@@ -36,3 +37,18 @@ class Cart(models.Model):
     def __str__(self):
         return f"{self.user}'s cart"
 
+class CartProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, related_name = "carts")
+    cart = models.ForeignKey(Cart, on_delete = models.CASCADE, related_name = "products")
+    quantity = models.IntegerField( default = 1 )
+    created_at = models.DateTimeField(auto_now_add = True)
+
+    def serialize(self):
+        return {
+            "product": self.product,
+            "cart": self.cart,
+            "quantity": self.quantity,
+            "created_at": self.created_at
+        }
+    def __str__(self):
+        return f"Product: {self.product}, quantity: {self.quantity}. User: {self.cart.user}"

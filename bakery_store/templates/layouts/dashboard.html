@@ -15,6 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     <link href="{% static 'styles/app.css' %}" rel="stylesheet" />
+    {% block head %}
+    
+    {% endblock %}
     {% block script %}
         <script src="{% static 'js/app.js' %}" type="module"></script>
     {% endblock %}
@@ -52,8 +55,8 @@
             <a href="{% url 'dashboard_products' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">
                 Pendings
             </a>
-            <a href="{% url 'dashboard_products' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">
-                Calendar
+            <a href="{% url 'dashboard_settings' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">
+                Settings
             </a>
             <a href="{% url 'dashboard_products' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">
                 Log Out

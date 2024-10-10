@@ -1,0 +1,68 @@
+{% extends "layouts/layout.html" %}
+{% load static %}
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading">Checkout</h3>
+
+            {% if message %}
+                <div class="msg-error">{{ message }}</div>
+            {% endif %}
+
+            {% for error in errors %}
+                <div class="msg-error">{{ error }}</div>
+            {% endfor %}
+
+        <div class="checkout__grid">
+
+
+
+            <<<< El usuario no puede ordenar productos de diferentes vendedores en una misma compra
+        
+            {% for product in products %}
+                <div class="checkout__card">
+                    <div class="checkout__desc-cont">
+                        <div class="checkout__img-cont">
+                            <img src="{{ product.image }}" alt="{{ product.name }}" class="checkout__img">
+                        </div>
+                        <div class="checkout__card-desc">
+                            <h4>{{ product.name }}</h4>
+                            <p>{{ product.description }}</p>
+                            <p>Production time: {{ product.production_time}} days</p>
+                        </div>
+                    </div>
+
+                    <div class="checkout__card-info">
+                        <div class="checkout__card-field">
+                            <label for="#">Quantity</label>
+                            <select name="#" id="#">
+                                <option value="#" selected >1</option>
+                                <option value="#">2</option>
+                                <option value="#">3</option>
+                            </select>
+                        </div>
+                        <p>$ {{ product.total_price }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div>
+                <p class="checkout__price">Total Price: $ 4455</p>
+                <p>Production Time: 16 days</p>
+            </div>
+
+            <div class="checkout__btn-cont">
+                <button class="btn">Submit Your Order</button>
+            
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}

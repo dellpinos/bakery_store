@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     # Cart
+    path('checkout', views.checkout, name="checkout"),
 
     # API
     path('api/cart/', views.index_cart, name="index_cart"),

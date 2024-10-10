@@ -1,0 +1,83 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Calendar
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/settings.js' %}" type="module"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading">Settings</h3>
+
+        {% if message %}
+            <div class="msg-{{ message.type }}">{{ message.txt }}</div>
+        {% endif %}
+
+        <input type="hidden" id="hidden-prev-dates" value="{{ days_off }}" />
+
+
+        <h4>Your Calendar</h4>
+        <form action="{% url 'calendar_update' %}" method="POST" class="form">
+
+            {% csrf_token %}
+            <legend>You can disable holidays here.</legend>
+                <div class="form__field--hor">
+                    <!-- Botón para abrir el calendario -->
+                    {% comment %} <button id="datepicker-button" class="btn btn-primary">Select Dates</button> {% endcomment %}
+
+                    <!-- Input oculto para almacenar las fechas seleccionadas -->
+                    <input type="hidden" id="hidden-datepicker" style="display: none" name="dates"/>
+                </div>
+
+            <div class="btn-container">
+                <input type="submit" class="btn" value="Submit">
+            </div>
+        </form>
+
+        <div class="form__container">
+            <form action="{% url 'capacity_update' %}" method="POST" class="form">
+                {% csrf_token %}
+                <legend>Here you can choose the maximum number of products you can deliver per day. This number is the same as the maximum number of products a user can purchase in a single order (max items in an order).</legend>
+                    <div class="form__field--hor">
+                        <label for="#">Select a number between 1 and 10:</label>
+                        <input type="number" max="10" min="1" class="form__input" name="capacity" value="{{ capacity }}">
+                    </div>
+
+                <div class="btn-container">
+                    <input type="submit" class="btn" value="Submit">
+                </div>
+            </form>
+        
+        </div>
+
+
+        <div class="form__container">
+            <form action="#" class="form">
+                <legend>Disable all products. If you don't have any pendent order, you can disable your store <<</legend>
+
+                <div class="btn-container">
+                    <input type="submit" class="btn" value="Disable - Enable">
+                
+                </div>
+            </form>
+        
+        </div>
+
+
+
+
+
+
+    
+{% endblock %}

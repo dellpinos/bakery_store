@@ -1,7 +1,13 @@
 {% extends "layouts/dashboard.html" %}
 
+{% load static %}
+
 {% block title %}
     New Product
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/newProduct.js' %}" type="module"></script>
 {% endblock %}
 
 {% block body %}
@@ -13,13 +19,13 @@
             <div class="msg-empty">You need to create some ingredients first</div>
         {% else %}
 
-            {% if message %}
-                <div class="msg-error">{{ message }}</div>
-            {% endif %}
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
 
-            {% for error in errors %}
-                <div class="msg-error">{{ error }}</div>
-            {% endfor %}
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
 
             <div class="form__container" >
                 <form action="{% url 'new_product' %}" method="POST" class="form" novalidate>

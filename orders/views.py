@@ -3,14 +3,19 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 
-from .models import Cart
+from .models import Cart, CartProduct
 from products.models import Product, Ingredient
+
+
+## API ##
 
 @csrf_exempt
 @login_required
 def index_cart(request):
 
     cart = Cart.objects.filter(user=request.user).first()
+
+
 
     if cart is None:
         return JsonResponse({
@@ -19,17 +24,15 @@ def index_cart(request):
             }, status = 200
         )
 
-
-    # Enviar elementos para listar
-
     products_count = cart.products.count()
 
     if products_count > 0:
-        products = cart.products.all()
+        cart_products = cart.products.all()
         serialized_products = []
 
         # Calculates total price
-        for product in products:
+        for cart_product in cart_products:
+            product = cart_product.product
             ingredients = product.ingredients.all()
             product.total_price = float(product.subtotal_price)
 
@@ -60,8 +63,7 @@ def index_cart(request):
         )
 
 
-
-
+# Add new product 
 @csrf_exempt
 @login_required
 def create_cart(request, product):
@@ -75,28 +77,67 @@ def create_cart(request, product):
     
     cart = Cart.objects.filter(user=request.user).first()
 
+    # Create Cart if doesn't exist
     if cart is None:
         cart = Cart(
             user = request.user
         )
         cart.save()
-        
+
     if product_db in cart.products.all():
         return JsonResponse(
             {"error" : "Product already in cart"}, status=403
         )
 
+    max_prod_capacity = product_db.seller_user.max_prod_capacity
+    items_quantity = 0
 
+    # Each item is a record from the 'CartProduct' model. It includes a product, a user, and a quantity.
+    for item in cart.products.all():
+        product = item.product
+        if product.seller_user != product_db.seller_user:
+            return JsonResponse(
+                {"error" : "You cannot add products from different sellers to the same order."}, status=403
+            )
+        
+        items_quantity += item.quantity
+        if items_quantity >= max_prod_capacity:
+            return JsonResponse(
+                {"error" : "You cannot add more products in this order."}, status=403
+            )
+        
+    cart_product = CartProduct(
+        product = product_db,
+        cart = cart,
+        quantity = 1
+    )
 
-    cart.products.add(product_db)
-
+    cart_product.save()
     products_count = cart.products.count()
-
-
-
-# Retorno la cantidad de productos actuales para la notificación del icono
 
     return JsonResponse(
         {"products_count" : products_count}, status=200
     )
-    pass
+
+@csrf_exempt
+@login_required
+def checkout(request):
+    
+    cart = request.user.cart.get()
+    cart_products = cart.products.all()
+    products = []
+
+    for cart_prod in cart_products:
+
+        prod = cart_prod.product
+        ingredients = prod.ingredients.all()
+        prod.total_price = float(prod.subtotal_price)
+
+        for productIngredient in ingredients:
+            prod.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
+
+        products.append(prod)
+
+    return render(request, 'orders/checkout.html', {
+        "products" : products
+    })

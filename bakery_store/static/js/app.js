@@ -1,347 +1,123 @@
-
-// Dashboard New product
-(function (){
-
-    if(document.querySelector('#create-product-ingredient')) {
-
-        let itemCounter = 0;
-        let ingredientsCost = 0;
-        let option
-        
-        const ingredientSelector = document.querySelector('#create-product-ingredient');
-        const quantity = document.querySelector('#create-product-quantity');
-        const btnAdd = document.querySelector('#create-product-add');
-        const btnSubmit = document.querySelector('#create-product-submit');
-        const customPrice = document.querySelector('#price');
-        const totalPrice = document.querySelector('#create-product-total');
-        const hiddenList = document.querySelector('#inputs-hidden-container');
-        const itemsList = document.querySelector('#create-product-items-list');
-
-        window.onload = function() {
-            ingredientSelector.selectedIndex = 0;
-            quantity.value = ''
-        };
-
-        quantity.addEventListener('input', (e) => {
-            if(e.target.value !== '' && ingredientSelector.selectedIndex !== 0) {
-                btnAdd.classList.remove('btn-disabled');
-            } else {
-                btnAdd.classList.add('btn-disabled');
-            }
-        });
-        
-        ingredientSelector.addEventListener('change', function(e) {
-            option = this.options[this.selectedIndex];
-            document.querySelector('#create-product-unit-measurement').textContent = option.dataset.measurementUnit;
-
-            if(customPrice.value !== '') {
-                btnAdd.classList.remove('btn-disabled');
-            }
-        });
-
-        customPrice.addEventListener('input', () => {
-            if( ingredientsCost !== 0) {
-                const price = customPrice.value ? customPrice.value : 0;
-                totalPrice.textContent = '$' + (parseFloat(price) + parseFloat(ingredientsCost)).toFixed(2);
-            }
-        });
-
-        btnAdd.addEventListener('click', () => {
-
-            if(option && quantity.value) {
-                
-                const data = {
-                    price: option.dataset.price,
-                    name: option.textContent,
-                    unit_measure: option.dataset.measurementUnit,
-                    size: option.dataset.size,
-                    quantity: quantity.value,
-                    id: option.value
-                }
-    
-                if( itemCounter < 30 ) {
-                    // Add input hidden to HTML
-                    const filteredData = {
-                        id: data.id,
-                        quantity: data.quantity
-                    }
-                    const hidden = document.createElement('INPUT');
-                    hidden.type = 'hidden';
-                    hidden.value = JSON.stringify(filteredData);
-                    hiddenList.appendChild(hidden);
-                    hidden.name = `ingredient_data`;
-
-                    // Add ingredient
-                    const item = formatItem(data, hidden);
-                    itemsList.appendChild(item);
-                    itemCounter++;
-
-                    // Reset elements
-                    ingredientSelector.selectedIndex = 0;
-                    quantity.value = '';
-                    document.querySelector('#create-product-unit-measurement').textContent = "empty";
-                    option = undefined;
-                    btnAdd.classList.add('btn-disabled');
-                } else {
-                    alert('You cannot add more than 30 ingredients')
-                }
-            }
-            if( itemCounter !== 0 ) {
-                btnSubmit.classList.remove('d-none');
-            } else {
-                btnSubmit.classList.add('d-none');
-            }
-        });
-
-
-
-        // generar los LI con js (reutilizar codigo para que no pierdan funcionalidad)
-        // Tambien marcar los selected del select multiple con Js
-        if( document.querySelector('[data-previous-items]')) {
-            const prevInputs = document.querySelectorAll('[data-previous-items]');
-
-            prevInputs.forEach( input => {
-
-                const jsonData = JSON.parse(input.value);
-                const data = {
-                    price: input.dataset.price,
-                    name: input.dataset.previousItems,
-                    unit_measure: input.dataset.measurementUnit,
-                    size: input.dataset.size,
-                    quantity: jsonData.quantity,
-                    id: jsonData.id
-                }
-
-                const item = formatItem(data, input);
-                itemCounter++;
-                itemsList.appendChild(item);
-            });
-            if( itemCounter !== 0 ) {
-                btnSubmit.classList.remove('d-none');
-            } else {
-                btnSubmit.classList.add('d-none');
-            }
-        }
-
-        function formatItem(data, hidden) {
-
-            const actualCost = parseFloat(((data.quantity * data.price) / data.size).toFixed(2));
-            const item = document.createElement('LI');
-            
-            item.textContent = `${data.quantity}${data.unit_measure} of ${data.name} - $${actualCost}`;
-            ingredientsCost += actualCost;
-    
-            if(customPrice.value) {
-                totalPrice.textContent = '$' + (parseFloat(customPrice.value) + parseFloat(ingredientsCost)).toFixed(2);
-            } else {
-                totalPrice.textContent = '$' + (parseFloat(ingredientsCost)).toFixed(2);
-            }
-    
-            item.addEventListener('click', (e) => {
-                e.target.remove();
-                hidden.remove();
-                ingredientsCost -= actualCost;
-                if(customPrice.value) {
-                    totalPrice.textContent = '$' + (parseFloat(customPrice.value) + parseFloat(ingredientsCost)).toFixed(2);
-                } else {
-                    totalPrice.textContent = '$' + (parseFloat(ingredientsCost)).toFixed(2);
-                }
-                itemCounter--;
-                if( itemCounter !== 0 ) {
-                    btnSubmit.classList.remove('d-none');
-                } else {
-                    btnSubmit.classList.add('d-none');
-                }
-            });
-    
-            return item;
-        }
-
-
-    }
-
-
-
-
-
-
-
-})();
-
-// Availability change
-(function() {
-    // Ingredient page
-    if(document.querySelector('#dashboard-ingredient-list')){
-        const btns = document.querySelectorAll('.list-availability__btn');
-
-        btns.forEach( btn => {
-            const id = btn.dataset.id;
-
-            btn.addEventListener('click', () => {
-                const url = `/api/ingredient_availability/${id}`;
-                changeAvailability(btn, url);
-            });
-        });
-    }
-
-    // // Product page
-    // if(document.querySelector('#dashboard-product-list')){
-    //     const btns = document.querySelectorAll('.list-availability__btn');
-
-    //     btns.forEach( btn => {
-    //         const id = btn.dataset.id;
-
-    //         btn.addEventListener('click', () => {
-    //             const url = `/api/ingredient_availability/${id}`;
-    //             changeAvailability(btn, url);
-    //         });
-    //     });
-    // }
-
-    async function changeAvailability(btn, url) {
-        try {
-            const response = await fetch(url);
-            const result = await response.json();
-
-            if( result.item ) {
-                if(result.item.availability) {
-                    btn.classList.remove('content__btn-disabled');
-                    btn.classList.add('content__btn-enabled');
-                    btn.textContent = "Enabled";
-                } else {
-                    btn.classList.remove('content__btn-enabled');
-                    btn.classList.add('content__btn-disabled');
-                    btn.textContent = "Disabled";
-                }
-            }
-        } catch (error) {
-            throw new Error(error);
-        }
-    }
-})();
-
-
-( function() {
-
+(function () {
     // Cart
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.querySelector('#header-cart-icon')) {
 
+            const cartIcon = document.querySelector('#header-cart-btn');
 
+            cartIcon.addEventListener('mouseover', () => {
+                document.querySelector('#cart-triangle').classList.remove('d-none');
+                document.querySelector('#cart-header').classList.remove('d-none');
+            });
 
+            cartIcon.addEventListener('mouseout', () => {
+                document.querySelector('#cart-triangle').classList.add('d-none');
+                document.querySelector('#cart-header').classList.add('d-none');
+            });
 
-    if(document.querySelector('#header-cart-icon')){
+            getCart();
+        }
 
-        const cartIcon = document.querySelector('#header-cart-btn');
+        if (document.querySelector('#btn-add-cart')) {
 
-        cartIcon.addEventListener('mouseover', () => {
-            document.querySelector('#cart-triangle').classList.remove('d-none');
-            document.querySelector('#cart-header').classList.remove('d-none');
+            const btn = document.querySelector('#btn-add-cart');
+            const productId = btn.dataset.product;
 
+            btn.addEventListener('click', handlerClick);
 
-        })
+            async function handlerClick() {
 
-        cartIcon.addEventListener('mouseout', () => {
-            document.querySelector('#cart-triangle').classList.add('d-none');
-            document.querySelector('#cart-header').classList.add('d-none');
+                try {
+                    const url = `/orders/api/cart/create/${productId}`;
+                    const response = await fetch(url);
+                    const result = await response.json();
 
-        })
+                    if (!result.error) {
+                        // Deletes empty message
+                        if (document.querySelector('.msg-empty')) {
+                            document.querySelector('.msg-empty').remove();
 
-        getCart();
-    }
+                        }
+                        await getCart();
 
-    if(document.querySelector('#btn-add-cart')){
+                        btn.removeEventListener('click', handlerClick);
+                        const card = btn.parentElement;
+                        btn.remove();
+                        const msg = document.createElement('P');
+                        msg.classList.add('mt-3')
+                        msg.textContent = "This product is in your cart. You can update the quantity at checkout. Remember, you must complete your order with this seller before ordering products from other sellers."
 
-        const btn = document.querySelector('#btn-add-cart');
-        const productId = btn.dataset.product;
+                        card.appendChild(msg);
 
-        btn.addEventListener('click', handlerClick);
+                    } else {
+                        console.log(result.error)
+                    }
 
-        async function handlerClick() {
+                } catch (error) {
+                    throw Error('Something went wrong.')
+                }
+            }
+        }
 
+        async function getCart() {
+
+            const counter = document.querySelector('#header-cart-icon');
             try {
-                const url = `/orders/api/cart/create/${productId}`;
+                const url = `/orders/api/cart/`;
 
                 const response = await fetch(url);
                 const result = await response.json();
 
-                if ( !result.error ) {
-                    // Deletes empty message
-                    if ( document.querySelector('.msg-empty')) {
-                        document.querySelector('.msg-empty').remove();
-
-                    }
-                    await getCart();
-
-                    btn.removeEventListener('click', handlerClick);
-
-                } else {
-                    console.log(result.error)
+                if (result.response > 0) {
+                    counter.textContent = result.response;
                 }
+
+                cartFormat(result);
+                return true;
 
             } catch (error) {
                 throw Error('Something went wrong.')
             }
-        }
-    }
+        };
 
-    async function getCart () {
+        function cartFormat(data) {
+            const list = document.querySelector('#cart-header-list');
 
-        const counter = document.querySelector('#header-cart-icon');
-        try {
-            const url = `/orders/api/cart/`;
-            
-            const response = await fetch(url);
-            const result = await response.json();
-            
-            if( result.response > 0 ) {
-                counter.textContent = result.response;
-            }
+            if (data.response > 0) {
 
-            cartFormat(result);
-            return true;
+                const cart = document.querySelector('#cart-header');
 
-        } catch (error) {
-            throw Error('Something went wrong.')
-        }
-    };
+                // Deletes previous elements
+                list.innerHTML = '';
+                if (cart.querySelector('.btn')) {
+                    cart.querySelector('.btn').remove();
+                }
 
-    function cartFormat(data) {
-        const list = document.querySelector('#cart-header-list');
+                data.products.forEach(prod => {
+                    const item = formatItem(prod);
+                    list.appendChild(item);
 
-        if( data.response > 0 ) {
+                });
 
-            const cart = document.querySelector('#cart-header');
+                const cartButton = document.createElement('A');
+                cartButton.href = '/orders/checkout';
 
-            // Deletes previous elements
-            list.innerHTML = '';
-            if ( cart.querySelector('.btn')) {
-                cart.querySelector('.btn').remove();
-            }
+                cartButton.classList.add("btn");
+                cartButton.textContent = "Checkout";
+                cart.appendChild(cartButton);
 
-            data.products.forEach(prod => {
-                const item = formatItem(prod);
-                list.appendChild(item);
-                
-            });
-
-            const cartButton = document.createElement('A');
-            // cartButton.href('#'); // << << << << << << ENLACE AL CHECKOUT
-
-            cartButton.classList.add("btn");
-            cartButton.textContent = "Checkout";
-            cart.appendChild(cartButton);
-
-        } else {
-            list.innerHTML = `
+            } else {
+                list.innerHTML = `
                 <p class="msg-empty">There are no products to show</p>
             `;
+            }
         }
-    }
 
-    function formatItem(product) {
+        function formatItem(product) {
 
-        const item = document.createElement('LI');
-        item.classList.add("cart__item");
-        item.innerHTML = `
+            const item = document.createElement('LI');
+            item.classList.add("cart__item");
+            item.innerHTML = `
                 <img src="${product.image}" alt="${product.name}">
                 <div class="cart__desc">
                     <p>${product.name}</p>
@@ -349,8 +125,7 @@
                     <p>Production time: ${product.production_time} days</p>
                 </div>
         `;
-        return item;
-    }
-
-
+            return item;
+        }
+    });
 })();

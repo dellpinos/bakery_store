@@ -2,8 +2,11 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class User(AbstractUser):
+
+    max_prod_capacity = models.IntegerField(default=3)
+
     def __str__(self):
-        return f"Id: {self.id} - Username: {self.username}, Email: {self.email}"
+        return f"Id: {self.id} - Username: {self.username}, Email: {self.email}, Max production Capacity: {self.max_prod_capacity}"
     
 class SellerTimeOff(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='days_off')

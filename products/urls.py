@@ -16,7 +16,7 @@ urlpatterns = [
     path('delete_ingredient/<int:ingredient>', views.delete_ingredient, name="delete_ingredient"),
 
     # API
-    path('api/ingredient_availability/<int:ingredient>', views.ingredient_availability, name="ingredient_availability"),
+    # path('api/ingredient_availability/<int:ingredient>', views.ingredient_availability, name="ingredient_availability"), - DISABLED FEATURE -
     path('api/product_availability/<int:product>', views.product_availability, name="product_availability")
 ]
 

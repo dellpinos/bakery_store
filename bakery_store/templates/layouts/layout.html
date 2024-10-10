@@ -32,7 +32,6 @@
           {% comment %} <a href="#" class="header__nav-link {% if request.resolver_match.url_name == 'index' %}header__nav-link--active{% endif %}">All Posts</a> {% endcomment %}
 
           {% if user.is_authenticated %}
-            {% comment %} <a href="{% url 'show_cart' %}" class="header__cart-icon-container"> {% endcomment %}
             <buttom class="header__cart-icon-container" id="header-cart-btn">
                 <img src="{% static 'img/cart.svg' %}" alt="Cart Icon" class="header__cart-icon">
                 <p id="header-cart-icon" ></p>
@@ -40,38 +39,7 @@
                 <div class="cart d-none" id="cart-header">
 
                     <h3 class="cart__heading">Your cart</h3>
-                    <ul class="cart__list" id="cart-header-list">
-                        {% comment %} <li class="cart__item">
-                            <img src="https://recetinas.com/wp-content/uploads/2017/12/tarta-humeda-de-chocolate.jpg" alt="#">
-                            <div class="cart__desc">
-                                <p>Torta Nombre largo muy largo </p>
-                                <p>$15566</p>
-                                <p>4 dias</p>
-                            </div>
-                        </li>
-                        <li class="cart__item">
-                            <img src="https://recetinas.com/wp-content/uploads/2017/12/tarta-humeda-de-chocolate.jpg" alt="#">
-                            <div class="cart__desc">
-                                <p>Torta Nombre largo muy largo</p>
-                                <p>$15566</p>
-                                <p>4 dias</p>
-                            </div>
-                        </li>
-                        <li class="cart__item">
-                            <img src="https://recetinas.com/wp-content/uploads/2017/12/tarta-humeda-de-chocolate.jpg" alt="#">
-                            <div class="cart__desc">
-                                <p>Torta Nombre largo muy largo</p>
-                                <p>$15566</p>
-                                <p>4 dias</p>
-                            </div>
-                        </li> {% endcomment %}
-
-                    </ul>
-
-                    {% comment %} <p class="cart__price">$155</p> {% endcomment %}
-                    {% comment %} <button class="btn btn-white">Buy Items</button> {% endcomment %}
-
-
+                    <ul class="cart__list" id="cart-header-list"></ul>
                 </div>
             </buttom>
             <a href="{% url 'dashboard' %}" class="header__nav-link" >Dashboard</a>
@@ -88,7 +56,11 @@
           {% comment %} <img src="{% static 'network/img/duck-color.svg' %}" alt="Twibble Logo" width="200" /> {% endcomment %}
         </a>
       </div>
+
     </header>
+        {% if cart_seller %} 
+            <p class="header__msg" >You are viewing <span>{{ cart_seller.username }}</span>'s products. You need to finish your order to purchase products from other sellers.</p>
+        {% endif %}
 
     <main>
       {% block body %}
