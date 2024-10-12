@@ -4,7 +4,8 @@ from products.models import Product
 
 
 class Order(models.Model):
-    buyer_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "orders")
+    buyer_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "buyer_orders")
+    seller_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "seller_orders")
     total_amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     delivery_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add = True)

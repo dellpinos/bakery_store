@@ -8,6 +8,7 @@ urlpatterns = [
     # API
     path('api/cart/', views.index_cart, name="index_cart"),
     path('api/cart/create/<int:product>', views.create_cart, name="create_cart"),
+    path('api/order/create', views.create_order, name="create_order"),
 
 
 

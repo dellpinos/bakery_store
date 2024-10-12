@@ -47,8 +47,6 @@
                     const formattedDates = prev_dates.map(date => {
                         return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
                     });
-                    console.log('FIT')
-                    console.log(formattedDates)
 
                     // Actualizar el input hidden con las fechas formateadas
                     document.querySelector('#hidden-datepicker').value = formattedDates.join(', '); // Cambia 'hidden-input' por el ID de tu input hidden

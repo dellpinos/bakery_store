@@ -5,10 +5,25 @@
     Checkout
 {% endblock %}
 
+{% block head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/checkout.js' %}" type="module"></script>
+{% endblock %}
+
+
 {% block body %}
 
     <div>
-        <h3 class="heading">Checkout</h3>
+        <h3 class="heading">Checkout - {{ seller_user.username}} Products</h3>
+        <input type="hidden" value="{{ seller_user.max_prod_capacity }}" id="seller-prod-max">
+
+        <input type="hidden" id="hidden-checkout-prev-dates" value="{{ disabled_days }}" />
 
             {% if message %}
                 <div class="msg-error">{{ message }}</div>
@@ -19,10 +34,6 @@
             {% endfor %}
 
         <div class="checkout__grid">
-
-
-
-            <<<< El usuario no puede ordenar productos de diferentes vendedores en una misma compra
         
             {% for product in products %}
                 <div class="checkout__card">
@@ -40,11 +51,7 @@
                     <div class="checkout__card-info">
                         <div class="checkout__card-field">
                             <label for="#">Quantity</label>
-                            <select name="#" id="#">
-                                <option value="#" selected >1</option>
-                                <option value="#">2</option>
-                                <option value="#">3</option>
-                            </select>
+                            <input type="number" value="{{ product.quantity }}" data-id="{{ product.id }}" class="form__input checkout__quantity" min="1">
                         </div>
                         <p>$ {{ product.total_price }}</p>
                     </div>
@@ -56,10 +63,35 @@
                 <p>Production Time: 16 days</p>
             </div>
 
-            <div class="checkout__btn-cont">
+            {% comment %} <div class="checkout__btn-cont">
                 <button class="btn">Submit Your Order</button>
             
+            </div> {% endcomment %}
+
+
+        <form action="" method="POST" class="form">
+            {% csrf_token %}
+                <div class="form__field--hor">
+                    <input type="hidden" id="hidden-datepicker" style="display: none" name="date"/>
+                </div>
+
+                {% comment %} <input type="hidden" name="products"
+                    value='[
+                        {% for product in products %}
+                            {
+                                "product_id": {{ forloop.counter0 }},
+                                "quantity": {{ product.quantity }}
+                            }{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    ]'> {% endcomment %}
+
+            <div class="btn-container">
+
+
+
+                <input type="submit" class="btn" value="Submit" id="checkout-submit-btn">
             </div>
+        </form>
         </div>
 
 

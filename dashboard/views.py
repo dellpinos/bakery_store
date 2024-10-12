@@ -93,6 +93,8 @@ def settings(request):
 @login_required
 def calendar_update(request):
 
+ ## Escribir valdiacion para verificar que los request si o si son post, un IF al principio de cada método POST
+ 
     body = request.POST
     str_dates = body["dates"]
 
