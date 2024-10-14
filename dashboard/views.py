@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from datetime import datetime, timedelta
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.paginator import Paginator
 from products.models import Product, Category, Ingredient
-from users.models import SellerTimeOff
+from users.models import SellerTimeOff, User
+from orders.models import Order, OrderProduct
+from django.http import HttpResponseRedirect, JsonResponse
 
 import json
 
@@ -77,12 +78,22 @@ def settings(request):
 
     # days_off_list = list(days_off.values())
 
+    orders = Order.objects.filter(seller_user = request.user).all()
+    pending_dates = []
+
+    for order in orders:
+        pending_dates.append(order.delivery_date)
+
+
     capacity = request.user.max_prod_capacity
     days_off = request.user.days_off.values_list('date', flat=True)
+    
+    pending_dates_list = [day.strftime('%Y-%m-%d') for day in pending_dates]  # Formato ISO
     days_off_list = [day.strftime('%Y-%m-%d') for day in days_off]  # Formato ISO
     
     return render(request, "dashboard/settings.html", {
         "days_off": json.dumps(days_off_list),
+        "pending_dates": json.dumps(pending_dates_list),
         "capacity": capacity
     })
 
@@ -185,5 +196,35 @@ def capacity_update(request):
         "capacity": new_capacity
     })
 
+@login_required
+def check_dates(request, quantity, user): 
+
+    seller_user = User.objects.filter(pk = user).first() # Vendedor
+    max_prod_per_day = seller_user.max_prod_capacity # Máximo por dia
+
+    disabled_days = list(seller_user.days_off.values_list('date', flat = True))
 
 
+    # Buscar todas las ordenes
+    prev_orders = Order.objects.filter(seller_user = seller_user).all() # Todas las ordenes
+
+    for order in prev_orders:
+        product_orders = order.products.all()
+        order.total_quantity = 0
+
+        for prod_order in product_orders:
+            order.total_quantity += prod_order.quantity
+
+        if ( order.total_quantity + quantity ) > max_prod_per_day:
+            disabled_days.append(order.delivery_date)
+
+
+    # Crear un array de fechas cuya cantidad de productos sumada al quantity recibido supere el max_prod_per_day
+    # Agregar disabled_days a este array
+
+
+    disabled_days = list(set(disabled_days))
+
+    disabled_days_list = [day.strftime('%Y-%m-%d') for day in disabled_days]  # Formato ISO
+
+    return JsonResponse({'status': 'success', "disabled_days": json.dumps(disabled_days_list)})

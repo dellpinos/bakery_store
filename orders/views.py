@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 import json
+from datetime import datetime, timedelta
 
 from .models import Cart, CartProduct, Order, OrderProduct
 from products.models import Product, Ingredient
@@ -131,6 +132,8 @@ def checkout(request):
     cart_products = cart.products.all()
     products = []
     seller_user = None
+    total_cart_quantity = 0
+    min_day = 0 # the longest production time in the current order
 
     for cart_prod in cart_products:
 
@@ -139,6 +142,9 @@ def checkout(request):
         prod.total_price = float(prod.subtotal_price)
         prod.quantity = cart_prod.quantity
         seller_user = prod.seller_user
+        total_cart_quantity += cart_prod.quantity
+        if prod.production_time > min_day:
+            min_day = prod.production_time
 
         for productIngredient in ingredients:
             prod.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
@@ -150,18 +156,64 @@ def checkout(request):
     # También incluir el dato de cuantas ordenes pendientes tiene el vendedor para esa fecha
     # Debe la disponibilidad de fechas debe ser dinámica si el usuario decide cambiar la cantidad de los productos
 
+    # Calculates min date (with production time)
+    today = datetime.now()
+    time_zone_correction = min_day - 1 ## Correción por zona horaria
+    min_date_formatted = (today + timedelta(days=time_zone_correction))
+
+
+
     prev_orders = Order.objects.filter(seller_user = seller_user).all()
 
-    print(prev_orders)
 
     disabled_days = seller_user.days_off.values_list('date', flat = True)
+
+    disabled_days = list(set(disabled_days))
+    # disabled_days_list = [day.strftime('%Y-%m-%d') for day in disabled_days]  # Formato ISO
+
+
+
+
+
+    ####
+
+    max_prod_per_day = seller_user.max_prod_capacity # Máximo por dia
+
+
+    # Buscar todas las ordenes
+
+    for order in prev_orders:
+        product_orders = order.products.all()
+        order.total_quantity = 0
+
+        for prod_order in product_orders:
+            order.total_quantity += prod_order.quantity
+
+        if ( order.total_quantity + total_cart_quantity ) > max_prod_per_day:
+            disabled_days.append(order.delivery_date)
+
+
+    # Crear un array de fechas cuya cantidad de productos sumada al quantity recibido supere el max_prod_per_day
+    # Agregar disabled_days a este array
+
+
+
+
     disabled_days_list = [day.strftime('%Y-%m-%d') for day in disabled_days]  # Formato ISO
+
+
+
+
+    ####
+
 
 
     return render(request, 'orders/checkout.html', {
         "products" : products,
         "seller_user" : seller_user,
         "disabled_days" : json.dumps(disabled_days_list),
+        "min_day": min_date_formatted.strftime("%Y-%m-%d"),
+        "min_day_number": min_day
     })
 
 
@@ -169,47 +221,67 @@ def checkout(request):
 @login_required
 def create_order(request):
     
+    if request.method == "POST":
 
-    date = request.POST['date']
-    products = request.POST['products']
+        data = json.loads(request.body)
 
+        date = data["date"]
+        products = data["products"]
 
-
-    products_dict = json.loads(products)
-
-    print(products_dict)
-    print(date)
-
-
-
-# 'date': ['2024-10-24'],
-# 'product_id_0': ['7'], 'product_quantity_0': ['1'],
-# 'product_id_1': ['4'], 'product_quantity_1': ['1'],
-# 'product_id_2': ['2'], 'product_quantity_2': ['1']
-# Validar datos
-
-# @csrf_exempt
+        products_db = []
+        seller_user = None
+        order_total_amount = 0
 
 
+        for product in products:
+            prod_db = Product.objects.filter(pk = product["id"]).first()
+            
+            if prod_db:
+                try:
+                    int(product["quantity"])
+                    datetime.strptime(date, "%Y-%m-%d")
+                    if int(product["quantity"]) < 1 or int(product["quantity"]) > 10:
+                        raise Exception
+                except:
+                    return JsonResponse({'status': 'error', 'message': 'Something was wrong'}, status = 400)
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Something was wrong'}, status = 400)
 
 
+            prod_db.quantity = int(product["quantity"])
+            seller_user = prod_db.seller_user
 
-        # products = None
+            # Calculates total amount again
+            ingredients = prod_db.ingredients.all()        
+            prod_db.total_price = float(prod_db.subtotal_price)
+            for productIngredient in ingredients:
+                prod_db.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
+            total_item = prod_db.total_price * prod_db.quantity
+            order_total_amount += total_item
 
-        #     buyer_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "buyer_orders")
-        #     seller_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "seller_orders")
-        #     total_amount = models.DecimalField(max_digits = 10, decimal_places = 2)
-        #     delivery_date = models.DateTimeField()
+            products_db.append(prod_db)
 
-        # order = Order(
-        #     buyer_user = request.user,
-        #     seller_user = "",
-        #     delivery_date = request.POST['date']
+        order = Order(
+            buyer_user = request.user,
+            seller_user = seller_user,
+            total_amount = order_total_amount,
+            delivery_date = date
+        )
 
-        # )
-        # print(request.POST)
-        # 1 dia
-        # id de productos con cantidades
-        # Comprador
-        # Valor a abonar - Calcular
+        order.save()
+
+        for prod in products_db:
+            OrderProduct.objects.create(
+                product = prod,
+                quantity = prod.quantity,
+                order = order
+            )
+
+        return JsonResponse({'status': 'success', 'order_id': order.id})
+    else:
+        print('HERE!')
+        print(json.loads(request.body))
+        return JsonResponse({'status': 'error'}, status = 403)
+    
+

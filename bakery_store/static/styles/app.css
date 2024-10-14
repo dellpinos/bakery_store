@@ -1086,6 +1086,16 @@ footer {
     box-shadow: 0 0 10px var(--silver);
 }
 
+.checkout__legend {
+    text-transform: capitalize;
+    color: var(--orange);
+    margin: 1rem 0;
+
+    > span {
+        font-weight: 700;
+    }
+}
+
 .checkout__card {
     display: flex;
     justify-content: space-between;

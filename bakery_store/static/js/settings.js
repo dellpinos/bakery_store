@@ -4,15 +4,21 @@
         if (document.querySelector('#hidden-datepicker')) {
 
             let prev_dates
+            let pending_dates // Pending order
+
             // Look for previous days 
             if (document.querySelector('#hidden-prev-dates') && document.querySelector('#hidden-prev-dates').value) {
                 prev_dates = JSON.parse(document.querySelector('#hidden-prev-dates').value);
             }
 
+            if (document.querySelector('#hidden-pending-dates') && document.querySelector('#hidden-pending-dates').value) {
+                pending_dates = JSON.parse(document.querySelector('#hidden-pending-dates').value);
+            }
+
             const today = new Date();
             const maxDate = new Date(today);
 
-            maxDate.setDate(today.getDay() + 90); // max 3 months
+            maxDate.setDate(today.getDay() + 120); // max 4 months
 
             flatpickr("#hidden-datepicker", {
                 dateFormat: "Y-m-d", // Formato de fecha
@@ -26,6 +32,17 @@
                         // Deshabilitar los domingos
                         return date.getDay() === 0; // 0 es el domingo
                     },
+                    function(date) {
+                        // Deshabilitar fechas previas
+                        
+                        if (Array.isArray(pending_dates)) {
+                            return pending_dates.some(prev_date => {
+                                const formattedDate = date.toISOString().split('T')[0]; // Fecha en formato "YYYY-MM-DD"
+                                return pending_dates.includes(formattedDate);
+                            });
+                        }
+                        return false; // Si disabledDates no es un array, no deshabilitar
+                    }
                     // function(date) {
                     //     // Deshabilitar fechas previas
                     //     if (Array.isArray(prev_dates)) {

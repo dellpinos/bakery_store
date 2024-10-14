@@ -21,9 +21,10 @@
 
     <div>
         <h3 class="heading">Checkout - {{ seller_user.username}} Products</h3>
-        <input type="hidden" value="{{ seller_user.max_prod_capacity }}" id="seller-prod-max">
+        <input type="hidden" value="{{ seller_user.max_prod_capacity }}" data-id="{{ seller_user.id }}" id="seller-prod-max">
 
         <input type="hidden" id="hidden-checkout-prev-dates" value="{{ disabled_days }}" />
+        <input type="hidden" id="hidden-checkout-min-date" value="{{ min_day }}" />
 
             {% if message %}
                 <div class="msg-error">{{ message }}</div>
@@ -34,6 +35,7 @@
             {% endfor %}
 
         <div class="checkout__grid">
+        <p class="checkout__legend">{{ seller_user.username}}'s maximum daily production: <span>{{ seller_user.max_prod_capacity }}</span> products</p>
         
             {% for product in products %}
                 <div class="checkout__card">
@@ -53,20 +55,16 @@
                             <label for="#">Quantity</label>
                             <input type="number" value="{{ product.quantity }}" data-id="{{ product.id }}" class="form__input checkout__quantity" min="1">
                         </div>
-                        <p>$ {{ product.total_price }}</p>
+                        <p class="checkout__card-price" data-id="{{ product.id }}" data-unit-price="{{ product.total_price }}">{{ product.total_price }}</p>
                     </div>
                 </div>
             {% endfor %}
 
             <div>
-                <p class="checkout__price">Total Price: $ 4455</p>
-                <p>Production Time: 16 days</p>
+                <p class="checkout__price">Total Price: <span id="checkout-total-price" >$0</span></p>
+                <p>Production Time: {{ min_day_number }} days</p>
             </div>
 
-            {% comment %} <div class="checkout__btn-cont">
-                <button class="btn">Submit Your Order</button>
-            
-            </div> {% endcomment %}
 
 
         <form action="" method="POST" class="form">
@@ -75,15 +73,6 @@
                     <input type="hidden" id="hidden-datepicker" style="display: none" name="date"/>
                 </div>
 
-                {% comment %} <input type="hidden" name="products"
-                    value='[
-                        {% for product in products %}
-                            {
-                                "product_id": {{ forloop.counter0 }},
-                                "quantity": {{ product.quantity }}
-                            }{% if not forloop.last %},{% endif %}
-                        {% endfor %}
-                    ]'> {% endcomment %}
 
             <div class="btn-container">
 

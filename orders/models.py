@@ -14,7 +14,7 @@ class Order(models.Model):
         return {
             "buyer_user": self.buyer_user,
             "total_amount": self.total_amount,
-            "deliver_date": self.delivery_date
+            "delivery_date": self.delivery_date
         }
     def __str__(self):
         return f"Id: {self.id}, Total: ${self.total_amount}, Delivery at: {self.delivery_date}"
@@ -26,6 +26,14 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete = models.CASCADE, related_name = "products")
     created_at = models.DateTimeField(auto_now_add = True)
 
+    def serialize(self):
+        return {
+            "product": self.product,
+            "quantity": self.quantity,
+            "order": self.order
+        }
+    def __str__(self):
+        return f"Id: {self.id}, Product: {self.product.id}, Quantity: {self.quantity}, Order: {self.order.id}"
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "cart")
