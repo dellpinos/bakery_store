@@ -1,0 +1,108 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Pending Orders
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading">Pending Orders</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        <ul class="content__list" id="dashboard-ingredient-list">
+
+
+            {% for order in page %}
+
+                <li class="content__item flex-col">
+                    <div class="pending-card__grid">
+                        <div class="pending-card__info">
+                            <h4>Delivery Date: {{ order.delivery_date }}</h4>
+                            <ul>
+                                <li>Username: {{ order.buyer_user.username }}</li>
+                                <li>Contact: {{ order.buyer_user.email }}</li>
+                                <li>Purchase Date: {{ order.created_at }}</li>
+                            </ul>
+                            <p>Total Amount: <span class="format-price">{{ order.total_amount }}</span></p>
+                        </div>
+
+                        <div class="pending-card__list">
+                            <h4>Total Products: {{ order.total_products }}</h4>
+                            <ul>
+                                {% for product in order.products_list %}
+                                    <li>
+                                        <p>{{ product.quantity }}</p>
+                                        <a href="#">{{ product.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-white">Confirm Order</button>
+
+                    {% comment %} <p>Delivery Date: {{ order.delivery_date }}</p>
+                    <p>Total Amount: {{ order.total_amount }}</p>
+                    <p>Username: {{ order.buyer_user.username }}</p>
+                    <p>Contact: {{ order.buyer_user.email }}</p>
+                    <p>Purchase Date: {{ order.created_at }}</p> {% endcomment %}
+
+                    {% comment %} <ul>
+                        {% for product in order.products_list %}
+                            <p>{{ product.name }}</p>
+                            <p>{{ product.quantity }}</p>
+                            <p>id: {{ product.id }}</p>
+                        {% endfor %}
+                    </ul> {% endcomment %}
+
+                    {% comment %} <button>Delivered Order</button> {% endcomment %}
+
+                    {% comment %} {% for product in order.products %}
+                        <p>product</p>
+                    {% endfor %} {% endcomment %}
+
+
+                </li>
+                <p>{{ order.products2 }}</p>
+
+            {% empty %}
+                <p class="msg-empty">There are no orders to show</p>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if page|length > 0 %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page.has_previous %}
+                    <a href="?page=1">
+                        <img  src="{% static 'img/track-back.svg'%}" class="pagination__icon" width="100px" alt="First">
+                    </a>
+                    <a href="?page={{ page.previous_page_number }}">
+                        <img  src="{% static 'img/arrow-left.svg'%}" class="pagination__icon" width="100px" alt="Previuos">
+                    </a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}
+                </span>
+        
+                {% if page.has_next %}
+                    <a href="?page={{ page.next_page_number }}">
+                        <img  src="{% static 'img/arrow-right.svg'%}" class="pagination__icon" width="100px" alt="Next">
+                    </a>
+                    <a href="?page={{ page.paginator.num_pages }}">
+                        <img  src="{% static 'img/track-next.svg'%}" class="pagination__icon" width="100px" alt="Last">
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    
+{% endblock %}

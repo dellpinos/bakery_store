@@ -1,6 +1,10 @@
 (function () {
     // Cart
     document.addEventListener('DOMContentLoaded', () => {
+
+        // Gives format to all prices
+        formatAllPrices();
+
         if (document.querySelector('#header-cart-icon')) {
 
             const cartIcon = document.querySelector('#header-cart-btn');
@@ -121,11 +125,25 @@
                 <img src="${product.image}" alt="${product.name}">
                 <div class="cart__desc">
                     <p>${product.name}</p>
-                    <p>$${product.price}</p>
+                    <p>${formatPrice(product.price)}</p>
                     <p>Production time: ${product.production_time} days</p>
                 </div>
         `;
             return item;
+        }
+
+        function formatAllPrices(){
+
+            const prices = document.querySelectorAll('.format-price');
+            prices.forEach(price => {
+                price.textContent = formatPrice(price.textContent);
+            })
+        }
+
+        function formatPrice(price) {
+            return parseInt(price).toLocaleString('en-US', { 
+                style: 'currency', currency: 'USD' 
+            })
         }
     });
 })();

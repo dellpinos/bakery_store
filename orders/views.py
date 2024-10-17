@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 import json
 from datetime import datetime, timedelta
+from django.urls import reverse
 
 from .models import Cart, CartProduct, Order, OrderProduct
 from products.models import Product, Ingredient
@@ -123,6 +124,32 @@ def create_cart(request, product):
         {"products_count" : products_count}, status=200
     )
 
+@login_required
+def delete_cart_item(request, product):
+
+    product = Product.objects.filter(pk = product).first()
+
+    if product:
+        user = request.user
+        cart = user.cart.all()
+        productsCart = cart[0].products.all()
+
+        for prodCart in productsCart:
+            if prodCart.product == product:
+                prodCart.delete()
+
+                # Redirect if there are no items in the cart
+                redirect = False
+                if len(productsCart) - 1 == 0:
+                    redirect = True
+                
+                return JsonResponse(
+                    {"result" : True, "redirect" : redirect}, status = 200
+                )
+    else:
+        return JsonResponse(
+            {"result" : False}, status = 400
+        )
 
 
 @login_required
@@ -152,6 +179,9 @@ def checkout(request):
         products.append(prod)
 
 
+    if not seller_user or total_cart_quantity == 0 :
+        return HttpResponseRedirect(reverse('index'))
+    
     # A estos dias debo sumar aquellos que ya cumplen el cupo de capacidad máxima del vendedor
     # También incluir el dato de cuantas ordenes pendientes tiene el vendedor para esa fecha
     # Debe la disponibilidad de fechas debe ser dinámica si el usuario decide cambiar la cantidad de los productos

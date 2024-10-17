@@ -39,6 +39,7 @@
         
             {% for product in products %}
                 <div class="checkout__card">
+                    <button class="checkout__card-remove" id="checkout-card-remove" data-id="{{ product.id }}">X</button>
                     <div class="checkout__desc-cont">
                         <div class="checkout__img-cont">
                             <img src="{{ product.image }}" alt="{{ product.name }}" class="checkout__img">
@@ -60,27 +61,21 @@
                 </div>
             {% endfor %}
 
-            <div>
-                <p class="checkout__price">Total Price: <span id="checkout-total-price" >$0</span></p>
-                <p>Production Time: {{ min_day_number }} days</p>
-            </div>
-
-
-
-        <form action="" method="POST" class="form">
-            {% csrf_token %}
-                <div class="form__field--hor">
-                    <input type="hidden" id="hidden-datepicker" style="display: none" name="date"/>
+            <div class="checkout__date-container">
+            
+                <div class="checkout__price-container">
+                    <p class="checkout__price">Total Price: <span id="checkout-total-price" >$0</span></p>
+                    <p>Production Time: {{ min_day_number }} days</p>
                 </div>
 
-
-            <div class="btn-container">
-
-
-
-                <input type="submit" class="btn" value="Submit" id="checkout-submit-btn">
+                <div class="checkout__calendar-container">
+                    <p class="g-alert" id="alert-msg-date">You must select a delivery date</p>
+                    <input type="hidden" id="hidden-datepicker" style="display: none" name="date"/>
+                </div>
             </div>
-        </form>
+            <div class="checkout__btn-cont">
+                <button type="submit" class="btn" id="checkout-submit-btn">Submit</button>
+            </div>
         </div>
 
 

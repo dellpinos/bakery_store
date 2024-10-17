@@ -20,11 +20,6 @@
                 <p>{{ ingredient.name }} - ${{ ingredient.price }}</p>
 
                 <div class="content__item-btns">
-                    {% comment %} {% if ingredient.availability %}
-                        <button class="list-availability__btn content__btn-enabled" data-id="{{ ingredient.id }}">Enabled</button>
-                    {% else %}
-                        <button class="list-availability__btn content__btn-disabled" data-id="{{ ingredient.id }}">Disabled</button>
-                    {% endif %} {% endcomment %}
                     <a href="{% url 'edit_ingredient' ingredient.id %}">
                         <img src="{% static 'img/edit-white.svg' %}" class="content__edit" alt="Edit Icon">
                     </a>

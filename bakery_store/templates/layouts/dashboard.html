@@ -52,7 +52,7 @@
             <a href="{% url 'dashboard_ingredients' %}" class="sidebar__item {% if request.resolver_match.url_name == 'dashboard_ingredients' %}sidebar__item--active{% endif %}">
                 My Ingredients
             </a>
-            <a href="{% url 'dashboard_products' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">
+            <a href="{% url 'pending_orders' %}" class="sidebar__item {% if request.resolver_match.url_name == 'pending_orders' %}sidebar__item--active{% endif %}">
                 Pendings
             </a>
             <a href="{% url 'dashboard_settings' %}" class="sidebar__item {% if request.resolver_match.url_name == 'index' %}sidebar__item--active{% endif %}">

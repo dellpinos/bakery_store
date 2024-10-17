@@ -68,6 +68,47 @@ def all_ingredients(request):
     })
 
 @login_required
+def pending_orders(request):
+    
+    orders = Order.objects.filter(seller_user = request.user).all()
+
+    
+
+    for order in orders:
+        order_products = order.products.all()
+        order.products_list = []
+        order.total_products = 0
+
+        for prod in order_products:
+            order.total_products += prod.quantity
+            order.products_list.append(
+                {
+                    "name" : prod.product.name,
+                    "quantity" : prod.quantity,
+                    "id" : prod.product.id
+                }
+            )
+
+
+
+
+    # Paginator
+    p = Paginator(orders, 20)
+
+    if request.GET.get('page'):
+        # Get the page number from the request
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+
+    page = p.page(page_number)
+
+    return render(request, 'dashboard/pendings.html', {
+        "page": page
+    })
+
+
+@login_required
 def settings(request):
 
     # Cambiar 2 por el número escogido por este usuario en el otro formulario

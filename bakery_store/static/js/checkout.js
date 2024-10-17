@@ -219,12 +219,41 @@
             });
 
 
+        }
 
+        // Removes item
+        if ( document.querySelector('#checkout-card-remove')) {
+            const btn = document.querySelector('#checkout-card-remove');
+            const productId = btn.dataset.id;
+
+            btn.addEventListener('click', async () => {
+
+                try {
+                    const url = `api/cart/item_delete/${productId}`;
+                    const response = await fetch(url, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken,
+                        }
+                    });
+                    const result = await response.json();
+
+                    if(result.result) {
+
+                        location.reload();
+                    } else {
+                        console.error('Something went wrong');
+                    }
+
+                } catch (error) {
+                    console.log(error);
+                }
+            })
         }
 
         if( document.querySelector('#checkout-submit-btn')) {
         // Send POST
-            console.log('FOX')
+
             const qInputs = document.querySelectorAll('.checkout__quantity');
             const btn = document.querySelector('#checkout-submit-btn');
 
@@ -260,6 +289,9 @@
                     // el usuario tiene la posibilidad de eliminar su orden???
                     // Puede ser redirigido a una nueva vista de "tus ordenes pendientes"
 
+                } else {
+                    document.querySelector('#alert-msg-date').classList.remove('g-alert');
+                    document.querySelector('#alert-msg-date').classList.add('r-alert');
                 }
             })
 
@@ -283,10 +315,6 @@
                     throw error;
                 }
             }
-
-
-
-            
         }
     });
 
