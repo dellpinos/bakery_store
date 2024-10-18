@@ -1,15 +1,16 @@
 (function () {
+
     // Availability change
     document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('#dashboard-product-list')) {
-
+            
             const btns = document.querySelectorAll('.list-availability__btn');
-
+            
             btns.forEach(btn => {
                 const id = btn.dataset.id;
-
+                
                 btn.addEventListener('click', () => {
-                    const url = `/api/product_availability/${id}`;
+                    const url = `/api/product_availability/${id}/`;
                     changeAvailability(btn, url);
                 });
             });

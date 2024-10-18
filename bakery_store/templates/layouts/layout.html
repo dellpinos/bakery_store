@@ -15,6 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     <link href="{% static 'styles/app.css' %}" rel="stylesheet" />
+
+    <meta name="csrf-token" content="{{ csrf_token }}">
     {% block head %}
     
     {% endblock %}
@@ -40,11 +42,18 @@
                 <p id="header-cart-icon" ></p>
                 <div class="cart__triangle d-none" id="cart-triangle"></div>
                 <div class="cart d-none" id="cart-header">
-
                     <h3 class="cart__heading">Your cart</h3>
                     <ul class="cart__list" id="cart-header-list"></ul>
                 </div>
             </buttom>
+            <buttom class="header__cart-icon-container">
+                <img src="{% static 'img/bell.svg' %}" alt="Cart Icon" class="header__cart-icon">
+                <p id="header-cart-icon" ></p>
+            </buttom>
+            <a href="{% url 'pending_deliveries' %}" class="header__cart-icon-container {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">
+                <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__cart-icon">
+                <p id="header-cart-icon" ></p>
+            </a>
             <a href="{% url 'dashboard' %}" class="header__nav-link" >Dashboard</a>
             <a href="#" class="header__nav-link header__nav-link--logout">Log Out</a>
           {% else %}

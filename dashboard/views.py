@@ -1,31 +1,29 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from datetime import datetime, timedelta
-from django.urls import reverse
+from datetime import datetime
 from django.core.paginator import Paginator
-from products.models import Product, Category, Ingredient
+from products.models import Product, Ingredient
 from users.models import SellerTimeOff, User
-from orders.models import Order, OrderProduct
-from django.http import HttpResponseRedirect, JsonResponse
-
+from orders.models import Order
+from django.http import JsonResponse
 import json
-
-
-
 
 @login_required
 def index(request):
 
+    # TODO: This route is useless
+
     return render(request, "dashboard/index.html")
+
 
 @login_required
 def all_products(request):
 
-    products = Product.objects.filter(seller_user=request.user).order_by("-created_at")
+    products = Product.objects.filter(seller_user=request.user, deleted_at = None).order_by("-created_at")
 
     # Calculates total price
     for product in products:
-        ingredients = product.ingredients.all()
+        ingredients = product.ingredients.filter(deleted_at = None)
         product.total_price = float(product.subtotal_price)
 
         for productIngredient in ingredients:
@@ -50,7 +48,7 @@ def all_products(request):
 @login_required
 def all_ingredients(request):
 
-    ingredients = Ingredient.objects.filter(seller_user=request.user).order_by("-created_at")
+    ingredients = Ingredient.objects.filter(seller_user = request.user, deleted_at = None).order_by("-created_at")
 
     # Paginator
     p = Paginator(ingredients, 20)
@@ -67,46 +65,6 @@ def all_ingredients(request):
         "page": page
     })
 
-@login_required
-def pending_orders(request):
-    
-    orders = Order.objects.filter(seller_user = request.user).all()
-
-    
-
-    for order in orders:
-        order_products = order.products.all()
-        order.products_list = []
-        order.total_products = 0
-
-        for prod in order_products:
-            order.total_products += prod.quantity
-            order.products_list.append(
-                {
-                    "name" : prod.product.name,
-                    "quantity" : prod.quantity,
-                    "id" : prod.product.id
-                }
-            )
-
-
-
-
-    # Paginator
-    p = Paginator(orders, 20)
-
-    if request.GET.get('page'):
-        # Get the page number from the request
-        page_number = request.GET.get('page')
-    else:
-        page_number = 1
-
-    page = p.page(page_number)
-
-    return render(request, 'dashboard/pendings.html', {
-        "page": page
-    })
-
 
 @login_required
 def settings(request):
@@ -119,7 +77,7 @@ def settings(request):
 
     # days_off_list = list(days_off.values())
 
-    orders = Order.objects.filter(seller_user = request.user).all()
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None).all()
     pending_dates = []
 
     for order in orders:
@@ -247,10 +205,10 @@ def check_dates(request, quantity, user):
 
 
     # Buscar todas las ordenes
-    prev_orders = Order.objects.filter(seller_user = seller_user).all() # Todas las ordenes
+    prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None).all() # Todas las ordenes
 
     for order in prev_orders:
-        product_orders = order.products.all()
+        product_orders = order.products.filter(deleted_at = None)
         order.total_quantity = 0
 
         for prod_order in product_orders:

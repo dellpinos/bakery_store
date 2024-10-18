@@ -122,8 +122,24 @@ textarea {
     color: var(--redAlert);
 }
 
+.c-grey {
+    color: var(--mediumSilver);
+}
+
+.c-black {
+    color: var(--midGray)
+}
+
+.c-yel {
+    color: var(--yellow);
+}
+
 .mt-3 {
     margin-top: 3rem;
+}
+
+.bold {
+    font-weight: 700;
 }
 
 .body-pos {
@@ -404,6 +420,7 @@ textarea {
 .header__cart-icon-container:hover {
     background-color: var(--darkOrange);
     border-radius: 1rem;
+    cursor: pointer;
 
 }
 
@@ -709,7 +726,15 @@ footer {
     }
 }
 
-.list-availability__btn {
+.content__btn-cont {
+    display: flex;
+    padding: 0 5rem;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.content__btn {
     border: none;
     border-radius: .5rem;
     padding: .5rem 1rem;
@@ -723,9 +748,16 @@ footer {
     background-color: var(--darkGreen);
 }
 
+.content__btn-enabled:hover {
+    background-color: var(--green);
+}
+
 .content__btn-disabled {
     background-color: var(--redAlertDark);
+}
 
+.content__btn-disabled:hover {
+    background-color: var(--redAlert);
 }
 
 .content__edit {
@@ -1284,22 +1316,44 @@ footer {
 .pending-card__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    width: 100%;
 }
 
 .pending-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 
-    > ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    > h4 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
     }
-}
-
-.pending-card__list {
-
     > ul {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
         list-style-type: none;
         padding: 0;
         margin: 0;
+        > li {
+
+            > a {
+
+                color: var(--white);
+            }
+            > a:hover {
+
+                color: var(--darkYellow);
+            }
+
+        }
     }
+}
+
+.deliveries__container {
+    margin: 0 15rem;
+}
+
+.deliveries-card__status {
+    font-size: 2.5rem;
 }

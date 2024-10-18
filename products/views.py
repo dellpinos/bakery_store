@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 import json, random
+from django.utils import timezone
 
 
 
@@ -63,27 +64,25 @@ def home(request):
 
     # User Cart
     cart_seller = None
-
     if request.user.is_authenticated:
         try:
-            if request.user.cart.get():
-                cart = request.user.cart.get()
-                products_cart = cart.products.all()
+            cart = request.user.cart.get()
+            products_cart = cart.products.all()
 
-                for cart_prod in products_cart:
-                    cart_seller = cart_prod.product.seller_user
+            for cart_prod in products_cart:
+                cart_seller = cart_prod.product.seller_user
 
         except Cart.DoesNotExist:
             pass
 
     if cart_seller:
-        products = Product.objects.filter(availability = True, seller_user = cart_seller).order_by('-created_at')
+        products = Product.objects.filter(availability = True, seller_user = cart_seller, deleted_at = None).order_by('-created_at')
     else:
-        products = Product.objects.filter(availability=True).order_by('-created_at')
+        products = Product.objects.filter(availability=True, deleted_at = None).order_by('-created_at')
 
     # Calculates total price
     for product in products:
-        ingredients = product.ingredients.all()
+        ingredients = product.ingredients.filter(deleted_at = None)
         product.total_price = float(product.subtotal_price)
 
         for productIngredient in ingredients:
@@ -106,9 +105,9 @@ def random_product(request):
     else:
         print('No products found.')
 
-    product = Product.objects.filter(pk=random_id).first()
+    product = Product.objects.filter(pk = random_id, deleted_at = None).first()
 
-    ingredients = product.ingredients.all()
+    ingredients = product.ingredients.filter(deleted_at = None)
     product.total_price = float(product.subtotal_price)
 
     for productIngredient in ingredients:
@@ -126,7 +125,7 @@ def random_product(request):
     while missing_products > 0:
             
         # Find a product that does not appear in the excluded list.
-        new_product = Product.objects.exclude(pk__in=excluded_ids).order_by('-created_at').first()
+        new_product = Product.objects.exclude(pk__in=excluded_ids).filter(deleted_at=None).order_by('-created_at').first()
 
         # Break if there are no more products
         if not new_product:
@@ -145,12 +144,12 @@ def random_product(request):
 
 def show_product(request, product):
 
-        product = Product.objects.filter(pk=product).first()
+        product = Product.objects.filter(pk=product, deleted_at=None).first()
 
         if product is None or not product.availability:
             return HttpResponseRedirect(reverse("index"))
 
-        ingredients = product.ingredients.all()
+        ingredients = product.ingredients.filter(deleted_at = None)
         product.total_price = float(product.subtotal_price)
 
         for productIngredient in ingredients:
@@ -168,7 +167,7 @@ def show_product(request, product):
         while missing_products > 0:
                 
             # Find a product that does not appear in the excluded list.
-            new_product = Product.objects.exclude(pk__in=excluded_ids).filter(availability = True).order_by('-created_at').first()
+            new_product = Product.objects.exclude(pk__in=excluded_ids).filter(availability = True, deleted_at = None).order_by('-created_at').first()
 
             # Break if there are no more products
             if not new_product:
@@ -239,7 +238,7 @@ def new_product(request):
 
         for ingredient in ingredients:
 
-            ingredient_db = Ingredient.objects.filter(pk=ingredient['id']).first()
+            ingredient_db = Ingredient.objects.filter(pk = ingredient['id'], deleted_at = None).first()
             if ingredient_db is None:
                 return HttpResponseRedirect(reverse("dashboard_products"))
             
@@ -264,8 +263,8 @@ def new_product(request):
 
         if len(errors) != 0:
 
-            categories = Category.objects.all()
-            ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+            categories = Category.objects.filter(deleted_at = None)
+            ingredients_all = Ingredient.objects.filter(seller_user = request.user, availability = True, deleted_at = None).order_by("name")
             return render(request, "dashboard/create_product.html", {
                 "errors": errors,
                 "body": body,
@@ -303,7 +302,7 @@ def new_product(request):
 
     else:
         categories = Category.objects.all()
-        ingredients = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+        ingredients = Ingredient.objects.filter(seller_user = request.user, availability = True, deleted_at = None).order_by("name")
         
         return render(request, "dashboard/create_product.html", {
             "categories": categories,
@@ -340,7 +339,7 @@ def edit_product(request, product):
         categories_list_int = []
 
         for ingredient in ingredients:
-            ingredient_db = Ingredient.objects.filter(pk=ingredient['id'], seller_user=request.user).first()
+            ingredient_db = Ingredient.objects.filter(pk = ingredient['id'], seller_user = request.user, deleted_at = None).first()
             ingredient_db.quantity = ingredient["quantity"]
 
             if ingredient_db is None:
@@ -362,8 +361,8 @@ def edit_product(request, product):
 
         if len(errors) != 0:
 
-            categories = Category.objects.all()
-            ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+            categories = Category.objects.filter(deleted_at = None)
+            ingredients_all = Ingredient.objects.filter(seller_user = request.user, availability = True, deleted_at = None).order_by("name")
             return render(request, "dashboard/create_product.html", {
                 "errors": errors,
                 "product": body,
@@ -374,7 +373,7 @@ def edit_product(request, product):
             })
         else:
 
-            product_db = Product.objects.filter(pk=product, seller_user=request.user).first()
+            product_db = Product.objects.filter(pk=product, seller_user = request.user, deleted_at = None).first()
             if product_db is None:
                 return HttpResponseRedirect(reverse("dashboard_products"))
 
@@ -407,13 +406,13 @@ def edit_product(request, product):
 
     else:
 
-        product = Product.objects.filter(pk=product, seller_user=request.user).first()
+        product = Product.objects.filter(pk=product, seller_user = request.user, deleted_at = None).first()
         if product is None:
             return HttpResponseRedirect(reverse("dashboard_products"))
 
         ingredients_prev = []
 
-        for ingredient in product.ingredients.all():
+        for ingredient in product.ingredients.filter( deleted_at = None ):
 
             ingredients_prev.append({
                 "id" : ingredient.ingredient.id,
@@ -430,7 +429,7 @@ def edit_product(request, product):
             categories_list_int.append(int(cat.id))
 
         categories = Category.objects.all()
-        ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability=True).order_by("name")
+        ingredients_all = Ingredient.objects.filter(seller_user=request.user, availability = True, deleted_at = None).order_by("name")
         
         return render(request, "dashboard/edit_product.html", {
             "categories": categories,
@@ -491,7 +490,7 @@ def new_ingredient(request):
 @login_required
 def edit_ingredient(request, ingredient):
 
-    ingredient_db = Ingredient.objects.filter(pk=ingredient, seller_user=request.user).first()
+    ingredient_db = Ingredient.objects.filter(pk = ingredient, seller_user = request.user, deleted_at = None).first()
     if ingredient_db is None:
         return HttpResponseRedirect(reverse("dashboard_ingredients"))
 
@@ -543,12 +542,13 @@ def edit_ingredient(request, ingredient):
 def delete_ingredient(request, ingredient):
 
 
-    ingredient_db = Ingredient.objects.filter(pk=ingredient, seller_user=request.user).first()
+    ingredient_db = Ingredient.objects.filter(pk = ingredient, seller_user = request.user, deleted_at = None).first()
     if ingredient_db is None:
         return HttpResponseRedirect(reverse("dashboard_ingredients"))
     
-    ingredient_db.delete()
-    
+    ingredient_db.deleted_at = timezone.now()
+    ingredient_db.save()
+
     return HttpResponseRedirect(reverse("dashboard_ingredients"))
 
 
@@ -558,7 +558,7 @@ def delete_ingredient(request, ingredient):
 @login_required
 def product_availability(request, product):
 
-    product_db = Product.objects.filter(pk=product, seller_user=request.user).first()
+    product_db = Product.objects.filter(pk = product, seller_user = request.user, deleted_at = None).first()
     if product_db is None:
         return JsonResponse(
             {"error" : "Forbidden"}, status=403

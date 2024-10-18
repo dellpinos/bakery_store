@@ -1,0 +1,95 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Pending Orders
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/orders.js' %}" type="module"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading">Pending Orders</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        <ul class="content__list">
+
+            {% for order in page %}
+
+                <li class="content__item flex-col">
+                    <div class="pending-card__grid">
+                        <div class="pending-card__info">
+                            <h4>Delivery Date: {{ order.delivery_date_formated }}</h4>
+                            <ul>
+                                <li><span class="bold">Username:</span> {{ order.buyer_user.username }}</li>
+                                <li><span class="bold">Contact:</span> {{ order.buyer_user.email }}</li>
+                                <li><span class="bold">Purchase Date:</span> {{ order.purchance_date_formated }}</li>
+                            </ul>
+                            <p><span class="bold">Total Amount:</span> <span class="format-price">{{ order.total_amount }}</span></p>
+                        </div>
+
+                        <div class="pending-card__info">
+                            <h4>Total Products: {{ order.total_products }}</h4>
+                            <ul class="pending-card__info">
+                                {% for product in order.products_list %}
+                                    <li>
+                                        <a href="{% url 'show_product' product.id %}">{{ product.name }} - <span class="bold">{{ product.quantity }}u</span></a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="content__btn-cont">
+                        <button class="content__btn content__btn-disabled pending__cancel" id="pending-btn-cancel" data-id="{{ order.id }}">Cancel Order</button>
+                        <button class="content__btn content__btn-enabled pending__confirm" id="pending-btn-confirm" data-id="{{ order.id }}">Confirm Order</button>
+                    </div>
+
+                </li>
+
+
+            {% empty %}
+                <p class="msg-empty">There are no orders to show</p>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if page|length > 0 %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page.has_previous %}
+                    <a href="?page=1">
+                        <img  src="{% static 'img/track-back.svg'%}" class="pagination__icon" width="100px" alt="First">
+                    </a>
+                    <a href="?page={{ page.previous_page_number }}">
+                        <img  src="{% static 'img/arrow-left.svg'%}" class="pagination__icon" width="100px" alt="Previuos">
+                    </a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}
+                </span>
+        
+                {% if page.has_next %}
+                    <a href="?page={{ page.next_page_number }}">
+                        <img  src="{% static 'img/arrow-right.svg'%}" class="pagination__icon" width="100px" alt="Next">
+                    </a>
+                    <a href="?page={{ page.paginator.num_pages }}">
+                        <img  src="{% static 'img/track-next.svg'%}" class="pagination__icon" width="100px" alt="Last">
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    
+{% endblock %}

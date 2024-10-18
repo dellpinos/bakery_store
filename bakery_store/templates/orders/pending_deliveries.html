@@ -1,72 +1,59 @@
-{% extends "layouts/dashboard.html" %}
+{% extends "layouts/layout.html" %}
 {% load static %}
 
 {% block title %}
-    Pending Orders
+    Pending deliveries
 {% endblock %}
 
 {% block body %}
 
-    <div>
-        <h3 class="heading">Pending Orders</h3>
+    <div class="deliveries__container">
+        <h3 class="heading">Pending deliveries</h3>
 
-        {% if message %}
-            <div class="msg-error">{{ message }}</div>
-        {% endif %}
+            {% if message %}
+                <div class="msg-error">{{ message }}</div>
+            {% endif %}
 
-        <ul class="content__list" id="dashboard-ingredient-list">
+            {% for error in errors %}
+                <div class="msg-error">{{ error }}</div>
+            {% endfor %}
 
+        <ul class="content__list">
 
             {% for order in page %}
 
                 <li class="content__item flex-col">
                     <div class="pending-card__grid">
                         <div class="pending-card__info">
-                            <h4>Delivery Date: {{ order.delivery_date }}</h4>
+                            <h4>Delivery Date: {{ order.delivery_date_formated }}</h4>
                             <ul>
-                                <li>Username: {{ order.buyer_user.username }}</li>
-                                <li>Contact: {{ order.buyer_user.email }}</li>
-                                <li>Purchase Date: {{ order.created_at }}</li>
+                                <li><span class="bold">Username:</span> {{ order.seller_user.username }}</li>
+                                <li><span class="bold">Contact:</span> {{ order.seller_user.email }}</li>
+                                <li><span class="bold">Purchase Date:</span> {{ order.purchance_date_formated }}</li>
                             </ul>
-                            <p>Total Amount: <span class="format-price">{{ order.total_amount }}</span></p>
+                            <p><span class="bold">Total Amount:</span> <span class="format-price">{{ order.total_amount }}</span></p>
                         </div>
 
-                        <div class="pending-card__list">
+                        <div class="pending-card__info">
                             <h4>Total Products: {{ order.total_products }}</h4>
-                            <ul>
+                            <ul class="pending-card__info">
                                 {% for product in order.products_list %}
                                     <li>
-                                        <p>{{ product.quantity }}</p>
-                                        <a href="#">{{ product.name }}</a>
+                                        <a href="{% url 'show_product' product.id %}">{{ product.name }} - <span class="bold">{{ product.quantity }}u</span></a>
                                     </li>
                                 {% endfor %}
                             </ul>
                         </div>
 
                     </div>
+                    <p class="deliveries-card__status">Order Status: 
+                    {% if order.status %}
+                        <span class="c-yel bold">Confirmed</span>
+                    {% else %}
+                        <span class="c-black bold">Pending</span>
+                    {% endif %}
 
-                    <button class="btn btn-white">Confirm Order</button>
-
-                    {% comment %} <p>Delivery Date: {{ order.delivery_date }}</p>
-                    <p>Total Amount: {{ order.total_amount }}</p>
-                    <p>Username: {{ order.buyer_user.username }}</p>
-                    <p>Contact: {{ order.buyer_user.email }}</p>
-                    <p>Purchase Date: {{ order.created_at }}</p> {% endcomment %}
-
-                    {% comment %} <ul>
-                        {% for product in order.products_list %}
-                            <p>{{ product.name }}</p>
-                            <p>{{ product.quantity }}</p>
-                            <p>id: {{ product.id }}</p>
-                        {% endfor %}
-                    </ul> {% endcomment %}
-
-                    {% comment %} <button>Delivered Order</button> {% endcomment %}
-
-                    {% comment %} {% for product in order.products %}
-                        <p>product</p>
-                    {% endfor %} {% endcomment %}
-
+                    </p>
 
                 </li>
                 <p>{{ order.products2 }}</p>
@@ -104,5 +91,6 @@
             </span>
         </div>
     {% endif %}
-    
+    </div>
+
 {% endblock %}

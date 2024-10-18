@@ -2,6 +2,7 @@
     // Cart
     document.addEventListener('DOMContentLoaded', () => {
 
+        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         // Gives format to all prices
         formatAllPrices();
 
@@ -32,7 +33,7 @@
             async function handlerClick() {
 
                 try {
-                    const url = `/orders/api/cart/create/${productId}`;
+                    const url = `/orders/api/cart/create/${productId}/`;
                     const response = await fetch(url);
                     const result = await response.json();
 

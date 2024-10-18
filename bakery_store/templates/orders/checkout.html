@@ -7,7 +7,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <meta name="csrf-token" content="{{ csrf_token }}">
+
 {% endblock %}
 
 {% block script %}
@@ -22,7 +22,6 @@
     <div>
         <h3 class="heading">Checkout - {{ seller_user.username}} Products</h3>
         <input type="hidden" value="{{ seller_user.max_prod_capacity }}" data-id="{{ seller_user.id }}" id="seller-prod-max">
-
         <input type="hidden" id="hidden-checkout-prev-dates" value="{{ disabled_days }}" />
         <input type="hidden" id="hidden-checkout-min-date" value="{{ min_day }}" />
 
@@ -39,7 +38,7 @@
         
             {% for product in products %}
                 <div class="checkout__card">
-                    <button class="checkout__card-remove" id="checkout-card-remove" data-id="{{ product.id }}">X</button>
+                    <button class="checkout__card-remove" data-id="{{ product.id }}">X</button>
                     <div class="checkout__desc-cont">
                         <div class="checkout__img-cont">
                             <img src="{{ product.image }}" alt="{{ product.name }}" class="checkout__img">

@@ -24,6 +24,7 @@ class Ingredient(models.Model):
     availability = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     seller_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ingredients")
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def serialize(self):
         return {
@@ -49,6 +50,7 @@ class Product(models.Model):
     availability = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     categories = models.ManyToManyField(Category, related_name='products')
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def serialize(self):
         return {
@@ -71,6 +73,7 @@ class ProductIngredient(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="products")
     quantity = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def serialize(self):
         return {

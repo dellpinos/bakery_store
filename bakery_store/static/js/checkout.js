@@ -116,7 +116,7 @@
 
             async function updateDates(quantity) {
 
-                const url = `/dashboard/api/calendar_info/${quantity}/${sellerUserId}`;
+                const url = `/dashboard/api/calendar_info/${quantity}/${sellerUserId}/`;
 
 
                 try {
@@ -208,8 +208,6 @@
                     const formattedDates = disabledDates.map(date => {
                         return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
                     });
-                    console.log('FIT')
-                    console.log(formattedDates)
 
                     deliveryDate = formattedDates.join(', ');
 
@@ -222,33 +220,35 @@
         }
 
         // Removes item
-        if ( document.querySelector('#checkout-card-remove')) {
-            const btn = document.querySelector('#checkout-card-remove');
-            const productId = btn.dataset.id;
+        if ( document.querySelector('.checkout__card-remove')) {
+            const btns = document.querySelectorAll('.checkout__card-remove');
+            
+            btns.forEach( btn => {
+                const productId = btn.dataset.id;
+                
+                btn.addEventListener('click', async () => {
 
-            btn.addEventListener('click', async () => {
-
-                try {
-                    const url = `api/cart/item_delete/${productId}`;
-                    const response = await fetch(url, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrftoken,
+                    try {
+                        const url = `/orders/api/cart/item_delete/${productId}/`;
+                        const response = await fetch(url, {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrftoken,
+                            }
+                        });
+                        const result = await response.json();
+    
+                        if(result.result) {
+                            location.reload();
+                        } else {
+                            console.error('Something went wrong');
                         }
-                    });
-                    const result = await response.json();
-
-                    if(result.result) {
-
-                        location.reload();
-                    } else {
-                        console.error('Something went wrong');
+    
+                    } catch (error) {
+                        console.log(error);
                     }
-
-                } catch (error) {
-                    console.log(error);
-                }
-            })
+                });
+            });
         }
 
         if( document.querySelector('#checkout-submit-btn')) {
@@ -284,10 +284,12 @@
                         date: deliveryDate
                     })
 
-                    console.log(products)
-                    // evaluar status, si la respuesta es correcta redirigir al usuario junto con el id de la orden
-                    // el usuario tiene la posibilidad de eliminar su orden???
-                    // Puede ser redirigido a una nueva vista de "tus ordenes pendientes"
+                    if( result.ok ) {
+                        location('/orders/pending_deliveries/')
+                    } else {
+                        console.error('Something went wrong');
+                    }
+
 
                 } else {
                     document.querySelector('#alert-msg-date').classList.remove('g-alert');
@@ -297,7 +299,7 @@
 
             async function sendProd(data) {
 
-                const url = '/orders/api/order/create';
+                const url = '/orders/api/order/create/';
 
                 try {
                     const response = await fetch(url, {

@@ -9,6 +9,8 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     delivery_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add = True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    status = models.BooleanField(default = False)
 
     def serialize(self):
         return {
@@ -25,6 +27,7 @@ class OrderProduct(models.Model):
     quantity = models.IntegerField( default = 1 )
     order = models.ForeignKey(Order, on_delete = models.CASCADE, related_name = "products")
     created_at = models.DateTimeField(auto_now_add = True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def serialize(self):
         return {

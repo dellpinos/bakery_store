@@ -5,6 +5,9 @@ from django.http import HttpResponseRedirect, JsonResponse
 import json
 from datetime import datetime, timedelta
 from django.urls import reverse
+from django.core.paginator import Paginator
+from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Cart, CartProduct, Order, OrderProduct
 from products.models import Product, Ingredient
@@ -38,7 +41,15 @@ def index_cart(request):
         # Calculates total price
         for cart_product in cart_products:
             product = cart_product.product
-            ingredients = product.ingredients.all()
+            ingredients = product.ingredients.filter(deleted_at = None)
+
+            if not ingredients:
+                return JsonResponse({
+                    "msg" : "Corrumpted record (product)",
+                    "response" : 0
+                    }, status = 422
+                )
+            
             product.total_price = float(product.subtotal_price)
 
             for productIngredient in ingredients:
@@ -73,7 +84,7 @@ def index_cart(request):
 @login_required
 def create_cart(request, product):
 
-    product_db = Product.objects.filter(pk=product).first()
+    product_db = Product.objects.filter(pk=product, deleted_at = None).first()
 
     if product_db is None:
         return JsonResponse(
@@ -127,7 +138,7 @@ def create_cart(request, product):
 @login_required
 def delete_cart_item(request, product):
 
-    product = Product.objects.filter(pk = product).first()
+    product = Product.objects.filter(pk = product, deleted_at = None).first()
 
     if product:
         user = request.user
@@ -155,7 +166,12 @@ def delete_cart_item(request, product):
 @login_required
 def checkout(request):
 
-    cart = request.user.cart.get()
+    try:
+        cart = request.user.cart.get()
+
+    except ObjectDoesNotExist:
+        return HttpResponseRedirect(reverse('index'))
+
     cart_products = cart.products.all()
     products = []
     seller_user = None
@@ -165,7 +181,7 @@ def checkout(request):
     for cart_prod in cart_products:
 
         prod = cart_prod.product
-        ingredients = prod.ingredients.all()
+        ingredients = prod.ingredients.filter(deleted_at = None)
         prod.total_price = float(prod.subtotal_price)
         prod.quantity = cart_prod.quantity
         seller_user = prod.seller_user
@@ -193,7 +209,7 @@ def checkout(request):
 
 
 
-    prev_orders = Order.objects.filter(seller_user = seller_user).all()
+    prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None).filter(deleted_at = None)
 
 
     disabled_days = seller_user.days_off.values_list('date', flat = True)
@@ -213,7 +229,7 @@ def checkout(request):
     # Buscar todas las ordenes
 
     for order in prev_orders:
-        product_orders = order.products.all()
+        product_orders = order.products.filter(deleted_at = None)
         order.total_quantity = 0
 
         for prod_order in product_orders:
@@ -247,6 +263,85 @@ def checkout(request):
     })
 
 
+@login_required
+def pending_orders(request):
+    
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None).all()
+
+    for order in orders:
+        order_products = order.products.filter(deleted_at = None)
+        order.products_list = []
+        order.total_products = 0
+        order.delivery_date_formated = order.delivery_date.strftime('%m/%d/%Y')
+        order.purchance_date_formated = order.created_at.strftime('%m/%d/%Y %H:%M hs')
+
+        for prod in order_products:
+            order.total_products += prod.quantity
+            order.products_list.append(
+                {
+                    "name" : prod.product.name,
+                    "quantity" : prod.quantity,
+                    "id" : prod.product.id
+                }
+            )
+
+
+    # Paginator
+    p = Paginator(orders, 5)
+
+    if request.GET.get('page'):
+        # Get the page number from the request
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+
+    page = p.page(page_number)
+
+    return render(request, 'orders/pendings.html', {
+        "page": page
+    })
+
+@login_required
+def pending_deliveries(request):
+
+    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None).all()
+
+    for order in orders:
+        order_products = order.products.filter(deleted_at = None)
+        order.products_list = []
+        order.total_products = 0
+        order.delivery_date_formated = order.delivery_date.strftime('%m/%d/%Y')
+        order.purchance_date_formated = order.created_at.strftime('%m/%d/%Y %H:%M hs')
+
+        for prod in order_products:
+            order.total_products += prod.quantity
+            order.products_list.append(
+                {
+                    "name" : prod.product.name,
+                    "quantity" : prod.quantity,
+                    "id" : prod.product.id
+                }
+            )
+
+
+    # Paginator
+    p = Paginator(orders, 5)
+
+    if request.GET.get('page'):
+        # Get the page number from the request
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+
+    page = p.page(page_number)
+
+    return render(request, 'orders/pending_deliveries.html', {
+        "page": page
+    })
+
+
+
+
 ## API
 @login_required
 def create_order(request):
@@ -262,9 +357,8 @@ def create_order(request):
         seller_user = None
         order_total_amount = 0
 
-
         for product in products:
-            prod_db = Product.objects.filter(pk = product["id"]).first()
+            prod_db = Product.objects.filter(pk = product["id"], deleted_at = None).first()
             
             if prod_db:
                 try:
@@ -282,7 +376,7 @@ def create_order(request):
             seller_user = prod_db.seller_user
 
             # Calculates total amount again
-            ingredients = prod_db.ingredients.all()        
+            ingredients = prod_db.ingredients.filter(deleted_at = None)    
             prod_db.total_price = float(prod_db.subtotal_price)
             for productIngredient in ingredients:
                 prod_db.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
@@ -307,11 +401,36 @@ def create_order(request):
                 quantity = prod.quantity,
                 order = order
             )
+        
+        # Delete Cart
+        user_cart = request.user.cart.get()
+        user_cart.delete() 
 
-        return JsonResponse({'status': 'success', 'order_id': order.id})
+        return JsonResponse({'status': 'success', 'order_id': order.id}, status = 200)
     else:
-        print('HERE!')
-        print(json.loads(request.body))
         return JsonResponse({'status': 'error'}, status = 403)
     
 
+@login_required
+def delete_order(request, order):
+
+    order_db = Order.objects.filter(pk = order, deleted_at = None).first()
+
+    if( order_db and order_db.seller_user == request.user):
+        order_db.deleted_at = timezone.now()
+        order_db.save()
+        return JsonResponse({'status': 'success'}, status = 200)
+    else:
+        return JsonResponse({'status': 'error'}, status = 400)
+
+
+def confirm_order(request, order):
+
+    order_db = Order.objects.filter(pk = order, deleted_at = None).first()
+
+    if( order_db and order_db.seller_user == request.user):
+        order_db.status = True
+        order_db.save()
+        return JsonResponse({'status': 'success'}, status = 200)
+    else:
+        return JsonResponse({'status': 'error'}, status = 400)

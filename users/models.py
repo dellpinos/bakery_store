@@ -4,6 +4,7 @@ from django.db import models
 class User(AbstractUser):
 
     max_prod_capacity = models.IntegerField(default=3)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Id: {self.id} - Username: {self.username}, Email: {self.email}, Max production Capacity: {self.max_prod_capacity}"

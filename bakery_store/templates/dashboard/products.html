@@ -24,11 +24,10 @@
                     <p>{{ product.name }} - ${{ product.total_price }}</p>
 
                 <div class="content__item-btns">
-                    {% comment %} <button id="product-list-availability" >Enabled</button> {% endcomment %}
                     {% if product.availability %}
-                        <button class="list-availability__btn content__btn-enabled" data-id="{{ product.id }}">Enabled</button>
+                        <button class="content__btn list-availability__btn content__btn-enabled" data-id="{{ product.id }}">Enabled</button>
                     {% else %}
-                        <button class="list-availability__btn content__btn-disabled" data-id="{{ product.id }}">Disabled</button>
+                        <button class="content__btn list-availability__btn content__btn-disabled" data-id="{{ product.id }}">Disabled</button>
                     {% endif %}
                     <a href="{% url 'edit_product' product.id %}">
                         <img src="{% static 'img/edit-white.svg'%}" class="content__edit" alt="Edit Icon">
