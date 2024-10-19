@@ -32,45 +32,64 @@
 
             async function handlerClick() {
 
-                try {
-                    const url = `/orders/api/cart/create/${productId}/`;
-                    const response = await fetch(url);
-                    const result = await response.json();
+                const result = await addToCart(productId);
 
-                    if (!result.error) {
-                        // Deletes empty message
-                        if (document.querySelector('.msg-empty')) {
-                            document.querySelector('.msg-empty').remove();
+                if (!result.error) {
+                    // Deletes empty message
+                    if (document.querySelector('.msg-empty')) {
+                        document.querySelector('.msg-empty').remove();
 
-                        }
-                        await getCart();
-
-                        btn.removeEventListener('click', handlerClick);
-                        const card = btn.parentElement;
-                        btn.remove();
-                        const msg = document.createElement('P');
-                        msg.classList.add('mt-3')
-                        msg.textContent = "This product is in your cart. You can update the quantity at checkout. Remember, you must complete your order with this seller before ordering products from other sellers."
-
-                        card.appendChild(msg);
-
-                    } else {
-                        console.log(result.error)
                     }
+                    await getCart();
 
-                } catch (error) {
-                    throw Error('Something went wrong.')
+                    btn.removeEventListener('click', handlerClick);
+                    const card = btn.parentElement;
+                    btn.remove();
+                    const msg = document.createElement('P');
+                    msg.classList.add('mt-3')
+                    msg.textContent = "This product is in your cart. You can update the quantity at checkout. Remember, you must complete your order with this seller before ordering products from other sellers."
+
+                    card.appendChild(msg);
+
+                } else {
+                    console.log(result.error)
                 }
+            }
+        }
+
+
+
+        async function addToCart(productId) {
+            
+            const url = `/orders/api/cart/create/${productId}/`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    }
+                });
+
+                const result = await response.json();
+                return result;
+
+            } catch (error) {
+                throw Error('Something went wrong.')
             }
         }
 
         async function getCart() {
 
             const counter = document.querySelector('#header-cart-icon');
+            const url = `/orders/api/cart/`;
             try {
-                const url = `/orders/api/cart/`;
 
-                const response = await fetch(url);
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    }
+                });
                 const result = await response.json();
 
                 if (result.response > 0) {

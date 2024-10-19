@@ -7,6 +7,7 @@
         const sellerUserId = parseInt(document.querySelector('#seller-prod-max').dataset.id);
         const minDay = document.querySelector('#hidden-checkout-min-date').value;
 
+
         let total = 0;
         let deliveryDate
         const today = new Date();
@@ -123,7 +124,6 @@
                     const response = await fetch(url);
                     const result = await response.json();
 
-                    console.log(result)
                     return result;
 
                 } catch (error) {
@@ -279,13 +279,22 @@
                         });
                     });
 
+                    // console.log('!!!')
+                    // console.log(deliveryDate)
+                    // console.log(typeof(deliveryDate))
+
+
+
+                    // 2024-10-28
+
                     const result = await sendProd({
                         products,
                         date: deliveryDate
+                        //date: "2024-10-30"
                     })
 
                     if( result.ok ) {
-                        location('/orders/pending_deliveries/')
+                        window.location.href = '/orders/pending_deliveries/';
                     } else {
                         console.error('Something went wrong');
                     }
@@ -310,8 +319,8 @@
                         },
                         body: JSON.stringify(data)
                     });
-                    const result = await response.json();
-                    return result;
+
+                    return response;
 
                 } catch (error) {
                     throw error;

@@ -64,12 +64,13 @@
             
                 <div class="checkout__price-container">
                     <p class="checkout__price">Total Price: <span id="checkout-total-price" >$0</span></p>
-                    <p>Production Time: {{ min_day_number }} days</p>
+                    <p class="center">Production Time: {{ min_day_number }} days</p>
                 </div>
 
                 <div class="checkout__calendar-container">
-                    <p class="g-alert" id="alert-msg-date">You must select a delivery date</p>
+                    <p class="g-alert">The production time is calculated starting from tomorrow, so today is not included</p>
                     <input type="hidden" id="hidden-datepicker" style="display: none" name="date"/>
+                    <p class="g-alert" id="alert-msg-date">You must select a delivery date</p>
                 </div>
             </div>
             <div class="checkout__btn-cont">
