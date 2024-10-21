@@ -1,14 +1,12 @@
 from django.shortcuts import render
-from .models import Product, Category, Ingredient, ProductIngredient
-from orders.models import Cart
-
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-import json, random
 from django.utils import timezone
-
+import json, random
+from .models import Product, Category, Ingredient, ProductIngredient
+from orders.models import Cart, OrderProduct
 
 
 ## Validation ##
@@ -36,7 +34,6 @@ def ingredient_validation(body, new):
 def product_validation(body, ingredients):
 
     errors = []
-
     if len(body["name"]) < 3 or len(body["name"]) > 120 :
         errors.append('The name must be between 5 and 120 characters long.')
 
@@ -58,8 +55,9 @@ def product_validation(body, ingredients):
 
     return errors
 
-## Controllers ##
+## Public Controllers ##
 
+# Index view
 def home(request):
 
     # User Cart
@@ -93,6 +91,7 @@ def home(request):
         "cart_seller": cart_seller
     })
 
+# Returns the show view of a random product
 def random_product(request):
 
     product_ids = list(Product.objects.filter(availability = True).values_list('id', flat=True))
@@ -113,7 +112,7 @@ def random_product(request):
     for productIngredient in ingredients:
         product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
-    # Looks for products by the same seller (limit: 3)
+    # Looks for related products by the same seller (limit: 3)
     products = list(Product.objects.filter(seller_user = product.seller_user).exclude(pk=product.id).order_by('-created_at')[:3])
 
     # Initialize with excluded IDs
@@ -141,72 +140,75 @@ def random_product(request):
         "related_products": products
     })
 
-
+# View that displays all the information of a product (show view)
 def show_product(request, product):
 
-        product = Product.objects.filter(pk=product, deleted_at=None).first()
+    product = Product.objects.filter(pk=product, deleted_at=None).first()
 
-        if product is None or not product.availability:
-            return HttpResponseRedirect(reverse("index"))
+    if product is None or not product.availability:
+        return HttpResponseRedirect(reverse("index"))
 
-        ingredients = product.ingredients.filter(deleted_at = None)
-        product.total_price = float(product.subtotal_price)
+    ingredients = product.ingredients.filter(deleted_at = None)
+    product.total_price = float(product.subtotal_price)
 
-        for productIngredient in ingredients:
-            product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
+    for productIngredient in ingredients:
+        product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
-        # Looks for products by the same seller (limit: 3)
-        products = list(Product.objects.filter(seller_user = product.seller_user, availability = True).exclude(pk=product.id).order_by('-created_at')[:3])
+    # Looks for related products by the same seller (limit: 3)
+    products = list(Product.objects.filter(seller_user = product.seller_user, availability = True).exclude(pk=product.id).order_by('-created_at')[:3])
 
-        # Initialize with excluded IDs
-        excluded_ids = [product.id for product in products]
-        excluded_ids.append(product.id)
+    # Initialize with excluded IDs
+    excluded_ids = [product.id for product in products]
+    excluded_ids.append(product.id)
 
-        missing_products = 3 - len(products)
+    missing_products = 3 - len(products)
 
-        while missing_products > 0:
+    while missing_products > 0:
+            
+        # Find a product that does not appear in the excluded list.
+        new_product = Product.objects.exclude(pk__in=excluded_ids).filter(availability = True, deleted_at = None).order_by('-created_at').first()
+
+        # Break if there are no more products
+        if not new_product:
+            break
+
+        products.append(new_product)
+        excluded_ids.append(new_product.id)
+
+        missing_products -= 1
+
+    # User Cart
+    in_cart = False
+    cart_seller_id = None
+
+    # Check if the product is in the cart
+    if request.user.is_authenticated:
+        try:
+            if request.user.cart.get():
+                cart = request.user.cart.get()
+                products_cart = cart.products.all() # All the CartProduct
                 
-            # Find a product that does not appear in the excluded list.
-            new_product = Product.objects.exclude(pk__in=excluded_ids).filter(availability = True, deleted_at = None).order_by('-created_at').first()
+                for cart_prod in products_cart:
+                    cart_seller_id = cart_prod.product.seller_user.id # Every product
 
-            # Break if there are no more products
-            if not new_product:
-                break
+                    if cart_prod.product == product:
+                        in_cart = True
 
-            products.append(new_product)
-            excluded_ids.append(new_product.id)
+        except Cart.DoesNotExist:
+            pass
 
-            missing_products -= 1
+    return render(request, "home/show_product.html", {
+        "product": product,
+        "related_products": products,
+        "in_cart": in_cart,
+        "cart_seller_id": cart_seller_id
+    })
 
-        # User Cart
-        in_cart = False
-        cart_seller_id = None
 
-        if request.user.is_authenticated:
-            try:
-                if request.user.cart.get():
-                    cart = request.user.cart.get()
-                    products_cart = cart.products.all() # Accedo a los CartProduct
-                    
-                    for cart_prod in products_cart: # Cada CartProduct
-                        
-                        cart_seller_id = cart_prod.product.seller_user.id # Cada uno tiene un producto
 
-                        if cart_prod.product == product:
-                            in_cart = True
+## Dashboard Controllers ##
 
-            except Cart.DoesNotExist:
-                pass
-
-        return render(request, "home/show_product.html", {
-            "product": product,
-            "related_products": products,
-            "in_cart": in_cart,
-            "cart_seller_id": cart_seller_id
-        })
-
-# Dashboard
-
+# New product form
 @login_required
 def new_product(request):
 
@@ -216,6 +218,7 @@ def new_product(request):
         ingredients = [json.loads(item) for item in body.getlist('ingredient_data')]
         categories_list = body.getlist('categories')
 
+        # Validation
         try:
             int(body["prod_time"])
             float(body["price"])
@@ -236,6 +239,7 @@ def new_product(request):
         categories_db = []
         categories_list_int = []
 
+        # Gets user's ingredients
         for ingredient in ingredients:
 
             ingredient_db = Ingredient.objects.filter(pk = ingredient['id'], deleted_at = None).first()
@@ -262,7 +266,6 @@ def new_product(request):
             categories_list_int = [int(category) for category in categories_list]
 
         if len(errors) != 0:
-
             categories = Category.objects.filter(deleted_at = None)
             ingredients_all = Ingredient.objects.filter(seller_user = request.user, availability = True, deleted_at = None).order_by("name")
             return render(request, "dashboard/create_product.html", {
@@ -273,8 +276,9 @@ def new_product(request):
                 "ingredients": ingredients_all,
                 "categories": categories
             })
+        
         else:
-
+            # Save new product
             new_product = Product(
                 name = body["name"],
                 subtotal_price = float(body["price"]),
@@ -309,6 +313,8 @@ def new_product(request):
             "ingredients": ingredients
         })
     
+
+# Edict product form
 @login_required
 def edit_product(request, product):
 
@@ -338,6 +344,7 @@ def edit_product(request, product):
         categories_db = []
         categories_list_int = []
 
+        # Gets user's ingredients
         for ingredient in ingredients:
             ingredient_db = Ingredient.objects.filter(pk = ingredient['id'], seller_user = request.user, deleted_at = None).first()
             ingredient_db.quantity = ingredient["quantity"]
@@ -377,6 +384,7 @@ def edit_product(request, product):
             if product_db is None:
                 return HttpResponseRedirect(reverse("dashboard_products"))
 
+            # Save new data
             product_db.name = body["name"]
             product_db.subtotal_price = float(body["price"])
             product_db.description = body["description"]
@@ -440,7 +448,7 @@ def edit_product(request, product):
             "categories_prev": product.categories
         })
     
-
+# New ingredient form
 @login_required
 def new_ingredient(request):
 
@@ -487,6 +495,7 @@ def new_ingredient(request):
         }
     })
 
+# Edit ingredient form
 @login_required
 def edit_ingredient(request, ingredient):
 
@@ -537,24 +546,10 @@ def edit_ingredient(request, ingredient):
         "ingredient": ingredient
     })
 
-# Hay que eliminar o limitar esta funcionalidad (que ocurre si el usuario elimina un ingrediente que es utilizado en productos)
-@login_required
-def delete_ingredient(request, ingredient):
-
-
-    ingredient_db = Ingredient.objects.filter(pk = ingredient, seller_user = request.user, deleted_at = None).first()
-    if ingredient_db is None:
-        return HttpResponseRedirect(reverse("dashboard_ingredients"))
-    
-    ingredient_db.deleted_at = timezone.now()
-    ingredient_db.save()
-
-    return HttpResponseRedirect(reverse("dashboard_ingredients"))
-
 
 ## API ##
 
-@csrf_exempt
+# Changes product's availability
 @login_required
 def product_availability(request, product):
 
@@ -563,6 +558,17 @@ def product_availability(request, product):
         return JsonResponse(
             {"error" : "Forbidden"}, status=403
         )
+    
+    # Look for pendient orders with this product
+    order_products = OrderProduct.objects.filter(product = product_db, deleted_at = None)
+
+    for order_prod in order_products:
+        order = order_prod.order
+
+        if order.status == False:
+            return JsonResponse(
+                {"error" : "There are open orders with this product"}, status=403
+            )
 
     if product_db.availability:
         product_db.availability = False
@@ -576,32 +582,3 @@ def product_availability(request, product):
             "availability" : product_db.availability
         }}, status=200
     )
-
-#  - DISABLED FEATURE -
-# @csrf_exempt
-# @login_required
-# def ingredient_availability(request, ingredient):
-
-#     ingredient_db = Product.objects.filter(pk=ingredient, seller_user=request.user).first()
-#     if ingredient_db is None:
-#         return HttpResponseRedirect(reverse("dashboard_products"))
-
-#     # Auth
-#     if request.user != ingredient_db.seller_user:
-#         return JsonResponse(
-#             {"error" : "Forbidden"}, status=403
-#         )
-
-#     if ingredient_db.availability:
-#         ingredient_db.availability = False
-#     else:
-#         ingredient_db.availability = True
-#     ingredient_db.save()
-
-#     return JsonResponse(
-#         {"item" : {
-#             "name" : ingredient_db.name,
-#             "availability" : ingredient_db.availability
-#         }}, status=200
-#     )
-

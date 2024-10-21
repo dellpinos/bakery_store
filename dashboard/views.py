@@ -4,12 +4,11 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.db.models import Sum
 from datetime import datetime
 from orders.models import Order
 from users.models import SellerTimeOff, User
 from products.models import Product, Ingredient
-
-from django.db.models import Sum
 
 
 @login_required
@@ -217,59 +216,41 @@ def check_dates(request, quantity, user):
     # Look for all orders
     prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None)
 
-
-
-
-
+    # Iterates all orders to get a list of elements (date, order.id and total_quantity)
     order_products_summary = []
 
     for order in prev_orders:
-        total_quantity = order.products.aggregate(total=Sum('quantity'))['total'] or 0
+        # Sum all the products from each order
+        total_quantity = order.products.aggregate(total=Sum('quantity'))
+        total_quantity = total_quantity['total'] or 0 # Assign 0 instead of None
+
         order_products_summary.append({
             'order_id': order.id,
             'total_products': total_quantity,
             'date' : order.delivery_date
         })
 
-    print('VV v VV')
-    print(order_products_summary)
-
-
-    # Agrupar por fecha
+    # Groups orders by date with total quantity
     grouped_by_date = {}
+    
+    # Iterates the list to obtain a dictionary of dates with their quantities
     for entry in order_products_summary:
         date = entry['date']
+
+        # If it doesn't exist, it assigns a value of 0 to accumulate later
         if date not in grouped_by_date:
             grouped_by_date[date] = 0
+
+        # If it exists, it adds its value to 'total_products'
         grouped_by_date[date] += entry['total_products']
 
-    # Convertir el diccionario en una lista si es necesario
+    # Convert the dictionary into a list of dictionaries
     result_summary = [{'date': date, 'total_products': total} for date, total in grouped_by_date.items()]
 
-    # Imprimir resultados
+    # Adds the dates where the quantity received in this request exceeds the maximum products per day
     for summary in result_summary:
-        disabled_days.append(summary['date'])
-
-
-        print(f"Fecha: {summary['date']}, Total Productos: {summary['total_products']}")
-
-    print(result_summary)
-    # total_orders_count = 0
-    # # Calculates products per day (every product inside every order)
-    # for order in prev_orders:
-    #     product_orders = order.products.filter(deleted_at = None)
-    #     order.total_quantity = 0
-
-    #     for prod_order in product_orders:
-    #         order.total_quantity += prod_order.quantity
-
-    #         print('|| Total Quantity ||')
-    #         print(order.total_quantity)
- 
-    #     total_orders_count
-    #     # Create a list of dates where the total quantity of products, added to the quantity received in this request, exceeds the maximum products per day
-    #     if ( order.total_quantity + quantity ) > max_prod_per_day:
-    #         disabled_days.append(order.delivery_date)
+        if ( summary['total_products'] + quantity ) > max_prod_per_day:
+            disabled_days.append(summary['date'])
 
     # Removes any duplicates
     disabled_days = list(set(disabled_days))

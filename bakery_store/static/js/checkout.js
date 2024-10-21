@@ -35,15 +35,19 @@
 
                 input.addEventListener('input', async e => {
 
+
                     // doesn't allow negative numbers
                     if (parseInt(e.target.value) <= 0) {
                         e.target.value = 1
                     }
 
-                    if ( e.target.value > 0 ) {
+
+
+                    // if ( e.target.value > 0 ) {
                         if ( value > parseInt(input.value)) {
                             // Substracting
-                            if( total - (value - parseInt(input.value)) > 1) {
+
+                            // if( total - (value - parseInt(input.value)) > 1) { ??????
                                 total -= value - parseInt(input.value);
                                 value = parseInt(input.value);
 
@@ -72,7 +76,7 @@
                                 priceCalculates();
         
                                 
-                            }
+                            // }
                             
                         } else {
                             // Adding
@@ -110,7 +114,7 @@
     
                             }
                         }
-                    }
+                    // }
 
                 })
             });
@@ -279,24 +283,20 @@
                         });
                     });
 
-                    // console.log('!!!')
-                    // console.log(deliveryDate)
-                    // console.log(typeof(deliveryDate))
-
-
-
-                    // 2024-10-28
-
                     const result = await sendProd({
                         products,
                         date: deliveryDate
-                        //date: "2024-10-30"
                     })
 
                     if( result.ok ) {
                         window.location.href = '/orders/pending_deliveries/';
                     } else {
                         console.error('Something went wrong');
+                        alert(result.message);
+
+                        setTimeout(() => {
+                            location.reload()
+                        }, 3000);
                     }
 
 

@@ -4,6 +4,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('#dashboard-product-list')) {
             
+
+            const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const btns = document.querySelectorAll('.list-availability__btn');
             
             btns.forEach(btn => {
@@ -11,14 +13,21 @@
                 
                 btn.addEventListener('click', () => {
                     const url = `/api/product_availability/${id}/`;
-                    changeAvailability(btn, url);
+                    changeAvailability(btn, url, csrftoken);
                 });
             });
         }
 
-        async function changeAvailability(btn, url) {
+        async function changeAvailability(btn, url, csrftoken) {
             try {
-                const response = await fetch(url);
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    }
+                });
+
                 const result = await response.json();
 
                 if (result.item) {

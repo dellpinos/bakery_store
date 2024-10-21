@@ -1066,7 +1066,7 @@ footer {
     flex-direction: column;
     gap: 2rem;
 
-    max-height: 50rem;
+    max-height: 30rem;
     overflow-y: scroll;
 }
 
