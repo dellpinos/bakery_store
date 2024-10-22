@@ -1,4 +1,5 @@
 (function () {
+
     // Cart
     document.addEventListener('DOMContentLoaded', () => {
 
@@ -56,8 +57,6 @@
                 }
             }
         }
-
-
 
         async function addToCart(productId) {
             

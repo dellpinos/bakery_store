@@ -11,6 +11,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     status = models.BooleanField(default = False)
+    archived = models.BooleanField(default = False)
 
     def serialize(self):
         return {

@@ -562,12 +562,13 @@ def product_availability(request, product):
     # Look for pendient orders with this product
     order_products = OrderProduct.objects.filter(product = product_db, deleted_at = None)
 
+
     for order_prod in order_products:
         order = order_prod.order
-
-        if order.status == False:
+        # Only active orders
+        if order.deleted_at == None:
             return JsonResponse(
-                {"error" : "There are open orders with this product"}, status=403
+                {"error" : "There are open orders with this product; you should confirm or close them first."}, status=403
             )
 
     if product_db.availability:

@@ -1,12 +1,12 @@
 (function () {
+
     // Checkout
     document.addEventListener('DOMContentLoaded', () => {
-        
+
         const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const maxSellerQuantity = parseInt(document.querySelector('#seller-prod-max').value);
         const sellerUserId = parseInt(document.querySelector('#seller-prod-max').dataset.id);
         const minDay = document.querySelector('#hidden-checkout-min-date').value;
-
 
         let total = 0;
         let deliveryDate
@@ -21,108 +21,56 @@
 
         priceCalculates()
 
-
-
-
         if (document.querySelector('#seller-prod-max')) {
             // Quantity Validation
             const qInputs = document.querySelectorAll('.checkout__quantity');
 
-
-            qInputs.forEach( input => {
+            qInputs.forEach(input => {
                 total += parseInt(input.value);
                 let value = parseInt(input.value);
 
                 input.addEventListener('input', async e => {
-
 
                     // doesn't allow negative numbers
                     if (parseInt(e.target.value) <= 0) {
                         e.target.value = 1
                     }
 
+                    if (value > parseInt(input.value)) {
+                        // Substracting
 
+                        total -= value - parseInt(input.value);
+                        value = parseInt(input.value);
 
-                    // if ( e.target.value > 0 ) {
-                        if ( value > parseInt(input.value)) {
-                            // Substracting
+                        const response = await updateDates(total);
+                        const new_dates = JSON.parse(response.disabled_days);
 
-                            // if( total - (value - parseInt(input.value)) > 1) { ??????
-                                total -= value - parseInt(input.value);
-                                value = parseInt(input.value);
+                        setCalendar(new_dates);
+                        priceCalculates();
 
-                                const response = await updateDates(total);
-                                const new_dates = JSON.parse(response.disabled_days);
+                    } else {
+                        // Adding
+                        if (total + (parseInt(input.value) - value) <= maxSellerQuantity) {
+                            total += parseInt(input.value) - value;
+                            value = parseInt(input.value);
 
-                                flatpickrInstance.set({
-                                    disable: [
-                                        function (date) {
-                                            return date.getDay() === 0; // Deshabilitar domingos
-                                        },
-                                        function(date) {
+                            const response = await updateDates(total);
+                            const new_dates = JSON.parse(response.disabled_days);
 
-                                            if (Array.isArray(new_dates)) {
-                                                return new_dates.some(prev_date => {
-                                                    const formattedDate = date.toISOString().split('T')[0]; // Fecha en formato "YYYY-MM-DD"
-                                                    return new_dates.includes(formattedDate);
-                                                });
-                                            }
-                                            return false; // Si disabledDates no es un array, no deshabilitar
-
-                                        }
-                                    ]
-                                });
-
-                                priceCalculates();
-        
-                                
-                            // }
-                            
+                            setCalendar(new_dates);
+                            priceCalculates()
                         } else {
-                            // Adding
-                            if( total + (parseInt(input.value) - value) <= maxSellerQuantity) {
-                                total += parseInt(input.value) - value;
-                                value = parseInt(input.value);
-                                
 
-                                const response = await updateDates(total);
-                                const new_dates = JSON.parse(response.disabled_days);
-
-
-                                flatpickrInstance.set({
-                                    disable: [
-                                        function (date) {
-                                            return date.getDay() === 0; // Deshabilitar domingos
-                                        },
-                                        function(date) {
-                                            if (Array.isArray(new_dates)) {
-                                                return new_dates.some(prev_date => {
-                                                    const formattedDate = date.toISOString().split('T')[0]; // Fecha en formato "YYYY-MM-DD"
-                                                    return new_dates.includes(formattedDate);
-                                                });
-                                            }
-                                            return false; // Si disabledDates no es un array, no deshabilitar
-                                        }
-
-                                    ]
-                                });
-                                priceCalculates()
-                            } else {
-    
-                                input.value = value;
-                                console.log('You cannot add more products in this order.')
-    
-                            }
+                            input.value = value;
+                            console.log('You cannot add more products in this order.')
                         }
-                    // }
-
+                    }
                 })
             });
 
             async function updateDates(quantity) {
 
                 const url = `/dashboard/api/calendar_info/${quantity}/${sellerUserId}/`;
-
 
                 try {
                     const response = await fetch(url);
@@ -134,10 +82,25 @@
                     throw error;
                 }
             }
+        }
 
-
-
-
+        function setCalendar(new_dates) {
+            flatpickrInstance.set({
+                disable: [
+                    function (date) {
+                        return date.getDay() === 0; // Disabled sundays
+                    },
+                    function (date) {
+                        if (Array.isArray(new_dates)) {
+                            return new_dates.some(prev_date => {
+                                const formattedDate = date.toISOString().split('T')[0]; // ISO Format
+                                return new_dates.includes(formattedDate);
+                            });
+                        }
+                        return false; // If disabledDates isn't an array, don't disable any date
+                    }
+                ]
+            });
         }
 
         function priceCalculates() {
@@ -145,16 +108,15 @@
             const priceInputs = document.querySelectorAll('.checkout__card-price');
             let totalPrice = 0;
 
-            priceInputs.forEach( price => {
+            priceInputs.forEach(price => {
                 const unitPrice = price.dataset.unitPrice;
 
-                if( parseFloat(unitPrice) ) {
+                if (parseFloat(unitPrice)) {
                     const quantity = document.querySelector(`.checkout__quantity[data-id="${price.dataset.id}"]`);
                     const pageTotalPrice = document.querySelector('#checkout-total-price');
 
                     const formatedPrice = formatPrice(unitPrice * parseInt(quantity.value));
                     price.textContent = formatedPrice;
-
 
                     totalPrice += (unitPrice * parseInt(quantity.value));
 
@@ -168,68 +130,55 @@
             });
         }
 
+        // Date picker
         if (document.querySelector('#hidden-checkout-prev-dates')) {
-            // Date picker
-
-
-
 
             // Look for previous days 
             if (document.querySelector('#hidden-checkout-prev-dates') && document.querySelector('#hidden-checkout-prev-dates').value) {
                 disabledDates = JSON.parse(document.querySelector('#hidden-checkout-prev-dates').value);
             }
 
-
-
             flatpickrInstance = flatpickr("#hidden-datepicker", {
-                dateFormat: "Y-m-d", // Formato de fecha
+                dateFormat: "Y-m-d", // Date format
                 inline: true,
-                minDate: minDay, // Fecha mínima (hoy)
+                minDate: minDay,
                 maxDate: maxDate,
-                // mode: "multiple", // Habilitar selección múltiple
                 positionElement: markedDay,
                 disable: [
                     function (date) {
-                        // Deshabilitar los domingos
-                        return date.getDay() === 0; // 0 es el domingo
+                        return date.getDay() === 0; // Disabled sundays
                     },
-                    function(date) {
-                        // Deshabilitar fechas previas
+                    function (date) {
+                        // Disable previous dates
                         if (Array.isArray(disabledDates)) {
                             return disabledDates.some(prev_date => {
-                                const formattedDate = date.toISOString().split('T')[0]; // Fecha en formato "YYYY-MM-DD"
+                                const formattedDate = date.toISOString().split('T')[0]; // ISO Format
                                 return disabledDates.includes(formattedDate);
                             });
                         }
-                        return false; // Si disabledDates no es un array, no deshabilitar
+                        return false; // If disabledDates isn't an array, don't disable any date
                     }
                 ],
 
                 onChange: function (disabledDates) {
 
-                    
-                    // Actualizar el input hidden con las fechas seleccionadas
+                    // Update hidden input with selected dates 
                     const formattedDates = disabledDates.map(date => {
-                        return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+                        return date.toISOString().split('T')[0]; // ISO Format
                     });
 
                     deliveryDate = formattedDates.join(', ');
-
-                    // Actualizar el input hidden con las fechas formateadas
-                    // document.querySelector('#hidden-datepicker').value = formattedDates.join(', '); // Cambia 'hidden-input' por el ID de tu input hidden
                 },
             });
-
-
         }
 
-        // Removes item
-        if ( document.querySelector('.checkout__card-remove')) {
+        // Removes cart item
+        if (document.querySelector('.checkout__card-remove')) {
             const btns = document.querySelectorAll('.checkout__card-remove');
-            
-            btns.forEach( btn => {
+
+            btns.forEach(btn => {
                 const productId = btn.dataset.id;
-                
+
                 btn.addEventListener('click', async () => {
 
                     try {
@@ -241,13 +190,13 @@
                             }
                         });
                         const result = await response.json();
-    
-                        if(result.result) {
+
+                        if (result.result) {
                             location.reload();
                         } else {
                             console.error('Something went wrong');
                         }
-    
+
                     } catch (error) {
                         console.log(error);
                     }
@@ -255,27 +204,19 @@
             });
         }
 
-        if( document.querySelector('#checkout-submit-btn')) {
-        // Send POST
+        // Submit order - send POST
+        if (document.querySelector('#checkout-submit-btn')) {
 
             const qInputs = document.querySelectorAll('.checkout__quantity');
             const btn = document.querySelector('#checkout-submit-btn');
 
-
-
-
-
             btn.addEventListener('click', async e => {
                 e.preventDefault();
 
-                // Falta validar que la fecha no sea inferior al tiempo de produccion mas alto de los productos
-                // También hay que validar que dias tiene disponibles el vendedor y
-                // cuantas ordenes y productos tiene para ese dia
-
-                if( total <= maxSellerQuantity && deliveryDate ) {
+                if (total <= maxSellerQuantity && deliveryDate) {
 
                     let products = [];
-                    qInputs.forEach( input => {
+                    qInputs.forEach(input => {
 
                         products.push({
                             id: input.dataset.id,
@@ -288,17 +229,18 @@
                         date: deliveryDate
                     })
 
-                    if( result.ok ) {
+                    if (result.ok) {
                         window.location.href = '/orders/pending_deliveries/';
                     } else {
                         console.error('Something went wrong');
-                        alert(result.message);
+
+                        const response = await result.json()
+                        alert(`${response.message}. You'll be redirected.`);
 
                         setTimeout(() => {
                             location.reload()
-                        }, 3000);
+                        }, 1000);
                     }
-
 
                 } else {
                     document.querySelector('#alert-msg-date').classList.remove('g-alert');
@@ -330,13 +272,8 @@
     });
 
     function formatPrice(price) {
-        return parseInt(price).toLocaleString('en-US', { 
-            style: 'currency', currency: 'USD' 
+        return parseInt(price).toLocaleString('en-US', {
+            style: 'currency', currency: 'USD'
         })
     }
-    function parsePrice(formattedPrice) {
-        const cleanPrice = formattedPrice.replace(/[$,]/g, '');
-        return parseFloat(cleanPrice);
-    }
-
 })();

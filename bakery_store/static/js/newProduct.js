@@ -1,5 +1,6 @@
 (function () {
     // Dashboard New product
+    
     document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('#create-product-ingredient')) {
 

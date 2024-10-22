@@ -1,36 +1,38 @@
-{% extends "layouts/layout.html" %}
+{% extends "layouts/dashboard.html" %}
 {% load static %}
 
 {% block title %}
-    Pending deliveries
+    Archived Orders
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/orders.js' %}" type="module"></script>
 {% endblock %}
 
 {% block body %}
 
-    <div class="deliveries__container">
-        <h3 class="heading">Pending deliveries</h3>
+    <div>
+        <h3 class="heading">Archived Orders</h3>
 
-            {% if message %}
-                <div class="msg-error">{{ message }}</div>
-            {% endif %}
-
-            {% for error in errors %}
-                <div class="msg-error">{{ error }}</div>
-            {% endfor %}
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
 
         <ul class="content__list">
 
-            <a href="{% url 'archived_deliveries' %}" class="btn btn-gray mt-3">View Archived Orders</a>
-
             {% for order in page %}
 
-                <li class="content__item flex-col">
+                <li class="content__item flex-col bg-gray">
                     <div class="pending-card__grid">
                         <div class="pending-card__info">
                             <h4>Delivery Date: {{ order.delivery_date_formated }}</h4>
                             <ul>
-                                <li><span class="bold">Username:</span> {{ order.seller_user.username }}</li>
-                                <li><span class="bold">Contact:</span> {{ order.seller_user.email }}</li>
+                                <li><span class="bold">Username:</span> {{ order.buyer_user.username }}</li>
+                                <li><span class="bold">Contact:</span> {{ order.buyer_user.email }}</li>
                                 <li><span class="bold">Purchase Date:</span> {{ order.purchance_date_formated }}</li>
                             </ul>
                             <p><span class="bold">Total Amount:</span> <span class="format-price">{{ order.total_amount }}</span></p>
@@ -48,17 +50,8 @@
                         </div>
 
                     </div>
-                    <p class="deliveries-card__status">Order Status: 
-                    {% if order.status %}
-                        <span class="c-yel bold">Confirmed</span>
-                    {% else %}
-                        <span class="c-black bold">Pending</span>
-                    {% endif %}
-
-                    </p>
-
                 </li>
-                <p>{{ order.products2 }}</p>
+
 
             {% empty %}
                 <p class="msg-empty">There are no orders to show</p>
@@ -93,6 +86,5 @@
             </span>
         </div>
     {% endif %}
-    </div>
-
+    
 {% endblock %}

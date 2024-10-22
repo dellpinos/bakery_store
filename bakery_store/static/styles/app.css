@@ -146,6 +146,9 @@ textarea {
     font-weight: 700;
 }
 
+.bg-gray {
+    background-color: var(--mediumSilver)!important;
+}
 .body-pos {
     position: relative;
     padding-top: 212px;
@@ -288,9 +291,9 @@ textarea {
 }
 
 .btn-disabled {
-    background-color: var(--lightSilver);
-    color: var(--lightSilver);
-    cursor: not-allowed;
+    background-color: var(--lightSilver)!important;
+    color: var(--lightSilver)!important;
+    cursor: not-allowed!important;
 }
 .btn-disabled:hover {
     background-color: var(--lightSilver)!important;
@@ -310,6 +313,18 @@ textarea {
 .btn-white:hover {
     color: var(--ivory);
     box-shadow: none;
+}
+
+.btn-gray {
+    background-color: var(--mediumSilver);
+    color: var(--lightGray);
+    box-shadow: 0 0 10px var(--mediumSilver);
+}
+
+.btn-gray:hover {
+    color: var(--white);
+    box-shadow: none;
+    background-color: var(--mediumSilver);
 }
 
 
@@ -1355,6 +1370,30 @@ footer {
 
         }
     }
+}
+
+.pending__cancel {
+    background-color: var(--redAlertDark);
+}
+
+.pending__cancel:hover {
+    background-color: var(--redAlert);
+}
+
+.pending__confirm {
+    background-color: var(--darkGreen);
+}
+
+.pending__confirm:hover {
+    background-color: var(--green);
+}
+
+.pending__archive {
+    background-color: var(--darkGreen);
+}
+
+.pending__archive:hover {
+    background-color: var(--green);
 }
 
 .deliveries__container {

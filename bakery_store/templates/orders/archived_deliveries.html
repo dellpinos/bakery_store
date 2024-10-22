@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block title %}
-    Pending deliveries
+    Archived deliveries
 {% endblock %}
 
 {% block body %}
 
     <div class="deliveries__container">
-        <h3 class="heading">Pending deliveries</h3>
+        <h3 class="heading">Archived deliveries</h3>
 
             {% if message %}
                 <div class="msg-error">{{ message }}</div>
@@ -20,11 +20,9 @@
 
         <ul class="content__list">
 
-            <a href="{% url 'archived_deliveries' %}" class="btn btn-gray mt-3">View Archived Orders</a>
-
             {% for order in page %}
 
-                <li class="content__item flex-col">
+                <li class="content__item flex-col bg-gray">
                     <div class="pending-card__grid">
                         <div class="pending-card__info">
                             <h4>Delivery Date: {{ order.delivery_date_formated }}</h4>

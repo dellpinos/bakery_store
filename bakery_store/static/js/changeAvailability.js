@@ -4,7 +4,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('#dashboard-product-list')) {
             
-
             const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const btns = document.querySelectorAll('.list-availability__btn');
             
@@ -28,19 +27,25 @@
                     }
                 });
 
-                const result = await response.json();
+                if (response.ok) {
+                    const result = await response.json();
 
-                if (result.item) {
-                    if (result.item.availability) {
-                        btn.classList.remove('content__btn-disabled');
-                        btn.classList.add('content__btn-enabled');
-                        btn.textContent = "Enabled";
-                    } else {
-                        btn.classList.remove('content__btn-enabled');
-                        btn.classList.add('content__btn-disabled');
-                        btn.textContent = "Disabled";
+                    if (result.item) {
+                        if (result.item.availability) {
+                            btn.classList.remove('content__btn-disabled');
+                            btn.classList.add('content__btn-enabled');
+                            btn.textContent = "Enabled";
+                        } else {
+                            btn.classList.remove('content__btn-enabled');
+                            btn.classList.add('content__btn-disabled');
+                            btn.textContent = "Disabled";
+                        }
                     }
+                } else {
+                    const result = await response.json();
+                    alert( result.error);
                 }
+
             } catch (error) {
                 throw new Error(error);
             }

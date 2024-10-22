@@ -93,7 +93,7 @@ def checkout(request):
 @login_required
 def pending_orders(request):
     
-    orders = Order.objects.filter(seller_user = request.user, deleted_at = None).all()
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)
@@ -127,11 +127,49 @@ def pending_orders(request):
         "page": page
     })
 
+# Archived Orders view (seller)
+@login_required
+def archived_orders(request):
+    
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = True)
+
+    for order in orders:
+        order_products = order.products.filter(deleted_at = None)
+        order.products_list = []
+        order.total_products = 0
+        order.delivery_date_formated = order.delivery_date.strftime('%m/%d/%Y')
+        order.purchance_date_formated = order.created_at.strftime('%m/%d/%Y %H:%M hs')
+
+        for prod in order_products:
+            order.total_products += prod.quantity
+            order.products_list.append(
+                {
+                    "name" : prod.product.name,
+                    "quantity" : prod.quantity,
+                    "id" : prod.product.id
+                }
+            )
+
+    # Paginator
+    p = Paginator(orders, 5) # NOTE: Items per page
+
+    if request.GET.get('page'):
+        # Get the page number from the request
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+
+    page = p.page(page_number)
+
+    return render(request, 'orders/archived.html', {
+        "page": page
+    })
+
 # Pending Orders view (buyer)
 @login_required
 def pending_deliveries(request):
 
-    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None).all()
+    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = False)
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)
@@ -162,6 +200,44 @@ def pending_deliveries(request):
     page = p.page(page_number)
 
     return render(request, 'orders/pending_deliveries.html', {
+        "page": page
+    })
+
+# Archived Orders view (buyer)
+@login_required
+def archived_deliveries(request):
+
+    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = True)
+
+    for order in orders:
+        order_products = order.products.filter(deleted_at = None)
+        order.products_list = []
+        order.total_products = 0
+        order.delivery_date_formated = order.delivery_date.strftime('%m/%d/%Y')
+        order.purchance_date_formated = order.created_at.strftime('%m/%d/%Y %H:%M hs')
+
+        for prod in order_products:
+            order.total_products += prod.quantity
+            order.products_list.append(
+                {
+                    "name" : prod.product.name,
+                    "quantity" : prod.quantity,
+                    "id" : prod.product.id
+                }
+            )
+
+    # Paginator
+    p = Paginator(orders, 5) # NOTE: Items per page
+
+    if request.GET.get('page'):
+        # Get the page number from the request
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+
+    page = p.page(page_number)
+
+    return render(request, 'orders/archived_deliveries.html', {
         "page": page
     })
 
@@ -346,7 +422,7 @@ def create_order(request):
                         for product_cart in products_cart:
                             product_cart.delete()
 
-                        return JsonResponse({'status': 'error', 'message': f"The {prod_db.name} is not available"}, status=400)
+                        return JsonResponse({'status': 'error', 'message': f"The '{prod_db.name}' is not available"}, status=400)
                 except ValueError:
                     return JsonResponse({'status': 'error', 'message': 'Invalid date format. Please use YYYY-MM-DD.'}, status=400)
                 except KeyError:
@@ -425,6 +501,7 @@ def delete_order(request, order):
     order_db = Order.objects.filter(pk = order, deleted_at = None).first()
 
     if( order_db and order_db.seller_user == request.user):
+
         order_db.deleted_at = timezone.now()
         order_db.save()
         return JsonResponse({'status': 'success'}, status = 200)
@@ -438,6 +515,18 @@ def confirm_order(request, order):
 
     if( order_db and order_db.seller_user == request.user):
         order_db.status = True
+        order_db.save()
+        return JsonResponse({'status': 'success'}, status = 200)
+    else:
+        return JsonResponse({'status': 'error'}, status = 400)
+    
+# Archive order
+def archive_order(request, order):
+
+    order_db = Order.objects.filter(pk = order, deleted_at = None).first()
+
+    if( order_db and order_db.seller_user == request.user):
+        order_db.archived = True
         order_db.save()
         return JsonResponse({'status': 'success'}, status = 200)
     else:
