@@ -380,6 +380,7 @@ textarea {
 .header__nav-link {
     color: var(--white);
     transition: color .3s ease;
+    padding: 1.9rem 0;
 }
 
 .header__nav-link:hover {
