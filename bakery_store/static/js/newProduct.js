@@ -42,7 +42,7 @@
             customPrice.addEventListener('input', () => {
                 if (ingredientsCost !== 0) {
                     const price = customPrice.value ? customPrice.value : 0;
-                    totalPrice.textContent = '$' + (parseFloat(price) + parseFloat(ingredientsCost)).toFixed(2);
+                    totalPrice.textContent = formatPrice(parseFloat(price) + parseFloat(ingredientsCost));
                 }
             });
 
@@ -124,13 +124,13 @@
                 const actualCost = parseFloat(((data.quantity * data.price) / data.size).toFixed(2));
                 const item = document.createElement('LI');
 
-                item.textContent = `${data.quantity}${data.unit_measure} of ${data.name} - $${actualCost}`;
+                item.textContent = `${data.quantity}${data.unit_measure} of ${data.name} - ${formatPrice(actualCost)}`;
                 ingredientsCost += actualCost;
 
                 if (customPrice.value) {
-                    totalPrice.textContent = '$' + (parseFloat(customPrice.value) + parseFloat(ingredientsCost)).toFixed(2);
+                    totalPrice.textContent = formatPrice(parseFloat(customPrice.value) + parseFloat(ingredientsCost));
                 } else {
-                    totalPrice.textContent = '$' + (parseFloat(ingredientsCost)).toFixed(2);
+                    totalPrice.textContent = formatPrice(parseFloat(ingredientsCost));
                 }
 
                 item.addEventListener('click', (e) => {
@@ -138,9 +138,9 @@
                     hidden.remove();
                     ingredientsCost -= actualCost;
                     if (customPrice.value) {
-                        totalPrice.textContent = '$' + (parseFloat(customPrice.value) + parseFloat(ingredientsCost)).toFixed(2);
+                        totalPrice.textContent = formatPrice(parseFloat(customPrice.value) + parseFloat(ingredientsCost));
                     } else {
-                        totalPrice.textContent = '$' + (parseFloat(ingredientsCost)).toFixed(2);
+                        totalPrice.textContent = formatPrice(parseFloat(ingredientsCost));
                     }
                     itemCounter--;
                     if (itemCounter !== 0) {
@@ -151,6 +151,12 @@
                 });
 
                 return item;
+            }
+
+            function formatPrice(price) {
+                return parseInt(price).toLocaleString('en-US', { 
+                    style: 'currency', currency: 'USD' 
+                })
             }
         }
     });

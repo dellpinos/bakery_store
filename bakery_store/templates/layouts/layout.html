@@ -15,14 +15,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     <link href="{% static 'styles/app.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/app.js' %}" type="module"></script>
 
     <meta name="csrf-token" content="{{ csrf_token }}">
     {% block head %}
     
     {% endblock %}
     {% block script %}
-        <script src="{% static 'js/app.js' %}" type="module"></script>
+
     {% endblock %}
+  
   </head>
   <body class="body-pos">
     <header class="header">
@@ -55,7 +57,7 @@
                 <p id="header-cart-icon" ></p>
             </a>
             <a href="{% url 'dashboard' %}" class="header__nav-link" >Dashboard</a>
-            <a href="#" class="header__nav-link header__nav-link--logout">Log Out</a>
+            <a href="{% url 'logout' %}" class="header__nav-link header__nav-link--logout">Log Out</a>
           {% else %}
             <a href="{% url 'login' %}" class="header__nav-link {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">Log In</a>
             <a href="{% url 'register' %}" class="header__nav-link {% if request.resolver_match.url_name == 'register' %}header__nav-link--active{% endif %}">Register</a>

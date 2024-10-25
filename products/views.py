@@ -314,7 +314,7 @@ def new_product(request):
         })
     
 
-# Edict product form
+# Edit product form
 @login_required
 def edit_product(request, product):
 

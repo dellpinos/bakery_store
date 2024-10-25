@@ -351,7 +351,7 @@ textarea {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 9; /*      << << << << <<      */
 }
 
 .header__username {
@@ -819,14 +819,20 @@ footer {
 }
 
 .product-card__img-container {
-    overflow: hidden;
+    
     border-radius: 1rem;
-
+    width: 100%;
+    max-height: 45rem;
+    overflow: hidden;
 }
 
 .product-card__img {
+
+    transition: transform .3s ease; 
     max-width: 100%;
-    transition: transform .3s ease;
+    overflow-y: hidden;
+    max-height: fit-content;
+    object-fit: cover;
     
 }
 
@@ -963,12 +969,24 @@ footer {
     grid-template-columns: 1fr 1fr;
     align-items: center;
 
-
-
 }
 
-.show-product__card .product-card__img {
-    width: 70rem;
+.show-product__img-container {
+    
+    border-radius: 1rem;
+
+    width: 60rem;
+    height: 45rem;
+    overflow: hidden;
+}
+
+
+.show-product__img {
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    
 }
 
 .show-product__card .product-card__price {
@@ -1123,32 +1141,6 @@ footer {
     font-family: var(--logoFont);
     text-shadow: 0 0 15px var(--darkYellow);
 }
-
-
-
-/* <div class="checkout__card">
-<div class="flex">
-    <img src="#" alt="#">
-    <div class="checkout__card-desc">
-        <h4>Name</h4>
-        <p>Description</p>
-    </div>
-</div>
-
-<div class="checkout__card-info">
-    <div class="form__field">
-        <label for="#">Quantity</label>
-        <select name="#" id="#" class="form__input">
-            <option value="#">1</option>
-            <option value="#">2</option>
-            <option value="#">3</option>
-        </select>
-    </div>
-
-    <p>price</p>
-    <p>production time</p>
-</div>
-</div> */
 
 .checkout__grid {
     display: flex;

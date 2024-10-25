@@ -21,7 +21,7 @@
         <ul class="content__list" id="dashboard-product-list">
             {% for product in page %}
             <li class="content__item">
-                    <p>{{ product.name }} - ${{ product.total_price }}</p>
+                    <p>{{ product.name }} - <span class="format-price">{{ product.total_price }}</span></p>
 
                 <div class="content__item-btns">
                     {% if product.availability %}
@@ -41,7 +41,7 @@
         </ul>
     </div>
 
-    {% if page|length > 0 %}
+    {% if page|length > 1 %}
         <div class="pagination">
             <span class="step-links">
                 {% if page.has_previous %}

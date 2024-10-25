@@ -21,14 +21,14 @@
             <div class="show-product__card">
                 <div>
                     <h4 class="heading-xs">{{ product.name }}</h4>
-                    <div class="product-card__img-container">
-                        <img src="{{ product.image }}" alt="{{product.name}} Image" width="500" class="product-card__img">
+                    <div class="show-product__img-container">
+                        <img src="{{ product.image }}" alt="{{product.name}} Image" width="500" class="show-product__img">
                     </div>
                 </div>
 
                 <div class="flex-col">
                     <p>{{ product.description }}</p>
-                    <p class="product-card__price">${{ product.total_price }}</p>
+                    <p class="product-card__price format-price">{{ product.total_price }}</p>
                     <p>Production time: {{ product.production_time }} days</p>
 
                     {% if user.is_authenticated and user != product.seller_user and not in_cart %}

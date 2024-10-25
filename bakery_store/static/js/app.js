@@ -156,7 +156,7 @@
             const prices = document.querySelectorAll('.format-price');
             prices.forEach(price => {
                 price.textContent = formatPrice(price.textContent);
-            })
+            });
         }
 
         function formatPrice(price) {
