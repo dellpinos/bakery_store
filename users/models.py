@@ -30,7 +30,7 @@ class Notification(models.Model):
         ('message', 'Message Notification'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "notifications")
     notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
     message = models.TextField()
     is_read = models.BooleanField(default=False)

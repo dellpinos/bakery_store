@@ -7,6 +7,7 @@
 
 {% block body %}
 
+
     <h3 class="heading">
     {% if cart_seller %} 
         {{ cart_seller.username }} Products
@@ -20,6 +21,8 @@
     {% if message %}
         <div class="msg-error">{{ message }}</div>
     {% endif %}
+
+
 
     <div class="home__grid">
         {% for item in products %}
@@ -36,17 +39,8 @@
                     <p>Production time: {{ item.production_time }} days</p>
                 </div>
             </a>
-            {% if forloop.counter|divisibleby:3 %}
-                <div class="common-section banner-grid">
-
-                    {% for category in categories %}
-                        <a href="{% url 'home_filtered' category.id %}" class="common-sectiom__item-container">
-                            <div class="common-section__img-container">
-                                <img src="{% static 'img/categories/' %}{{ category.image }}.svg" alt="Category {{ category.name }} Icon" class="common-section__item">
-                            </div>
-                                <p class="common-section__item-txt">{{ category.name }}</p>
-                        </a>
-                    {% endfor %}
+            {% if forloop.counter|divisibleby:6 %}
+                <div class="common-section banner-grid common-section__w-img common-section__img-1">
 
                 </div>
             {% endif %}

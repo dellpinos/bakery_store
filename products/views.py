@@ -102,7 +102,8 @@ def home_filtered(request, category):
     if not category:
         return HttpResponseRedirect(reverse("index", {
                 "message": "Invalid category"
-            }))
+        }))
+    
     
     # User Cart
     cart_seller = None
@@ -249,11 +250,14 @@ def show_product(request, product):
         except Cart.DoesNotExist:
             pass
 
+    categories = Category.objects.all()
+
     return render(request, "home/show_product.html", {
         "product": product,
         "related_products": products,
         "in_cart": in_cart,
-        "cart_seller_id": cart_seller_id
+        "cart_seller_id": cart_seller_id,
+        "categories" : categories
     })
 
 

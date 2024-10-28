@@ -12,15 +12,17 @@ class Order(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True)
     status = models.BooleanField(default = False)
     archived = models.BooleanField(default = False)
+    token = models.CharField(max_length = 8, unique = True)
 
     def serialize(self):
         return {
             "buyer_user": self.buyer_user,
             "total_amount": self.total_amount,
-            "delivery_date": self.delivery_date
+            "delivery_date": self.delivery_date,
+            "token": self.token
         }
     def __str__(self):
-        return f"Id: {self.id}, Total: ${self.total_amount}, Delivery at: {self.delivery_date}"
+        return f"Id: {self.id}, Total: ${self.total_amount}, Delivery at: {self.delivery_date}, Toke: {self.token}"
 
 
 class OrderProduct(models.Model):

@@ -48,10 +48,21 @@
                     <ul class="cart__list" id="cart-header-list"></ul>
                 </div>
             </buttom>
-            <buttom class="header__cart-icon-container">
-                <img src="{% static 'img/bell.svg' %}" alt="Cart Icon" class="header__cart-icon">
-                <p id="header-cart-icon" ></p>
+
+
+            <buttom class="header__cart-icon-container" id="header-notif-btn">
+                <img src="{% static 'img/bell.svg' %}" alt="Notification Icon" class="header__cart-icon">
+                <p id="header-notif-icon" ></p>
+
+                <div class="cart__triangle d-none" id="notif-triangle"></div>
+                <div class="cart d-none" id="notif-header">
+                    <h3 class="cart__heading">Your notificationss</h3>
+                    <ul class="cart__list" id="notif-header-list"></ul>
+                </div>
             </buttom>
+
+
+
             <a href="{% url 'pending_deliveries' %}" class="header__cart-icon-container {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">
                 <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__cart-icon">
                 <p id="header-cart-icon" ></p>
@@ -73,13 +84,17 @@
 
 
 
-
-
-
-
-
     </header>
-            <div class="categories-section">
+    {% if user.is_authenticated %}
+        <div class="categories-section">
+
+            
+            <a href="/" class="categories-sectiom__item-container">
+                <div class="categories-section__img-container">
+                    <img src="{% static 'img/categories/' %}add.svg" alt="Category All Icon" class="categories-section__item">
+                </div>
+                <p class="categories-section__item-txt">All</p>
+            </a>
 
             {% for category in categories %}
                 <a href="{% url 'home_filtered' category.id %}" class="categories-sectiom__item-container">
@@ -91,6 +106,7 @@
             {% endfor %}
 
         </div>
+    {% endif %}
 
 
         {% if cart_seller %} 

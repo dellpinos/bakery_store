@@ -10,6 +10,8 @@ from django.db.models import Sum
 from datetime import datetime, timedelta
 from .models import Cart, CartProduct, Order, OrderProduct
 from products.models import Product
+from users.models import Notification
+from .utils import generate_unique_token
 
 # Checkout view
 @login_required
@@ -469,12 +471,16 @@ def create_order(request):
         if count_previous_products + order_total_quantity > max_prod_per_day:
             return JsonResponse({'status': 'error', 'message': 'Invalid quantity'}, status = 400)
         
+        # Generates unique token
+        token = generate_unique_token()
+
         # Creates order
         order = Order(
             buyer_user = request.user,
             seller_user = seller_user,
             total_amount = order_total_amount,
-            delivery_date = date_obj
+            delivery_date = date_obj,
+            token = token
         )
         order.save()
 
@@ -490,6 +496,23 @@ def create_order(request):
         user_cart = request.user.cart.get()
         user_cart.delete() 
 
+        # Create Notifications
+        notification_seller = Notification(
+            user = seller_user,
+            notification_type = 'order',
+            message = "You have a new order awaiting your approval. Please review it under 'Pending Orders' and update the order status as soon as possible."
+        )
+        
+        notification_seller.save()
+
+        notification_buyer = Notification(
+            user = request.user,
+            notification_type = 'order',
+            message = "Your order has been submitted to the seller. Please wait for their approval. We will notify you once the order status is updated."
+        )
+
+        notification_buyer.save()
+
         return JsonResponse({'status': 'success', 'order_id': order.id}, status = 200)
     else:
         return JsonResponse({'status': 'error'}, status = 403)
@@ -504,6 +527,24 @@ def delete_order(request, order):
 
         order_db.deleted_at = timezone.now()
         order_db.save()
+
+        # Create Notifications
+        notification_seller = Notification(
+            user = order_db.seller_user,
+            notification_type = 'order',
+            message = f"The order {order_db.token} has been deleted."
+        )
+        
+        notification_seller.save()
+
+        notification_buyer = Notification(
+            user = order_db.buyer_user,
+            notification_type = 'order',
+            message = f"The order {order_db.token} has been deleted."
+        )
+
+        notification_buyer.save()
+
         return JsonResponse({'status': 'success'}, status = 200)
     else:
         return JsonResponse({'status': 'error'}, status = 400)
@@ -516,6 +557,24 @@ def confirm_order(request, order):
     if( order_db and order_db.seller_user == request.user):
         order_db.status = True
         order_db.save()
+
+        # Create Notifications
+        notification_seller = Notification(
+            user = order_db.seller_user,
+            notification_type = 'order',
+            message = f"The order {order_db.token} has been confirmed."
+        )
+        
+        notification_seller.save()
+
+        notification_buyer = Notification(
+            user = order_db.buyer_user,
+            notification_type = 'order',
+            message = f"The order {order_db.token} has been confirmed."
+        )
+
+        notification_buyer.save()
+        
         return JsonResponse({'status': 'success'}, status = 200)
     else:
         return JsonResponse({'status': 'error'}, status = 400)

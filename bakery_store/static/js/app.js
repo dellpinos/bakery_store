@@ -1,8 +1,9 @@
 (function () {
 
-    // Cart
+    // Cart & Notifications
     document.addEventListener('DOMContentLoaded', () => {
-
+        
+        // Cart
         const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         // Gives format to all prices
         formatAllPrices();
@@ -164,5 +165,26 @@
                 style: 'currency', currency: 'USD' 
             })
         }
+
+        // Notifications
+
+
+        if (document.querySelector('#header-notif-icon')) {
+
+            const notifIcon = document.querySelector('#header-notif-btn');
+
+            notifIcon.addEventListener('mouseover', () => {
+                document.querySelector('#notif-triangle').classList.remove('d-none');
+                document.querySelector('#notif-header').classList.remove('d-none');
+            });
+
+            notifIcon.addEventListener('mouseout', () => {
+                document.querySelector('#notif-triangle').classList.add('d-none');
+                document.querySelector('#notif-header').classList.add('d-none');
+            });
+
+            // getCart();
+        }
+
     });
 })();

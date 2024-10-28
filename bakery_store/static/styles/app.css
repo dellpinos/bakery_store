@@ -176,6 +176,7 @@ textarea {
 
 .flex {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 2rem;
 }
@@ -562,6 +563,7 @@ footer {
     justify-content: space-around;
     background-color: rgba(var(--darkYellowRgb), 0.8);
 
+    min-height: 25rem;
 
     border: 2px solid var(--orange);
     border-radius: 1rem;
@@ -596,11 +598,11 @@ footer {
 
 
 .common-section__heading {
-    color: var(--white);
+    color: var(--orange);
     font-family: var(--logoFont);
-    text-shadow: 0 0 15px var(--darkYellow);
+    text-shadow: 0 0 15px var(--black);
     font-weight: 700;
-    font-size: 9rem;
+    font-size: 7rem;
     margin: 0;
 }
 
@@ -612,6 +614,25 @@ footer {
     font-family: var(--logoFont);
     margin-top: 1rem;
     font-weight: 700;
+}
+
+.common-section__w-img {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Common section backgrounds */
+.common-section__img-1 {
+    background-image: url('../img/baking.jpg');
+}
+
+.common-section__img-2 {
+    background-image: url('../img/baking2.jpg');
+}
+
+.common-section__img-3 {
+    background-image: url('../img/baking3.jpg');
 }
 
 /* Form - Post & Auth */
