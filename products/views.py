@@ -86,9 +86,58 @@ def home(request):
         for productIngredient in ingredients:
             product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
+    categories = Category.objects.all()
+
     return render(request, "home/index.html", {
         "products": products,
-        "cart_seller": cart_seller
+        "cart_seller": cart_seller,
+        "categories": categories
+    })
+
+# Index filtered by category
+def home_filtered(request, category):
+
+    category_db = Category.objects.filter(pk = category).first()
+
+    if not category:
+        return HttpResponseRedirect(reverse("index", {
+                "message": "Invalid category"
+            }))
+    
+    # User Cart
+    cart_seller = None
+    if request.user.is_authenticated:
+        try:
+            cart = request.user.cart.get()
+            products_cart = cart.products.all()
+
+            for cart_prod in products_cart:
+                cart_seller = cart_prod.product.seller_user
+
+        except Cart.DoesNotExist:
+            pass
+
+    if cart_seller:
+        products = Product.objects.filter(availability = True, seller_user = cart_seller, deleted_at = None, categories__id = category_db.id).order_by('-created_at')
+    else:
+        products = Product.objects.filter(availability=True, deleted_at = None, categories__id = category_db.id).order_by('-created_at')
+
+    # Calculates total price
+    for product in products:
+        ingredients = product.ingredients.filter(deleted_at = None)
+        product.total_price = float(product.subtotal_price)
+
+        for productIngredient in ingredients:
+            product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
+
+    categories = Category.objects.all()
+
+    return render(request, "home/index.html", {
+        "products": products,
+        "cart_seller": cart_seller,
+        "categories": categories,
+        "category": category_db
+
     })
 
 # Returns the show view of a random product
@@ -135,9 +184,12 @@ def random_product(request):
 
         missing_products -= 1
 
+    categories = Category.objects.all()
+
     return render(request, "home/show_product.html", {
         "product": product,
-        "related_products": products
+        "related_products": products,
+        "categories": categories
     })
 
 # View that displays all the information of a product (show view)

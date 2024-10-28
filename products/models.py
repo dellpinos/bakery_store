@@ -3,16 +3,18 @@ from users.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=60)
+    image = models.CharField(max_length=30, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "image": self.image
         }
     
     def __str__(self):
-        return f"Category name: {self.name}"
+        return f"Category name: {self.name}, image: {self.image}"
 
 
 class Ingredient(models.Model):

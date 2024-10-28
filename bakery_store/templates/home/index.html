@@ -10,6 +10,9 @@
     <h3 class="heading">
     {% if cart_seller %} 
         {{ cart_seller.username }} Products
+
+    {% elif category %}
+        {{ category.name }}
     {% else %}
         All Products
     {% endif %}</h3>
@@ -21,6 +24,7 @@
     <div class="home__grid">
         {% for item in products %}
 
+
             <a href="{% url 'show_product' item.id %}" class="product-card">
                 <h4>{{ item.name }}</h4>
                 <div class="product-card__img-container">
@@ -31,44 +35,35 @@
                     <p class="product-card__price format-price">{{ item.total_price }}</p>
                     <p>Production time: {{ item.production_time }} days</p>
                 </div>
-                
             </a>
+            {% if forloop.counter|divisibleby:3 %}
+                <div class="common-section banner-grid">
+
+                    {% for category in categories %}
+                        <a href="{% url 'home_filtered' category.id %}" class="common-sectiom__item-container">
+                            <div class="common-section__img-container">
+                                <img src="{% static 'img/categories/' %}{{ category.image }}.svg" alt="Category {{ category.name }} Icon" class="common-section__item">
+                            </div>
+                                <p class="common-section__item-txt">{{ category.name }}</p>
+                        </a>
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+            
         {% endfor %}
     </div>
-    <div class="common-section">
-        <div >
-            <div class="common-section__item-container">
-                <img src="{% static 'img/cake1.svg' %}" alt="Cart Icon" class="common-section__item">
-            </div>
-                <p class="common-section__item-txt">Cakes</p>
-        </div>
-        <div >
-            <div class="common-section__item-container">
-                <img src="{% static 'img/croissant.svg' %}" alt="Cart Icon" class="common-section__item">
-            </div>
-            <p class="common-section__item-txt">Bakery</p>
-        </div>
-        <div >
-            <div class="common-section__item-container">
-                <img src="{% static 'img/cake2.svg' %}" alt="Cart Icon" class="common-section__item">
-            </div>
-            <p class="common-section__item-txt">Speciality Cakes</p>
-        </div>
-        <div >
-            <div class="common-section__item-container">
-                <img src="{% static 'img/cupcake.svg' %}" alt="Cart Icon" class="common-section__item">
-            </div>
-            <p class="common-section__item-txt">Cupcakes</p>
-        </div>
-    </div>
 
-    <div class="common-section">
+    {% if not products %}
+        <p class="msg-empty">There are no products to show. <a href=" {% url 'index' %}" class="c-yel">Back to all products.</a></p>
+    {% endif %}
+    {% comment %} <div class="common-section">
         <h2 class="common-section__heading">Surprise Selection!</h2>
         <div class="common-section__item-container">
             <a href="{% url 'random_product' %}" >
                 <img src="{% static 'img/box.svg' %}" alt="Cart Icon" class="common-section__item scale">
             </a>
         </div>
-    </div>
+    </div> {% endcomment %}
 
 {% endblock %}

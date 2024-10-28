@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     # Public
     path('', views.home, name='index'),
+    path('<int:category>/', views.home_filtered, name='home_filtered'),
     path('show_product/<int:product>/', views.show_product, name="show_product"),
 
     # Dashboard

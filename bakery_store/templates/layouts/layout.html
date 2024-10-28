@@ -71,7 +71,28 @@
         </a>
       </div>
 
+
+
+
+
+
+
+
     </header>
+            <div class="categories-section">
+
+            {% for category in categories %}
+                <a href="{% url 'home_filtered' category.id %}" class="categories-sectiom__item-container">
+                    <div class="categories-section__img-container">
+                        <img src="{% static 'img/categories/' %}{{ category.image }}.svg" alt="Category {{ category.name }} Icon" class="categories-section__item">
+                    </div>
+                    <p class="categories-section__item-txt">{{ category.name }}</p>
+                </a>
+            {% endfor %}
+
+        </div>
+
+
         {% if cart_seller %} 
             <p class="header__msg" >You are viewing <span>{{ cart_seller.username }}</span>'s products. You need to finish your order to purchase products from other sellers.</p>
         {% endif %}
