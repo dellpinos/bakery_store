@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 import re
-from users.models import User
+from users.models import User, Notification
 
 def login_view(request):
     if request.method == "POST":
@@ -65,3 +66,47 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auth/register.html")
+
+## API ##
+
+# Get user's notifications
+@login_required
+def get_notifications(request):
+
+    notifications = request.user.notifications.filter(is_read = False)
+
+    if not notifications:
+        return JsonResponse({
+            "msg" : "There is no notifications",
+            "response" : 0
+            }, status = 200
+        )
+
+    serialized_notifications = []
+
+    for notification in notifications:
+        serialized_notifications.append(notification.serialize())
+
+    return JsonResponse({
+        "response": notifications.count(),
+        "notifications": serialized_notifications
+    })
+
+# Deletes notification
+@login_required
+def delete_notification(request, id):
+
+    notif = Notification.objects.filter(pk = id, user = request.user).first()
+
+    if not notif:
+        return JsonResponse({
+            "msg" : "Something was wrong"
+            }, status = 404
+        )
+
+    notif.delete()
+
+    return JsonResponse({
+        "msg" : "Notification deleted"
+        }, status = 200
+    )

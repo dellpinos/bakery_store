@@ -5,7 +5,6 @@ from ..models import Category
 
 def create_categories(apps, schema_editor):
 
-    Category.objects.create(name="All", image="add")
     Category.objects.create(name="Cakes", image="cake1")
     Category.objects.create(name="Bakery", image="croissant")
     Category.objects.create(name="Pies", image="pie")
@@ -16,22 +15,17 @@ def create_categories(apps, schema_editor):
     Category.objects.create(name="Specialty Cakes", image="cake2")
 
 
+def reverse_create_categories(apps, schema_editor):
+    Category = apps.get_model('products', 'Category')
+    Category.objects.filter(name__in=[
+        "Cakes", "Bakery", "Pies", "Cookies", "Cupcakes", "Desserts", "Vegan", "Specialty Cakes"
+    ]).delete()
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('products', '0013_category_image'),
     ]
-    
+
     operations = [
-        migrations.RunPython(create_categories),
+        migrations.RunPython(create_categories, reverse_create_categories),
     ]
-
-
-
-
-
-
-
-
-

@@ -140,15 +140,15 @@
         function formatItem(product) {
 
             const item = document.createElement('LI');
-            item.classList.add("cart__item");
+            item.classList.add("popup__item");
             item.innerHTML = `
                 <img src="${product.image}" alt="${product.name}">
-                <div class="cart__desc">
+                <div class="popup__desc ellipsis">
                     <p>${product.name}</p>
                     <p>${formatPrice(product.price)}</p>
                     <p>Production time: ${product.production_time} days</p>
                 </div>
-        `;
+            `;
             return item;
         }
 
@@ -183,7 +183,110 @@
                 document.querySelector('#notif-header').classList.add('d-none');
             });
 
-            // getCart();
+            getNotifications();
+        }
+        async function getNotifications() {
+
+            const counter = document.querySelector('#header-notif-icon');
+
+            const url = `/users/api/notifications/`;
+            try {
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    }
+                });
+                const result = await response.json();
+
+                if (result.response > 0) {
+                    counter.textContent = result.response;
+                } else {
+                    counter.textContent = '';
+                }
+
+                notifFormat(result);
+                return true;
+
+            } catch (error) {
+                throw Error('Something went wrong.')
+            }
+        };
+
+        function notifFormat(data) {
+            
+            const list = document.querySelector('#notif-header-list');
+
+            if (data.response > 0) {
+
+                const cart = document.querySelector('#notif-header');
+
+                // Deletes previous elements
+                list.innerHTML = '';
+                if (cart.querySelector('.btn')) {
+                    cart.querySelector('.btn').remove();
+                }
+
+                data.notifications.forEach(notif => {
+                    const item = formatNotifItem(notif);
+                    list.appendChild(item);
+
+                });
+
+                // const cartButton = document.createElement('A');
+                // cartButton.href = '/orders/checkout';
+
+                // cartButton.classList.add("btn");
+                // cartButton.textContent = "Checkout";
+                // cart.appendChild(cartButton);
+
+            } else {
+                list.innerHTML = `
+                <p class="msg-empty">There are no notifications to show</p>
+            `;
+            }
+        }
+        function formatNotifItem(notif) {
+
+            const item = document.createElement('LI');
+            item.classList.add("popup__item");
+
+            const btn = document.createElement('BUTTON');
+            btn.classList.add('popup__close');
+            btn.textContent = 'X';
+
+            const cont = document.createElement('DIV');
+            cont.classList.add('popup__desc');
+
+            const msg = document.createElement('P');
+            msg.textContent = notif.message
+
+            cont.appendChild(msg);
+
+            item.appendChild(btn);
+            item.appendChild(cont);
+
+            btn.addEventListener('click', async () => {
+
+                const url = `/users/api/notification_delete/${notif.id}`;
+                try {
+                    const response = await fetch(url, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken,
+                        }
+                    });
+                    await response.json();
+
+                    getNotifications();
+
+                } catch (error) {
+                    
+                }
+            })
+
+            return item;
         }
 
     });

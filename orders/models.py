@@ -2,7 +2,6 @@ from django.db import models
 from users.models import User
 from products.models import Product
 
-
 class Order(models.Model):
     buyer_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "buyer_orders")
     seller_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "seller_orders")
@@ -16,7 +15,7 @@ class Order(models.Model):
 
     def serialize(self):
         return {
-            "buyer_user": self.buyer_user,
+            "buyer_user": self.buyer_user.username,
             "total_amount": self.total_amount,
             "delivery_date": self.delivery_date,
             "token": self.token
@@ -34,7 +33,7 @@ class OrderProduct(models.Model):
 
     def serialize(self):
         return {
-            "product": self.product,
+            "product": self.product.name,
             "quantity": self.quantity,
             "order": self.order
         }
@@ -60,8 +59,8 @@ class CartProduct(models.Model):
 
     def serialize(self):
         return {
-            "product": self.product,
-            "cart": self.cart,
+            "product": self.product.name,
+            "cart": self.cart.user.username,
             "quantity": self.quantity,
             "created_at": self.created_at
         }

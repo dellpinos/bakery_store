@@ -39,32 +39,32 @@
           {% comment %} <a href="#" class="header__nav-link {% if request.resolver_match.url_name == 'index' %}header__nav-link--active{% endif %}">All Posts</a> {% endcomment %}
 
           {% if user.is_authenticated %}
-            <buttom class="header__cart-icon-container" id="header-cart-btn">
-                <img src="{% static 'img/cart.svg' %}" alt="Cart Icon" class="header__cart-icon">
+            <buttom class="header__popup-icon-container" id="header-cart-btn">
+                <img src="{% static 'img/cart.svg' %}" alt="Cart Icon" class="header__popup-icon">
                 <p id="header-cart-icon" ></p>
-                <div class="cart__triangle d-none" id="cart-triangle"></div>
-                <div class="cart d-none" id="cart-header">
-                    <h3 class="cart__heading">Your cart</h3>
-                    <ul class="cart__list" id="cart-header-list"></ul>
+                <div class="popup__triangle d-none" id="cart-triangle"></div>
+                <div class="popup d-none" id="cart-header">
+                    <h3 class="popup__heading">Your cart</h3>
+                    <ul class="popup__list" id="cart-header-list"></ul>
                 </div>
             </buttom>
 
 
-            <buttom class="header__cart-icon-container" id="header-notif-btn">
-                <img src="{% static 'img/bell.svg' %}" alt="Notification Icon" class="header__cart-icon">
+            <buttom class="header__popup-icon-container" id="header-notif-btn">
+                <img src="{% static 'img/bell.svg' %}" alt="Notification Icon" class="header__popup-icon">
                 <p id="header-notif-icon" ></p>
 
-                <div class="cart__triangle d-none" id="notif-triangle"></div>
-                <div class="cart d-none" id="notif-header">
-                    <h3 class="cart__heading">Your notificationss</h3>
-                    <ul class="cart__list" id="notif-header-list"></ul>
+                <div class="popup__triangle d-none" id="notif-triangle"></div>
+                <div class="popup d-none" id="notif-header">
+                    <h3 class="popup__heading">Your notifications</h3>
+                    <ul class="popup__list" id="notif-header-list"></ul>
                 </div>
             </buttom>
 
 
 
-            <a href="{% url 'pending_deliveries' %}" class="header__cart-icon-container {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">
-                <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__cart-icon">
+            <a href="{% url 'pending_deliveries' %}" class="header__popup-icon-container {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">
+                <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__popup-icon">
                 <p id="header-cart-icon" ></p>
             </a>
             <a href="{% url 'dashboard' %}" class="header__nav-link" >Dashboard</a>
@@ -85,6 +85,10 @@
 
 
     </header>
+    {% if cart_seller %} 
+        <p class="header__msg" >You are viewing <span>{{ cart_seller.username }}</span>'s products. You need to finish your order to purchase products from other sellers.</p>
+    {% endif %}
+    
     {% if user.is_authenticated %}
         <div class="categories-section">
 
@@ -109,9 +113,7 @@
     {% endif %}
 
 
-        {% if cart_seller %} 
-            <p class="header__msg" >You are viewing <span>{{ cart_seller.username }}</span>'s products. You need to finish your order to purchase products from other sellers.</p>
-        {% endif %}
+
 
     <main>
       {% block body %}
