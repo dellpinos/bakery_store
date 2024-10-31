@@ -142,7 +142,9 @@
             const item = document.createElement('LI');
             item.classList.add("popup__item");
             item.innerHTML = `
-                <img src="${product.image}" alt="${product.name}">
+                <div class="popup__img-cont">
+                    <img src="${product.image}" alt="${product.name}">
+                </div>
                 <div class="popup__desc ellipsis">
                     <p>${product.name}</p>
                     <p>${formatPrice(product.price)}</p>
@@ -168,7 +170,6 @@
 
         // Notifications
 
-
         if (document.querySelector('#header-notif-icon')) {
 
             const notifIcon = document.querySelector('#header-notif-btn');
@@ -176,16 +177,19 @@
             notifIcon.addEventListener('mouseover', () => {
                 document.querySelector('#notif-triangle').classList.remove('d-none');
                 document.querySelector('#notif-header').classList.remove('d-none');
+
             });
 
-            notifIcon.addEventListener('mouseout', () => {
+            notifIcon.addEventListener('mouseleave', () => {
                 document.querySelector('#notif-triangle').classList.add('d-none');
                 document.querySelector('#notif-header').classList.add('d-none');
+                getNotifications();
             });
 
             getNotifications();
         }
         async function getNotifications() {
+
 
             const counter = document.querySelector('#header-notif-icon');
 
@@ -207,6 +211,7 @@
                 }
 
                 notifFormat(result);
+
                 return true;
 
             } catch (error) {
@@ -217,31 +222,25 @@
         function notifFormat(data) {
             
             const list = document.querySelector('#notif-header-list');
-
-            if (data.response > 0) {
-
+            
+            if (data.notifications.length > 0) {
+                
                 const cart = document.querySelector('#notif-header');
-
+                
                 // Deletes previous elements
                 list.innerHTML = '';
                 if (cart.querySelector('.btn')) {
                     cart.querySelector('.btn').remove();
                 }
-
+                
+                console.log(data)
                 data.notifications.forEach(notif => {
                     const item = formatNotifItem(notif);
                     list.appendChild(item);
-
                 });
-
-                // const cartButton = document.createElement('A');
-                // cartButton.href = '/orders/checkout';
-
-                // cartButton.classList.add("btn");
-                // cartButton.textContent = "Checkout";
-                // cart.appendChild(cartButton);
-
+                
             } else {
+
                 list.innerHTML = `
                 <p class="popup__msg-empty">There are no notifications to show</p>
             `;
@@ -249,8 +248,13 @@
         }
         function formatNotifItem(notif) {
 
+            
             const item = document.createElement('LI');
             item.classList.add("popup__item");
+            
+            if( !notif.is_read ) {
+                item.classList.add("popup__item--new");
+            }
 
             const btn = document.createElement('BUTTON');
             btn.classList.add('popup__close');
@@ -267,6 +271,29 @@
             item.appendChild(btn);
             item.appendChild(cont);
 
+            item.addEventListener('mouseover', markAsRead);
+
+            async function markAsRead() {
+                if( notif.is_read ) return
+
+                const url = `/users/api/mark_read/${notif.id}`;
+                try {
+                    const response = await fetch(url, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken,
+                        }
+                    });
+                    await response.json();
+
+                    item.classList.remove("popup__item--new");
+                    item.removeEventListener('mouseover', markAsRead);
+
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
             btn.addEventListener('click', async () => {
 
                 const url = `/users/api/notification_delete/${notif.id}`;
@@ -282,12 +309,10 @@
                     getNotifications();
 
                 } catch (error) {
-                    
+                    console.log(error)
                 }
             })
-
             return item;
         }
-
     });
 })();

@@ -48,7 +48,6 @@
                 </div>
             </buttom>
 
-
             <buttom class="header__popup-icon-container" id="header-notif-btn">
                 <img src="{% static 'img/bell.svg' %}" alt="Notification Icon" class="header__popup-icon">
                 <p id="header-notif-icon" ></p>
@@ -59,8 +58,6 @@
                     <ul class="popup__list" id="notif-header-list"></ul>
                 </div>
             </buttom>
-
-
 
             <a href="{% url 'pending_deliveries' %}" class="header__popup-icon-container {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">
                 <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__popup-icon">

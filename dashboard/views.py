@@ -79,7 +79,7 @@ def all_ingredients(request):
 @login_required
 def settings(request):
 
-    orders = Order.objects.filter(seller_user = request.user, deleted_at = None).all()
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
     pending_dates = []
 
     # Look for pending orders
@@ -214,7 +214,7 @@ def check_dates(request, quantity, user):
     disabled_days = list(seller_user.days_off.values_list('date', flat = True))
 
     # Look for all orders
-    prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None)
+    prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None, archived = False)
 
     # Iterates all orders to get a list of elements (date, order.id and total_quantity)
     order_products_summary = []

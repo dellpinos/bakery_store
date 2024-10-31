@@ -73,11 +73,13 @@ def register(request):
 @login_required
 def get_notifications(request):
 
-    notifications = request.user.notifications.filter(is_read = False)
+    notifications = request.user.notifications.all()
+    counter = request.user.notifications.filter(is_read = False).count()
 
     if not notifications:
         return JsonResponse({
             "msg" : "There is no notifications",
+            "notifications": [],
             "response" : 0
             }, status = 200
         )
@@ -88,7 +90,7 @@ def get_notifications(request):
         serialized_notifications.append(notification.serialize())
 
     return JsonResponse({
-        "response": notifications.count(),
+        "response": counter,
         "notifications": serialized_notifications
     })
 
@@ -108,5 +110,25 @@ def delete_notification(request, id):
 
     return JsonResponse({
         "msg" : "Notification deleted"
+        }, status = 200
+    )
+
+# Marks a notification as read
+@login_required
+def mark_read_notification(request, id):
+
+    notif = Notification.objects.filter(pk = id, user = request.user).first()
+
+    if not notif:
+        return JsonResponse({
+            "msg" : "Something was wrong"
+            }, status = 404
+        )
+    
+    notif.is_read = True
+    notif.save()
+
+    return JsonResponse({
+        "msg" : "Notification marked as read"
         }, status = 200
     )

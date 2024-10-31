@@ -8,10 +8,11 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     delivery_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add = True)
-    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_at = models.DateTimeField(null = True, blank = True)
     status = models.BooleanField(default = False)
     archived = models.BooleanField(default = False)
     token = models.CharField(max_length = 8, unique = True)
+    recived = models.BooleanField(default = False)
 
     def serialize(self):
         return {
@@ -21,7 +22,7 @@ class Order(models.Model):
             "token": self.token
         }
     def __str__(self):
-        return f"Id: {self.id}, Total: ${self.total_amount}, Delivery at: {self.delivery_date}, Toke: {self.token}"
+        return f"Id: {self.id}, Total: ${self.total_amount}, Delivery at: {self.delivery_date}, Token: {self.token}"
 
 
 class OrderProduct(models.Model):

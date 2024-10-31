@@ -58,10 +58,10 @@ def checkout(request):
     min_date_formatted = (today + timedelta(days=time_zone_correction))
 
     # Look for seller days off
-    disabled_days = seller_user.days_off.values_list('date', flat = True)
+    disabled_days = list(seller_user.days_off.values_list('date', flat = True))
 
     # Look for all orders
-    prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None)
+    prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None, archived = False)
 
     max_prod_per_day = seller_user.max_prod_capacity
 
@@ -470,7 +470,7 @@ def create_order(request):
         if day_off:
             return JsonResponse({'status': 'error', 'message': 'Invalid date'}, status = 400)
 
-        prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None, delivery_date = date_obj)
+        prev_orders = Order.objects.filter(seller_user = seller_user, deleted_at = None, delivery_date = date_obj, archived = False)
         max_prod_per_day = seller_user.max_prod_capacity
 
         # Calculates total quantities
@@ -512,7 +512,7 @@ def create_order(request):
         notification_seller = Notification(
             user = seller_user,
             notification_type = 'order',
-            message = "You have a new order awaiting your approval. Please review it under 'Pending Orders' and update the order status as soon as possible."
+            message = f"You have a new order (#{token}) awaiting your approval. Please review it under 'Pending Orders' and update the order status as soon as possible."
         )
         
         notification_seller.save()
@@ -520,7 +520,7 @@ def create_order(request):
         notification_buyer = Notification(
             user = request.user,
             notification_type = 'order',
-            message = "Your order has been submitted to the seller. Please wait for their approval. We will notify you once the order status is updated."
+            message = f"Your order (#{token}) has been submitted to the seller. Please wait for their approval. We will notify you once the order status is updated."
         )
 
         notification_buyer.save()
@@ -544,7 +544,7 @@ def delete_order(request, order):
         notification_seller = Notification(
             user = order_db.seller_user,
             notification_type = 'order',
-            message = f"The order {order_db.token} has been deleted."
+            message = f"The order #{order_db.token} has been deleted."
         )
         
         notification_seller.save()
@@ -552,7 +552,7 @@ def delete_order(request, order):
         notification_buyer = Notification(
             user = order_db.buyer_user,
             notification_type = 'order',
-            message = f"The order {order_db.token} has been deleted."
+            message = f"The order #{order_db.token} has been canceled by the seller."
         )
 
         notification_buyer.save()
@@ -574,7 +574,7 @@ def confirm_order(request, order):
         notification_seller = Notification(
             user = order_db.seller_user,
             notification_type = 'order',
-            message = f"The order {order_db.token} has been confirmed."
+            message = f"The order #{order_db.token} has been confirmed."
         )
         
         notification_seller.save()
@@ -582,7 +582,7 @@ def confirm_order(request, order):
         notification_buyer = Notification(
             user = order_db.buyer_user,
             notification_type = 'order',
-            message = f"The order {order_db.token} has been confirmed."
+            message = f"The order #{order_db.token} has been confirmed."
         )
 
         notification_buyer.save()
@@ -591,14 +591,63 @@ def confirm_order(request, order):
     else:
         return JsonResponse({'status': 'error'}, status = 400)
     
+# Mark order as recived
+def mark_recived(request, order):
+
+    order_db = Order.objects.filter(pk = order, deleted_at = None).first()
+
+    if( order_db and order_db.buyer_user == request.user):
+        order_db.recived = True
+        order_db.save()
+
+        # Create Notifications
+        notification_seller = Notification(
+            user = order_db.seller_user,
+            notification_type = 'order',
+            message = f"The order #{order_db.token} has been mark as recived."
+        )
+        
+        notification_seller.save()
+
+        notification_buyer = Notification(
+            user = order_db.buyer_user,
+            notification_type = 'order',
+            message = f"The order #{order_db.token} has been mark as recived by the buyer."
+        )
+
+        notification_buyer.save()
+
+        return JsonResponse({'status': 'success'}, status = 200)
+    else:
+        return JsonResponse({'status': 'error'}, status = 400)
+    
+
 # Archive order
 def archive_order(request, order):
 
-    order_db = Order.objects.filter(pk = order, deleted_at = None).first()
+    order_db = Order.objects.filter(pk = order, deleted_at = None, recived = True).first()
 
     if( order_db and order_db.seller_user == request.user):
         order_db.archived = True
         order_db.save()
+
+        # Create Notifications
+        notification_seller = Notification(
+            user = order_db.seller_user,
+            notification_type = 'order',
+            message = f"The order #{order_db.token} has been deleted."
+        )
+        
+        notification_seller.save()
+
+        notification_buyer = Notification(
+            user = order_db.buyer_user,
+            notification_type = 'order',
+            message = f"The order #{order_db.token} has been canceled by the seller."
+        )
+
+        notification_buyer.save()
+
         return JsonResponse({'status': 'success'}, status = 200)
     else:
         return JsonResponse({'status': 'error'}, status = 400)

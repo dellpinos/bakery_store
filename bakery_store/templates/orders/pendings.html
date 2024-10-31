@@ -22,8 +22,11 @@
             <div class="msg-error">{{ message }}</div>
         {% endif %}
 
+        <div class="flex">
+            <a href="{% url 'archived_orders' %}" class="btn btn-gray">View Archived Orders</a>
+        </div>
+
         <ul class="content__list">
-            <a href="{% url 'archived_orders' %}" class="btn btn-gray mt-3">View Archived Orders</a>
 
             {% for order in page %}
 
@@ -36,7 +39,9 @@
                                 <li><span class="bold">Contact:</span> {{ order.buyer_user.email }}</li>
                                 <li><span class="bold">Purchase Date:</span> {{ order.purchance_date_formated }}</li>
                             </ul>
+
                             <p><span class="bold">Total Amount:</span> <span class="format-price">{{ order.total_amount }}</span></p>
+                            <p><span class="bold">Order:</span> #{{ order.token }}</p>
                         </div>
 
                         <div class="pending-card__info">
@@ -53,7 +58,9 @@
                     </div>
                     <div class=" content__btn-cont" id="pending-btn-container" {% if order.status %} style="justify-content: center;"{% endif %}>
                         {% if order.status %}
-                            <button class="content__btn pending__archive" data-id="{{ order.id }}">Archive Order</button>
+                            {% if order.recived %}
+                                <button class="content__btn pending__archive" data-id="{{ order.id }}">Archive Order</button>
+                            {% endif %}
                         {% else %}
                             <button class="content__btn pending__cancel" data-id="{{ order.id }}">Cancel Order</button>
                             <button class="content__btn pending__confirm" data-id="{{ order.id }}">Confirm Order</button>
@@ -68,7 +75,7 @@
         </ul>
     </div>
 
-    {% if page|length > 0 %}
+    {% if page|length > 1 %}
         <div class="pagination">
             <span class="step-links">
                 {% if page.has_previous %}

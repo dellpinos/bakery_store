@@ -5,6 +5,10 @@
     Pending deliveries
 {% endblock %}
 
+{% block script %}
+    <script src="{% static 'js/deliveries.js' %}" type="module"></script>
+{% endblock %}
+
 {% block body %}
 
     <div class="deliveries__container">
@@ -18,9 +22,11 @@
                 <div class="msg-error">{{ error }}</div>
             {% endfor %}
 
-        <a href="{% url 'archived_deliveries' %}" class="btn btn-gray mt-3">View Archived Orders</a>
-        <ul class="content__list">
+        <div class="flex">
+            <a href="{% url 'archived_deliveries' %}" class="btn btn-gray">View Archived Orders</a>
+        </div>
 
+        <ul class="content__list">
 
             {% for order in page %}
 
@@ -34,6 +40,7 @@
                                 <li><span class="bold">Purchase Date:</span> {{ order.purchance_date_formated }}</li>
                             </ul>
                             <p><span class="bold">Total Amount:</span> <span class="format-price">{{ order.total_amount }}</span></p>
+                            <p><span class="bold">Order:</span> #{{ order.token }}</p>
                         </div>
 
                         <div class="pending-card__info">
@@ -48,17 +55,24 @@
                         </div>
 
                     </div>
-                    <p class="deliveries-card__status">Order Status: 
-                    {% if order.status %}
-                        <span class="c-yel bold">Confirmed</span>
-                    {% else %}
-                        <span class="c-black bold">Pending</span>
-                    {% endif %}
 
+                    <p class="deliveries-card__status">Order Status: 
+                        {% if order.status and not order.recived %}
+                            <span class="c-yel bold">Confirmed</span>
+                        {% elif order.recived %}
+                            <span class="c-green bold">Recived</span>
+                        {% else %}
+                            <span class="c-black bold">Pending</span>
+                        {% endif %}
                     </p>
 
+                    <div class=" content__btn-cont" id="recived-btn-container" {% if order.status %} style="justify-content: center;"{% endif %}>
+                        {% if order.status and not order.recived %}
+                            <button class="content__btn deliveries__recived" data-id="{{ order.id }}">Mark as Received</button>
+                        {% endif %}
+                    </div>
+
                 </li>
-                <p>{{ order.products2 }}</p>
 
             {% empty %}
                 <p class="msg-empty">There are no orders to show</p>
@@ -66,7 +80,7 @@
         </ul>
     </div>
 
-    {% if page|length > 0 %}
+    {% if page|length > 1 %}
         <div class="pagination">
             <span class="step-links">
                 {% if page.has_previous %}

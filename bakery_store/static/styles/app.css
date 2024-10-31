@@ -34,7 +34,8 @@
 
     --orange: #ff7360;
     --darkOrange: #c94738;
-    --orange-op: rgba(255, 87, 51, 0.6); /* --orange with opacity */
+    --orangeRgb: 255, 115, 96;
+
 }
 
 /* Scrollbar Styles WebKit (Chrome, Safari, Edge) */
@@ -135,12 +136,20 @@ textarea {
     color: var(--yellow);
 }
 
+.c-green {
+    color: var(--darkGreen);
+}
+
 .center {
     text-align: center;
 }
 
 .mt-3 {
     margin-top: 3rem;
+}
+
+.mb-6 {
+    margin-bottom: 6rem;
 }
 
 .bold {
@@ -282,6 +291,7 @@ textarea {
 }
 
 .btn {
+    display: block;
     border: none;
     background-color: var(--orange);
     padding: 1rem 3rem;
@@ -291,7 +301,7 @@ textarea {
     font-size: 2rem;
     border-radius: 1.5rem;
     cursor: pointer;
-    transition: background-color .8s ease, color .8s ease;
+    transition: background-color .8s ease, color .8s ease, box-shadow .5s ease;
 }
 
 .btn-delete {
@@ -330,8 +340,10 @@ textarea {
 
 .btn-gray {
     background-color: var(--mediumSilver);
-    color: var(--lightGray);
-    box-shadow: 0 0 10px var(--mediumSilver);
+    color: var(--ivory);
+    box-shadow: 0 0 4px 1px var(--lightGray);
+    margin: 5rem 0;
+    font-size: 1.8rem;
 }
 
 .btn-gray:hover {
@@ -566,19 +578,11 @@ textarea {
     color: var(--white);
 }
 
-
-
-
-
-
-
-
-
 /* Footer */
 
 footer {
 
-    padding: 2rem 0;
+    padding: 3rem 0 6rem 0;
     background-color: var(--orange);
     color: var(--white);
     font-size: 1.8rem;
@@ -1044,7 +1048,7 @@ footer {
     color: var(--white);
 }
 .product-ingredient__form {
-    background-color: var(--orange-op);
+    background-color: rgba(var(--orangeRgb), 0.5);
     padding: 2rem;
     border-radius: 1rem;
     color: var(--yellow);
@@ -1233,6 +1237,7 @@ footer {
     background-color: var(--ivory);
     border: 3px solid var(--darkOrange);
     box-shadow: 0 0 6px 2px var(--darkOrange);
+    cursor: default;
 
 }
 
@@ -1259,8 +1264,7 @@ footer {
     font-size: 1.6rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-
+    gap: 1rem;
     max-height: 30rem;
     overflow-y: scroll;
 }
@@ -1269,11 +1273,27 @@ footer {
     display: flex;
     padding: 1rem;
     gap: 2rem;
+    border-radius: 1rem;
+
+}
+
+.popup__img-cont {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+
+    width: 15rem;
+    height: 10rem;
 
     > img {
-        width: 15rem;
-    }
+        width: 100%;
+        max-height: fit-content;
 
+    }
+}
+
+.popup__item--new {
+    background-color: rgba(var(--orangeRgb), 0.3);
 }
 
 .popup__desc {
@@ -1287,7 +1307,6 @@ footer {
     > p {
         text-align: start;
     }
-
 }
 
 .popup__price {
@@ -1304,12 +1323,13 @@ footer {
     background-color: inherit;
     font-weight: 700;
     border-radius: 50%;
-    padding: .5rem .9rem;
+    padding: .5rem 1rem;
     cursor: pointer;
     border: 1px solid var(--silver);
     color: var(--silver);
     transition: all .3s ease;
     box-shadow: 0px 0px inherit;
+    background-color: var(--ivory);
 }
 
 .popup__close:hover {
@@ -1361,7 +1381,7 @@ footer {
     gap: 5rem;
     position: relative;
 
-    max-height: 27rem;
+    max-height: 33rem;
     border: 2px solid var(--ivory);
 
 }
@@ -1404,7 +1424,6 @@ footer {
 .checkout__img-cont {
 
     overflow: hidden;
-
     display: flex;
     align-items: center;
     max-height: fit-content;
@@ -1574,4 +1593,12 @@ footer {
 
 .deliveries-card__status {
     font-size: 2.5rem;
+}
+
+.deliveries__recived {
+    background-color: var(--darkGreen);
+}
+
+.deliveries__recived:hover {
+    background-color: var(--green);
 }

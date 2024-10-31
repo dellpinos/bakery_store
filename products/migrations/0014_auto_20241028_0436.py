@@ -12,13 +12,13 @@ def create_categories(apps, schema_editor):
     Category.objects.create(name="Cupcakes", image="cupcake")
     Category.objects.create(name="Desserts", image="dessert")
     Category.objects.create(name="Vegan", image="fruit")
-    Category.objects.create(name="Specialty Cakes", image="cake2")
+    Category.objects.create(name="Specials", image="cake2")
 
 
 def reverse_create_categories(apps, schema_editor):
     Category = apps.get_model('products', 'Category')
     Category.objects.filter(name__in=[
-        "Cakes", "Bakery", "Pies", "Cookies", "Cupcakes", "Desserts", "Vegan", "Specialty Cakes"
+        "Cakes", "Bakery", "Pies", "Cookies", "Cupcakes", "Desserts", "Vegan", "Specials"
     ]).delete()
 
 class Migration(migrations.Migration):
