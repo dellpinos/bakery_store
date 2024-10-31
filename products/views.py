@@ -137,7 +137,7 @@ def home_filtered(request, category):
         "products": products,
         "cart_seller": cart_seller,
         "categories": categories,
-        "category": category_db
+        "category_db": category_db
 
     })
 

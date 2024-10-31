@@ -31,12 +31,11 @@
       <div class="header__nav-container">
         <div>
           {% if user.is_authenticated %}
-            <a href="#" class="header__username">{{ user.username }}</a>
+            <p class="header__username">Hello {{ user.username }}</p>
           {% endif %}
         </div>
 
         <nav class="header__nav">
-          {% comment %} <a href="#" class="header__nav-link {% if request.resolver_match.url_name == 'index' %}header__nav-link--active{% endif %}">All Posts</a> {% endcomment %}
 
           {% if user.is_authenticated %}
             <buttom class="header__popup-icon-container" id="header-cart-btn">
@@ -67,7 +66,7 @@
                 <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__popup-icon">
                 <p id="header-cart-icon" ></p>
             </a>
-            <a href="{% url 'dashboard' %}" class="header__nav-link" >Dashboard</a>
+            <a href="{% url 'dashboard' %}" class="header__nav-link" >Seller Panel</a>
             <a href="{% url 'logout' %}" class="header__nav-link header__nav-link--logout">Log Out</a>
           {% else %}
             <a href="{% url 'login' %}" class="header__nav-link {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">Log In</a>
@@ -93,27 +92,24 @@
         <div class="categories-section">
 
             
-            <a href="/" class="categories-sectiom__item-container">
+            <a href="/" class="categories-section__item-container {% if request.resolver_match.url_name == 'index' %}categories-section__item-container--active {% endif %}">
                 <div class="categories-section__img-container">
-                    <img src="{% static 'img/categories/' %}add.svg" alt="Category All Icon" class="categories-section__item">
+                    <img src="{% static 'img/categories/' %}add.svg" alt="Category All Icon" class="categories-section__item {% if request.resolver_match.url_name == 'index' %}categories-section__item--active {% endif %}">
                 </div>
-                <p class="categories-section__item-txt">All</p>
+                <p class="categories-section__item-txt {% if request.resolver_match.url_name == 'index' %}categories-section__item-txt--active {% endif %}">All</p>
             </a>
 
             {% for category in categories %}
-                <a href="{% url 'home_filtered' category.id %}" class="categories-sectiom__item-container">
+                <a href="{% url 'home_filtered' category.id %}" class="categories-section__item-container {% if category_db.name == category.name %}categories-section__item-container--active {% endif %}">
                     <div class="categories-section__img-container">
-                        <img src="{% static 'img/categories/' %}{{ category.image }}.svg" alt="Category {{ category.name }} Icon" class="categories-section__item">
+                        <img src="{% static 'img/categories/' %}{{ category.image }}.svg" alt="Category {{ category.name }} Icon" class="categories-section__item {% if category_db.name == category.name %}categories-section__item--active {% endif %}">
                     </div>
-                    <p class="categories-section__item-txt">{{ category.name }}</p>
+                    <p class="categories-section__item-txt {% if category_db.name == category.name %}categories-section__item-txt--active {% endif %}">{{ category.name }}</p>
                 </a>
             {% endfor %}
 
         </div>
     {% endif %}
-
-
-
 
     <main>
       {% block body %}
@@ -122,7 +118,7 @@
     </main>
 
     <footer>
-        Martín del Pino
+        <p>&copy; {{ current_year }} - Martín del Pino. All rights reserved.</p>
     </footer>
   </body>
 </html>

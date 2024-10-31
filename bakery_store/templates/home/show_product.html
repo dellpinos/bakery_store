@@ -22,7 +22,13 @@
                 <div>
                     <h4 class="heading-xs">{{ product.name }}</h4>
                     <div class="show-product__img-container">
-                        <img src="{{ product.image }}" alt="{{product.name}} Image" width="500" class="show-product__img">
+                        {% if product.image %}
+                            <img src="{{ product.image }}" alt="{{product.name}} Image" width="500" class="show-product__img">
+                        {% else %}
+                            <div class="flex-center">
+                                <img src="{% static 'img/empty-picture.svg' %}" alt="Empty Image" width="250">
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -43,6 +49,10 @@
 
                     {% if cart_seller_id and cart_seller_id != product.seller_user.id %}
                         <p class="mt-3">You have products from another seller in your cart. Finish that order first.</p>
+                    {% endif %}
+
+                    {% if user == product.seller_user %}
+                        <p class="mt-3">This post is yours.</p>
                     {% endif %}
 
                 </div>

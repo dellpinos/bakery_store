@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
 from datetime import datetime, timedelta
 from .models import Cart, CartProduct, Order, OrderProduct
-from products.models import Product
+from products.models import Product, Category
 from users.models import Notification
 from .utils import generate_unique_token
 
@@ -83,12 +83,15 @@ def checkout(request):
     # ISO Format
     disabled_days_list = [day.strftime('%Y-%m-%d') for day in disabled_days]
 
+    categories = Category.objects.all()
+
     return render(request, 'orders/checkout.html', {
         "products" : products,
         "seller_user" : seller_user,
         "disabled_days" : json.dumps(disabled_days_list),
         "min_day": min_date_formatted.strftime("%Y-%m-%d"),
-        "min_day_number": min_day
+        "min_day_number": min_day,
+        "categories": categories
     })
 
 # Pending Orders view (seller)
@@ -163,8 +166,11 @@ def archived_orders(request):
 
     page = p.page(page_number)
 
+    categories = Category.objects.all()
+
     return render(request, 'orders/archived.html', {
-        "page": page
+        "page": page,
+        "categories": categories
     })
 
 # Pending Orders view (buyer)
@@ -201,8 +207,11 @@ def pending_deliveries(request):
 
     page = p.page(page_number)
 
+    categories = Category.objects.all()
+
     return render(request, 'orders/pending_deliveries.html', {
-        "page": page
+        "page": page,
+        "categories": categories
     })
 
 # Archived Orders view (buyer)
@@ -239,8 +248,11 @@ def archived_deliveries(request):
 
     page = p.page(page_number)
 
+    categories = Category.objects.all()
+
     return render(request, 'orders/archived_deliveries.html', {
-        "page": page
+        "page": page,
+        "categories": categories
     })
 
 

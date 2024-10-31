@@ -18,9 +18,9 @@
                 <div class="msg-error">{{ error }}</div>
             {% endfor %}
 
+        <a href="{% url 'archived_deliveries' %}" class="btn btn-gray mt-3">View Archived Orders</a>
         <ul class="content__list">
 
-            <a href="{% url 'archived_deliveries' %}" class="btn btn-gray mt-3">View Archived Orders</a>
 
             {% for order in page %}
 

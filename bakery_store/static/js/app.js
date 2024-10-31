@@ -38,8 +38,8 @@
 
                 if (!result.error) {
                     // Deletes empty message
-                    if (document.querySelector('.msg-empty')) {
-                        document.querySelector('.msg-empty').remove();
+                    if (document.querySelector('.popup__msg-empty')) {
+                        document.querySelector('.popup__msg-empty').remove();
 
                     }
                     await getCart();
@@ -132,7 +132,7 @@
 
             } else {
                 list.innerHTML = `
-                <p class="msg-empty">There are no products to show</p>
+                <p class="popup__msg-empty">There are no products to show</p>
             `;
             }
         }
@@ -243,7 +243,7 @@
 
             } else {
                 list.innerHTML = `
-                <p class="msg-empty">There are no notifications to show</p>
+                <p class="popup__msg-empty">There are no notifications to show</p>
             `;
             }
         }
