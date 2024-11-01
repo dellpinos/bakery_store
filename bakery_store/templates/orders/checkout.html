@@ -32,6 +32,13 @@
                 <div class="msg-error">{{ error }}</div>
             {% endfor %}
 
+        <div class="dashboard__actions">
+            <a href="{% url 'index' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+        </div>
+
         <div class="checkout__grid">
         <p class="checkout__legend">{{ seller_user.username}}'s maximum daily production: <span>{{ seller_user.max_prod_capacity }}</span> products</p>
         

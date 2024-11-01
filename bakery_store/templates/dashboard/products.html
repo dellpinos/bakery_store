@@ -14,6 +14,17 @@
     <div>
         <h3 class="heading">All Products</h3>
 
+        <div class="dashboard__actions">
+            <a href="{% url 'dashboard' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+            <a href="{% url 'new_product' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/plus.svg' %}" alt="Plus Icon" width="30">
+                <p>New Product</p>
+            </a>
+        </div>
+
         {% if message %}
             <div class="msg-error">{{ message }}</div>
         {% endif %}

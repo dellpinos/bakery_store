@@ -845,6 +845,35 @@ footer {
 
 }
 
+.dashboard__actions {
+    display: flex;
+    justify-content: space-between;
+    margin: 4rem 0;
+
+
+}
+
+.dashboard__actions-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem;
+    min-width: 15%;
+    font-size: 1.8rem;
+    background-color: var(--orange);
+    color: var(--white);
+    transition: background-color .5s ease;
+}
+
+.dashboard__actions-btn:hover {
+
+    background-color: var(--darkOrange);
+
+}
+
 .sidebar {
     min-height: 100vh;
     min-width: 20rem;
@@ -852,24 +881,36 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
+
     font-size: 1.8rem;
-    gap: 2rem;
+
 }
 
 .sidebar__item {
 
+    border-top: 2px solid var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
     color: var(--white);
+    padding: 2rem 0;
+    background-color: inherit;
+    width: 100%;
+    transition: background-color .5s ease;
+
+    > img {
+        width: 3rem;
+
+    }
 }
 
 .sidebar__item--active {
-
-    color: var(--yellow);
+    background-color: var(--darkOrange);
 }
 
 .sidebar__item:hover {
-
-    color: var(--yellow);
+    background-color: var(--darkOrange);
 }
 
 /* Dashboard Lists - Products and Ingredients */
@@ -1630,4 +1671,33 @@ footer {
 
 .settings__section--wider {
     grid-column: span 3;
+}
+
+/* Dashboard Index */
+
+.docs {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: var(--white);
+    border-radius: 1rem;
+    padding: 2rem;
+    font-size: 1.8rem;
+}
+.docs__legend {
+    text-align: center;
+    font-weight: 700;
+    color: var(--orange);
+}
+
+.docs__section {
+
+    > h4 {
+        font-size: 2.5rem;
+        color: var(--orange);
+    }
+
+    > p {
+        padding: 1rem;
+    }
 }

@@ -18,6 +18,13 @@
                 <div class="msg-error">{{ error }}</div>
             {% endfor %}
 
+        <div class="dashboard__actions">
+            <a href="{% url 'pending_deliveries' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+        </div>
+
         <ul class="content__list">
 
             {% for order in page %}
@@ -46,24 +53,6 @@
                         </div>
 
                     </div>
-                    {% comment %} <p class="deliveries-card__status">Order Status: 
-                        {% if order.status %}
-                            <span class="c-yel bold">Confirmed</span>
-                        {% else %}
-                            <span class="c-black bold">Pending</span>
-                        {% endif %}
-
-                    </p> {% endcomment %}
-                    
-                    {% comment %} <p class="deliveries-card__status">Order Status: 
-                        {% if order.status and not order.recived %}
-                            <span class="c-yel bold">Confirmed</span>
-                        {% elif order.recived %}
-                            <span class="c-green bold">Recived</span>
-                        {% else %}
-                            <span class="c-black bold">Pending</span>
-                        {% endif %}
-                    </p> {% endcomment %}
                 </li>
                 <p>{{ order.products2 }}</p>
 

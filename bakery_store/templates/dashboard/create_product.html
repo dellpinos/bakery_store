@@ -1,5 +1,4 @@
 {% extends "layouts/dashboard.html" %}
-
 {% load static %}
 
 {% block title %}
@@ -14,6 +13,13 @@
 
     <div>
         <h3 class="heading">New Product</h3>
+
+        <div class="dashboard__actions">
+            <a href="{% url 'dashboard_products' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+        </div>
 
         {% if not ingredients %}
             <div class="msg-empty">You need to create some ingredients first</div>

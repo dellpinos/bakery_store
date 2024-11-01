@@ -1,4 +1,5 @@
 {% extends "layouts/dashboard.html" %}
+{% load static %}
 
 {% block title %}
     Edit Ingredient
@@ -8,6 +9,13 @@
 
     <div>
         <h3 class="heading">Edit Ingredient</h3>
+
+        <div class="dashboard__actions">
+            <a href="{% url 'dashboard_ingredients' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+        </div>
 
         {% if message %}
             <div class="msg-error">{{ message }}</div>
