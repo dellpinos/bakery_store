@@ -23,7 +23,7 @@ def index(request):
 @login_required
 def all_products(request):
 
-    products = Product.objects.filter(seller_user=request.user, deleted_at = None).order_by("-created_at")
+    products = Product.objects.filter(seller_user = request.user, deleted_at = None).order_by("-created_at")
 
     # Calculates total price
     for product in products:
@@ -40,7 +40,7 @@ def all_products(request):
             product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
     # Paginator
-    p = Paginator(products, 20)
+    p = Paginator(products, 20) # NOTE: Items per page
 
     if request.GET.get('page'):
         # Get the page number from the request
@@ -61,7 +61,7 @@ def all_ingredients(request):
     ingredients = Ingredient.objects.filter(seller_user = request.user, deleted_at = None).order_by("-created_at")
 
     # Paginator
-    p = Paginator(ingredients, 20)
+    p = Paginator(ingredients, 20) # NOTE: Items per page
 
     if request.GET.get('page'):
         # Get the page number from the request
@@ -198,6 +198,55 @@ def capacity_update(request):
             },
             "days_off": json.dumps(days_off_list),
             "capacity": new_capacity
+        })
+    
+@login_required
+def disable_all(request):
+
+    if request.POST:
+
+        orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
+        pending_dates = []
+
+        # Look for pending orders
+        for order in orders:
+            pending_dates.append(order.delivery_date)
+
+        # Look for previous days off
+        days_off = request.user.days_off.values_list('date', flat = True)
+
+        # ISO Format
+        pending_dates_list = [day.strftime('%Y-%m-%d') for day in pending_dates]
+        days_off_list = [day.strftime('%Y-%m-%d') for day in days_off]
+
+        capacity = request.user.max_prod_capacity
+        
+        if orders.exists():
+            return render(request, "dashboard/settings.html", {
+                "message": {
+                    "type": "error",
+                    "txt": "There are pending orders"
+                },
+                "days_off": json.dumps(days_off_list),
+                "pending_dates": json.dumps(pending_dates_list),
+                "capacity": capacity
+            })
+
+        # Disable all products
+        products = Product.objects.filter(seller_user = request.user, deleted_at = None)
+
+        for product in products:
+            product.availability = False
+            product.save()
+
+        return render(request, "dashboard/settings.html", {
+            "message": {
+                "type": "success",
+                "txt": "All products have been disabled"
+            },
+            "days_off": json.dumps(days_off_list),
+            "pending_dates": json.dumps(pending_dates_list),
+            "capacity": capacity
         })
 
 

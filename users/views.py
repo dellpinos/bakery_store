@@ -73,7 +73,7 @@ def register(request):
 @login_required
 def get_notifications(request):
 
-    notifications = request.user.notifications.all()
+    notifications = request.user.notifications.order_by("-created_at")
     counter = request.user.notifications.filter(is_read = False).count()
 
     if not notifications:

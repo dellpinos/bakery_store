@@ -207,6 +207,13 @@ textarea {
     align-items: center;
 }
 
+.flex-end {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 .flex-col {
     display: flex;
     flex-direction: column;
@@ -238,7 +245,7 @@ textarea {
 }
 
 .msg-error {
-    margin: 0;
+    margin: 5rem 0;
     padding: .5rem;
     text-align: center;
     color: var(--white);
@@ -246,7 +253,7 @@ textarea {
 }
 
 .msg-success {
-    margin: 0;
+    margin: 5rem 0;
     padding: .5rem;
     text-align: center;
     color: var(--white);
@@ -812,8 +819,8 @@ footer {
 
 .banner-grid {
 
-    grid-column: span 3; /* Ocupa dos columnas */
-    /* grid-row: span 1; /* Ocupa una fila (opcional) */
+    grid-column: span 3;
+
 }
 
 /*Dashboard */
@@ -1320,22 +1327,19 @@ footer {
     font-size: 1rem;
     width: 3rem;
     height: 3rem;
-    background-color: inherit;
     font-weight: 700;
     border-radius: 50%;
     padding: .5rem 1rem;
     cursor: pointer;
-    border: 1px solid var(--silver);
-    color: var(--silver);
-    transition: all .3s ease;
-    box-shadow: 0px 0px inherit;
+    border: 1px solid var(--redAlert);
+    color: var(--redAlert);
     background-color: var(--ivory);
+    box-shadow: 0px 0px 0px var(--darkOrange) inset;
+    transition: all .3s ease;
 }
 
 .popup__close:hover {
-    border: 1px solid var(--redAlert);
-    color: var(--redAlert);
-    box-shadow: 0px 0px 10px var(--darkOrange);
+    box-shadow: 0px 0px 5px 1px var(--darkOrange) inset;
 }
 
 .popup__msg-empty {
@@ -1601,4 +1605,29 @@ footer {
 
 .deliveries__recived:hover {
     background-color: var(--green);
+}
+
+/* Settings View */
+
+.settings__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 0 4rem;
+}
+
+.settings__section {
+    padding: 4rem;
+    color: var(--white);
+    background-color: var(--orange);
+    border-radius: 1.5rem;
+    gap: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.settings__section--wider {
+    grid-column: span 3;
 }

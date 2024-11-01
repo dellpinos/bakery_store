@@ -233,7 +233,6 @@
                     cart.querySelector('.btn').remove();
                 }
                 
-                console.log(data)
                 data.notifications.forEach(notif => {
                     const item = formatNotifItem(notif);
                     list.appendChild(item);
@@ -256,6 +255,26 @@
                 item.classList.add("popup__item--new");
             }
 
+            const rawDate = new Date(notif.created_at);
+
+            const options = {
+                year: "2-digit",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "numeric",
+                minute: "numeric"
+            };
+
+            const formatedDate = rawDate.toLocaleString('en-US', options);
+
+            const date = document.createElement('P');
+            date.textContent = formatedDate;
+
+            const dateCont = document.createElement('DIV');
+            dateCont.classList.add('flex-end')
+
+            dateCont.appendChild(date);
+
             const btn = document.createElement('BUTTON');
             btn.classList.add('popup__close');
             btn.textContent = 'X';
@@ -266,6 +285,7 @@
             const msg = document.createElement('P');
             msg.textContent = notif.message
 
+            cont.appendChild(dateCont);
             cont.appendChild(msg);
 
             item.appendChild(btn);

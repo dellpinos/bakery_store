@@ -28,13 +28,6 @@
                             while (container.firstElementChild) {
                                 container.firstElementChild.remove()
                             }
-        
-                            // const newBtn = document.createElement('BUTTON');
-                            // newBtn.textContent = "Archive Order"
-                            // newBtn.classList.add('content__btn', 'pending__archive');
-
-                            // container.style.cssText = 'justify-content: center;';
-                            // container.appendChild(newBtn);
 
                             function utilityFunction() {
                                 newBtnHandler(id, btn, utilityFunction);
@@ -61,12 +54,12 @@
                             const result = await handleOrderChanges(url);
 
                             if ( result.ok) {
-                                alert('This order has been canceled successfully.')
+                                alert('This order has been canceled successfully. The page will be reloaded.')
 
                                 // Remove order card
                                 setTimeout(() => {
                                     location.reload();
-                                }, 2000);
+                                }, 1000);
                             }
                         }
                     });

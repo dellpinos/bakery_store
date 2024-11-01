@@ -27,53 +27,57 @@
         <input type="hidden" id="hidden-prev-dates" value="{{ days_off }}" />
         <input type="hidden" id="hidden-pending-dates" value="{{ pending_dates }}" />
 
+        <div class="settings__grid">
 
-        <h4>Your Calendar</h4>
-        <form action="{% url 'calendar_update' %}" method="POST" class="form">
-
-            {% csrf_token %}
-            <legend>You can disable holidays here.</legend>
-                <div class="form__field--hor">
-                    <!-- Botón para abrir el calendario -->
-                    {% comment %} <button id="datepicker-button" class="btn btn-primary">Select Dates</button> {% endcomment %}
-
-                    <!-- Input oculto para almacenar las fechas seleccionadas -->
-                    <input type="hidden" id="hidden-datepicker" style="display: none" name="dates"/>
-                </div>
-
-            <div class="btn-container">
-                <input type="submit" class="btn" value="Submit">
-            </div>
-        </form>
-
-        <div class="form__container">
-            <form action="{% url 'capacity_update' %}" method="POST" class="form">
+            <form action="{% url 'calendar_update' %}" method="POST" class="settings__section">
                 {% csrf_token %}
-                <legend>Here you can choose the maximum number of products you can deliver per day. This number is the same as the maximum number of products a user can purchase in a single order (max items in an order).</legend>
-                    <div class="form__field--hor">
-                        <label for="#">Select a number between 1 and 10:</label>
-                        <input type="number" max="10" min="1" class="form__input" name="capacity" value="{{ capacity }}">
+                <h4>Your Calendar</h4>
+                <legend>You can disable holidays here. You can't disable days with active orders.</legend>
+                    <div class="flex">
+                        <!-- Botón para abrir el calendario -->
+                        {% comment %} <button id="datepicker-button" class="btn btn-primary">Select Dates</button> {% endcomment %}
+
+                        <!-- Input oculto para almacenar las fechas seleccionadas -->
+                        <input type="hidden" id="hidden-datepicker" style="display: none" name="dates"/>
                     </div>
-
+                    <p>Mark your days off on the calendar and press submit.</p>
                 <div class="btn-container">
-                    <input type="submit" class="btn" value="Submit">
+                    <input type="submit" class="btn btn-white" value="Submit">
                 </div>
             </form>
-        
-        </div>
 
 
-        <div class="form__container">
-            <form action="#" class="form">
-                <legend>Disable all products. If you don't have any pendent order, you can disable your store <<</legend>
+                <form action="{% url 'capacity_update' %}" method="POST" class="settings__section">
+                    {% csrf_token %}
+                    <h4>Your maximum daily orders </h4>
+                    <legend>Here you can choose the maximum number of products you can deliver per day. This number is the same as the maximum number of products a user can purchase in a single order (max items in an order).</legend>
+                    <div class="flex">
+
+                        <input type="number" max="10" min="1" class="form__input center" name="capacity" value="{{ capacity }}">
+                    </div>
+                    <p>Select a number between 1 and 10 and press submit.</p>
+                    <div class="btn-container">
+                        <input type="submit" class="btn btn-white" value="Submit">
+                    </div>
+                </form>
+            
+
+
+            <form action="{% url 'disable_all' %}" method="POST" class="settings__section settings__section--wider">
+                {% csrf_token %}
+                <h4>Disable all your products</h4>
+                <legend>Disable all products. If you don't have any pendent order, you can disable all your store</legend>
 
                 <div class="btn-container">
-                    <input type="submit" class="btn" value="Disable - Enable">
-                
+                    <input type="submit" class="btn btn-white" value="Disable">
                 </div>
+
             </form>
-        
+
         </div>
+
+            
+
 
 
 
