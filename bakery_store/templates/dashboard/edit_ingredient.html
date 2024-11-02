@@ -10,13 +10,6 @@
     <div>
         <h3 class="heading">Edit Ingredient</h3>
 
-        <div class="dashboard__actions">
-            <a href="{% url 'dashboard_ingredients' %}" class="dashboard__actions-btn">
-                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
-                <p>Back</p>
-            </a>
-        </div>
-
         {% if message %}
             <div class="msg-error">{{ message }}</div>
         {% endif %}
@@ -24,6 +17,14 @@
         {% for error in errors %}
             <div class="msg-error">{{ error }}</div>
         {% endfor%}
+        
+        <div class="dashboard__actions">
+            <a href="{% url 'dashboard_ingredients' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+        </div>
+
         <div class="form__container">
         
             <form action="{% url 'edit_ingredient' ingredient %}" method="POST" class="form">

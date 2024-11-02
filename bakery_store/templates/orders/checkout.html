@@ -24,13 +24,13 @@
         <input type="hidden" id="hidden-checkout-prev-dates" value="{{ disabled_days }}" />
         <input type="hidden" id="hidden-checkout-min-date" value="{{ min_day }}" />
 
-            {% if message %}
-                <div class="msg-error">{{ message }}</div>
-            {% endif %}
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
 
-            {% for error in errors %}
-                <div class="msg-error">{{ error }}</div>
-            {% endfor %}
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
 
         <div class="dashboard__actions">
             <a href="{% url 'index' %}" class="dashboard__actions-btn">
@@ -83,8 +83,6 @@
                 <button type="submit" class="btn" id="checkout-submit-btn">Submit</button>
             </div>
         </div>
-
-
     </div>
 
 {% endblock %}

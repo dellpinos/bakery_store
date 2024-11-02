@@ -14,6 +14,14 @@
     <div>
         <h3 class="heading">New Product</h3>
 
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
+
         <div class="dashboard__actions">
             <a href="{% url 'dashboard_products' %}" class="dashboard__actions-btn">
                 <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
@@ -24,14 +32,6 @@
         {% if not ingredients %}
             <div class="msg-empty">You need to create some ingredients first</div>
         {% else %}
-
-        {% if message %}
-            <div class="msg-error">{{ message }}</div>
-        {% endif %}
-
-        {% for error in errors %}
-            <div class="msg-error">{{ error }}</div>
-        {% endfor %}
 
             <div class="form__container" >
                 <form action="{% url 'new_product' %}" method="POST" class="form" novalidate>
@@ -109,7 +109,6 @@
                     <input type="submit" value="Submit" class="btn d-none" id="create-product-submit">
                 </form>
             </div>
-
         </div>
     {% endif %}
 

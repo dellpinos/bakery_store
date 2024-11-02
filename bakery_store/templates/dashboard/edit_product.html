@@ -16,13 +16,20 @@
     <div>
         <h3 class="heading">Edit Product</h3>
 
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
+
         <div class="dashboard__actions">
             <a href="{% url 'dashboard_products' %}" class="dashboard__actions-btn">
                 <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
                 <p>Back</p>
             </a>
         </div>
-
         <div class="dashboard__actions">
             <a href="{% url 'dashboard' %}" class="dashboard__actions-btn">
                 <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
@@ -34,15 +41,7 @@
             <div class="msg-empty">You need to create some ingredients first</div>
         {% else %}
 
-            {% if message %}
-                <div class="msg-error">{{ message }}</div>
-            {% endif %}
-
-            {% for error in errors %}
-                <div class="msg-error">{{ error }}</div>
-            {% endfor %}
-
-            <div class="form__container" >
+            <div class="form__container">
                 <form action="{% url 'edit_product' product.id %}" method="POST" class="form" novalidate>
                 {% csrf_token %}
                     <div class="form__field">
@@ -118,7 +117,6 @@
                     <input type="submit" value="Update Product" class="btn d-none" id="create-product-submit">
                 </form>
             </div>
-
         </div>
     {% endif %}
 

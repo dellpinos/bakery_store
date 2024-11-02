@@ -44,11 +44,21 @@
                 const result = await handleOrderChanges(url);
                 
                 if(result.ok) {
-                    alert('This order has been finished successfully')
+                    alert('This order has been finished successfully');
+
+                    // Select previous status
+                    const card = btn.parentElement.parentElement
+                    const statusMsg = card.querySelector('.deliveries-card__status span');
+
+                    statusMsg.textContent = "Recived";
+
+                    statusMsg.classList.remove('c-yel');
+                    statusMsg.classList.add('c-white');
 
                     btn.classList.remove('deliveries__recived');
                     btn.classList.add('btn-disabled');
                     btn.removeEventListener('click', listener);
+                    btn.remove();
                 }
             }
          }

@@ -55,6 +55,14 @@
 
                 } else {
                     console.log(result.error)
+                    btn.removeEventListener('click', handlerClick);
+                    const card = btn.parentElement;
+                    btn.remove();
+                    const msg = document.createElement('P');
+                    msg.classList.add('mt-3')
+                    msg.textContent = result.error
+
+                    card.appendChild(msg);
                 }
             }
         }

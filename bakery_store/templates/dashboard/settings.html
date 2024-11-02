@@ -20,16 +20,16 @@
     <div>
         <h3 class="heading">Settings</h3>
 
+        {% if message %}
+            <div class="msg-{{ message.type }}">{{ message.txt }}</div>
+        {% endif %}
+
         <div class="dashboard__actions">
             <a href="{% url 'dashboard' %}" class="dashboard__actions-btn">
                 <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
                 <p>Back</p>
             </a>
         </div>
-
-        {% if message %}
-            <div class="msg-{{ message.type }}">{{ message.txt }}</div>
-        {% endif %}
 
         <input type="hidden" id="hidden-prev-dates" value="{{ days_off }}" />
         <input type="hidden" id="hidden-pending-dates" value="{{ pending_dates }}" />

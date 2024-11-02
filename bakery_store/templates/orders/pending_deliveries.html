@@ -14,13 +14,13 @@
     <div class="deliveries__container">
         <h3 class="heading">Pending deliveries</h3>
 
-            {% if message %}
-                <div class="msg-error">{{ message }}</div>
-            {% endif %}
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
 
-            {% for error in errors %}
-                <div class="msg-error">{{ error }}</div>
-            {% endfor %}
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
 
         <div class="dashboard__actions">
             <a href="{% url 'index' %}" class="dashboard__actions-btn">
@@ -67,7 +67,7 @@
                         {% if order.status and not order.recived %}
                             <span class="c-yel bold">Confirmed</span>
                         {% elif order.recived %}
-                            <span class="c-green bold">Recived</span>
+                            <span class="c-white bold">Recived</span>
                         {% else %}
                             <span class="c-black bold">Pending</span>
                         {% endif %}

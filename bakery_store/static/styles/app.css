@@ -140,6 +140,10 @@ textarea {
     color: var(--darkGreen);
 }
 
+.c-white {
+    color: var(--white);
+}
+
 .center {
     text-align: center;
 }
@@ -349,7 +353,7 @@ textarea {
     background-color: var(--mediumSilver);
     color: var(--ivory);
     box-shadow: 0 0 4px 1px var(--lightGray);
-    margin: 5rem 0;
+    margin: 1rem 0;
     font-size: 1.8rem;
 }
 

@@ -10,13 +10,13 @@
     <div class="deliveries__container">
         <h3 class="heading">Archived deliveries</h3>
 
-            {% if message %}
-                <div class="msg-error">{{ message }}</div>
-            {% endif %}
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
 
-            {% for error in errors %}
-                <div class="msg-error">{{ error }}</div>
-            {% endfor %}
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
 
         <div class="dashboard__actions">
             <a href="{% url 'pending_deliveries' %}" class="dashboard__actions-btn">

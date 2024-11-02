@@ -10,6 +10,10 @@
     <div>
         <h3 class="heading">All Ingredients</h3>
 
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
         <div class="dashboard__actions">
             <a href="{% url 'dashboard' %}" class="dashboard__actions-btn">
                 <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
@@ -20,10 +24,6 @@
                 <p>New Ingredient</p>
             </a>
         </div>
-
-        {% if message %}
-            <div class="msg-error">{{ message }}</div>
-        {% endif %}
 
         <ul class="content__list" id="dashboard-ingredient-list">
             {% for ingredient in page %}

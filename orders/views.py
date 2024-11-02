@@ -50,7 +50,7 @@ def checkout(request):
         products.append(prod)
 
     if not seller_user or total_cart_quantity == 0 :
-        return HttpResponseRedirect(reverse('index')) ## <<<<< <<
+        return HttpResponseRedirect(reverse('index'))
 
     # Calculates min date (with production time)
     today = datetime.now()
@@ -604,7 +604,7 @@ def mark_recived(request, order):
         notification_seller = Notification(
             user = order_db.seller_user,
             notification_type = 'order',
-            message = f"The order #{order_db.token} has been mark as recived."
+            message = f"The order #{order_db.token} has been mark as recived by the buyer."
         )
         
         notification_seller.save()
@@ -612,7 +612,7 @@ def mark_recived(request, order):
         notification_buyer = Notification(
             user = order_db.buyer_user,
             notification_type = 'order',
-            message = f"The order #{order_db.token} has been mark as recived by the buyer."
+            message = f"The order #{order_db.token} has been mark as recived."
         )
 
         notification_buyer.save()
@@ -635,7 +635,7 @@ def archive_order(request, order):
         notification_seller = Notification(
             user = order_db.seller_user,
             notification_type = 'order',
-            message = f"The order #{order_db.token} has been deleted."
+            message = f"The order #{order_db.token} has been archived."
         )
         
         notification_seller.save()
@@ -643,7 +643,7 @@ def archive_order(request, order):
         notification_buyer = Notification(
             user = order_db.buyer_user,
             notification_type = 'order',
-            message = f"The order #{order_db.token} has been canceled by the seller."
+            message = f"The order #{order_db.token} has been archived."
         )
 
         notification_buyer.save()
