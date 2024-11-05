@@ -76,6 +76,8 @@
           <p>Bakery<span class="logo-font">Store</span></p>
           {% comment %} <img src="{% static 'network/img/duck-color.svg' %}" alt="Twibble Logo" width="200" /> {% endcomment %}
         </a>
+
+        <img src="{% static 'img/nav.svg' %}" alt="Mobile Icon" width="30" class="header__nav-mobile-icon">
       </div>
 
 
@@ -87,6 +89,13 @@
     
     {% if user.is_authenticated %}
         <div class="categories-section">
+
+            <div class="categories-mobile-section">
+                <div class="categories-section__img-container">
+                    <img src="{% static 'img/categories/' %}add.svg" alt="Categories Icon" class="categories-section__item">
+                </div>
+                <p class="categories-section__item-txt">Categories</p>
+            </div>
 
             
             <a href="/" class="categories-section__item-container {% if request.resolver_match.url_name == 'index' %}categories-section__item-container--active {% endif %}">
