@@ -37,7 +37,7 @@
 
             {% for order in page %}
 
-                <li class="content__item flex-col">
+                <li class="content__item">
                     <div class="pending-card__grid">
                         <div class="pending-card__info">
                             <h4>Delivery Date: {{ order.delivery_date_formated }}</h4>
@@ -60,7 +60,6 @@
                                 {% endfor %}
                             </ul>
                         </div>
-
                     </div>
 
                     <p class="deliveries-card__status">Order Status: 
@@ -78,7 +77,6 @@
                             <button class="content__btn deliveries__recived" data-id="{{ order.id }}">Mark as Received</button>
                         {% endif %}
                     </div>
-
                 </li>
 
             {% empty %}

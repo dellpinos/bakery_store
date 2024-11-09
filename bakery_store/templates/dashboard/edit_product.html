@@ -30,12 +30,6 @@
                 <p>Back</p>
             </a>
         </div>
-        <div class="dashboard__actions">
-            <a href="{% url 'dashboard' %}" class="dashboard__actions-btn">
-                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
-                <p>Back</p>
-            </a>
-        </div>
 
         {% if not ingredients %}
             <div class="msg-empty">You need to create some ingredients first</div>

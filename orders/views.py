@@ -337,11 +337,12 @@ def create_cart(request, product):
         )
         cart.save()
 
-    if product_db in cart.products.all():
-        return JsonResponse(
-            {"error" : "Product already in cart"}, status=403
-        )
-
+    for prod in cart.products.all():
+        if prod.product.id == product_db.id:
+            return JsonResponse(
+                {"error" : "Product already in cart"}, status=403
+            )
+        
     max_prod_capacity = product_db.seller_user.max_prod_capacity
     items_quantity = 0
 
