@@ -168,6 +168,10 @@ textarea {
     position: relative;
 }
 
+.dir-col {
+    flex-direction: column!important;
+}
+
 .ellipsis {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -1177,6 +1181,7 @@ footer {
     padding: 0;
     margin: 0;
 }
+
 
 .content__item {
     display: flex;

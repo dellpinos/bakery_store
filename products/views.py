@@ -104,7 +104,6 @@ def home_filtered(request, category):
                 "message": "Invalid category"
         }))
     
-    
     # User Cart
     cart_seller = None
     if request.user.is_authenticated:
@@ -150,9 +149,10 @@ def random_product(request):
     if product_ids:
         # Random ID select
         random_id = random.choice(product_ids)
-        print(f'Random Product ID: {random_id}')
     else:
-        print('No products found.')
+        return HttpResponseRedirect(reverse("index", {
+                "message": "There are no products"
+        }))
 
     product = Product.objects.filter(pk = random_id, deleted_at = None).first()
 
