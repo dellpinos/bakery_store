@@ -11,8 +11,8 @@
     {% if cart_seller %} 
         {{ cart_seller.username }} Products
 
-    {% elif category %}
-        {{ category.name }}
+    {% elif category_db %}
+        {{ category_db.name }}
     {% else %}
         All Products
     {% endif %}</h3>
@@ -47,7 +47,11 @@
     </div>
 
     {% if not products %}
-        <p class="msg-empty mb-6">There are no products to show. <a href=" {% url 'index' %}" class="c-yel">Back to all products.</a></p>
+        <p class="msg-empty mb-6">There are no products to show.
+            {% if category_db %}
+                <a href=" {% url 'index' %}" class="c-yel">Back to all products.</a>
+            {% endif %}
+        </p>
     {% endif %}
     <div class="common-section common-section__w-img common-section__img-3">
         <a href="{% url 'random_product' %}">

@@ -28,67 +28,113 @@
   </head>
   <body class="body-pos">
     <header class="header">
-      <div class="header__nav-container">
-        <div>
-          {% if user.is_authenticated %}
-            <p class="header__username">Hello {{ user.username }}</p>
-          {% endif %}
+        <div class="header__container">
+            <div class="header__nav-container">
+                <div>
+                {% if user.is_authenticated %}
+                    <p class="header__username">Hello {{ user.username }}</p>
+                {% endif %}
+                </div>
+
+                <nav class="header__nav">
+
+                {% if user.is_authenticated %}
+                    <buttom class="header__popup-icon-container" id="header-cart-btn">
+                        <img src="{% static 'img/cart.svg' %}" alt="Cart Icon" class="header__popup-icon">
+                        <p id="header-cart-icon" class="icon-counter"></p>
+                        <div class="popup__triangle d-none" id="cart-triangle"></div>
+                        <div class="popup d-none" id="cart-header">
+                            <h3 class="popup__heading">Your cart</h3>
+                            <ul class="popup__list" id="cart-header-list"></ul>
+                        </div>
+                    </buttom>
+
+                    <buttom class="header__popup-icon-container" id="header-notif-btn">
+                        <img src="{% static 'img/bell.svg' %}" alt="Notification Icon" class="header__popup-icon">
+                        <p id="header-notif-icon" class="icon-counter"></p>
+
+                        <div class="popup__triangle d-none" id="notif-triangle"></div>
+                        <div class="popup d-none" id="notif-header">
+                            <h3 class="popup__heading">Your notifications</h3>
+                            <ul class="popup__list" id="notif-header-list"></ul>
+                        </div>
+                    </buttom>
+
+                    <a href="{% url 'pending_deliveries' %}" class="header__popup-icon-container {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">
+                        <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__popup-icon">
+                        <p id="header-cart-icon" ></p>
+                    </a>
+                    <a href="{% url 'dashboard' %}" class="header__nav-link" >Seller Panel</a>
+                    <a href="{% url 'logout' %}" class="header__nav-link header__nav-link--logout">Log Out</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="header__nav-link {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">Log In</a>
+                    <a href="{% url 'register' %}" class="header__nav-link {% if request.resolver_match.url_name == 'register' %}header__nav-link--active{% endif %}">Register</a>
+                {% endif %}
+                </nav>
+            </div>
+            <div class="header__icon-container">
+                <a class="header__icon" href="/">
+                    <p>Bakery<span class="logo-font">Store</span></p>
+                </a>
+
+                <img src="{% static 'img/nav.svg' %}" alt="Mobile Icon" width="30" class="header__nav-mobile-icon" id="nav-mobile-btn">
+            </div>
+        
         </div>
 
-        <nav class="header__nav">
+        <div class="menu-mobile" id="menu-mobile">
 
-          {% if user.is_authenticated %}
-            <buttom class="header__popup-icon-container" id="header-cart-btn">
-                <img src="{% static 'img/cart.svg' %}" alt="Cart Icon" class="header__popup-icon">
-                <p id="header-cart-icon" ></p>
-                <div class="popup__triangle d-none" id="cart-triangle"></div>
-                <div class="popup d-none" id="cart-header">
-                    <h3 class="popup__heading">Your cart</h3>
-                    <ul class="popup__list" id="cart-header-list"></ul>
+            {% if user.is_authenticated %}
+
+                <div class="menu-mobile__container">
+                    <p class="menu-mobile__item menu-mobile__username">Hello {{ user.username }}</p>
+
+                    <a href="{% url 'pending_deliveries' %}" class="menu-mobile__item">Pending Deliveries</a>
+
+                    <buttom class="menu-mobile__item relative">
+                        <a href="{% url 'checkout' %}" >Checkout</a>
+                        <p id="mobile-cart-counter" class="icon-counter"></p>
+                    </buttom>
+
+                    <a href="{% url 'dashboard' %}" class="menu-mobile__item" >Seller Panel</a>
+                    <buttom class="menu-mobile__item relative" id="nav-mobile-btn-notif" >
+                        <p>Notifications</p>
+                        <p id="mobile-notif-counter" class="icon-counter"></p>
+                    </buttom>
+                    <div class="popup d-none" id="notif-mobile-menu">
+                        <h3 class="popup__heading">Your notifications</h3>
+                        <ul class="popup__list" id="notif-mobile-list"></ul>
+                    </div>
+
                 </div>
-            </buttom>
 
-            <buttom class="header__popup-icon-container" id="header-notif-btn">
-                <img src="{% static 'img/bell.svg' %}" alt="Notification Icon" class="header__popup-icon">
-                <p id="header-notif-icon" ></p>
+                <a href="{% url 'logout' %}" class="btn btn-white">Log Out</a>
 
-                <div class="popup__triangle d-none" id="notif-triangle"></div>
-                <div class="popup d-none" id="notif-header">
-                    <h3 class="popup__heading">Your notifications</h3>
-                    <ul class="popup__list" id="notif-header-list"></ul>
+            {% else %}
+                <div class="menu-mobile__container">
+                    <a href="{% url 'login' %}" class="menu-mobile__item">Login</a>
+                    <a href="{% url 'register' %}" class="menu-mobile__item">Register</a>
                 </div>
-            </buttom>
 
-            <a href="{% url 'pending_deliveries' %}" class="header__popup-icon-container {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">
-                <img src="{% static 'img/checklist.svg' %}" alt="Cart Icon" class="header__popup-icon">
-                <p id="header-cart-icon" ></p>
-            </a>
-            <a href="{% url 'dashboard' %}" class="header__nav-link" >Seller Panel</a>
-            <a href="{% url 'logout' %}" class="header__nav-link header__nav-link--logout">Log Out</a>
-          {% else %}
-            <a href="{% url 'login' %}" class="header__nav-link {% if request.resolver_match.url_name == 'login' %}header__nav-link--active{% endif %}">Log In</a>
-            <a href="{% url 'register' %}" class="header__nav-link {% if request.resolver_match.url_name == 'register' %}header__nav-link--active{% endif %}">Register</a>
-          {% endif %}
-        </nav>
-      </div>
-      <div class="header__icon-container">
-        <a class="header__icon" href="/">
-          <p>Bakery<span class="logo-font">Store</span></p>
-          {% comment %} <img src="{% static 'network/img/duck-color.svg' %}" alt="Twibble Logo" width="200" /> {% endcomment %}
-        </a>
-      </div>
+            {% endif %}
 
-
-
+        </div>
     </header>
-    {% if cart_seller %} 
+
+    {% if cart_seller %}
         <p class="header__msg" >You are viewing <span>{{ cart_seller.username }}</span>'s products. You need to finish your order to purchase products from other sellers.</p>
     {% endif %}
     
-    {% if user.is_authenticated %}
+    {% if not no_cat %}
         <div class="categories-section">
 
-            
+            <div class="categories-mobile-section" id="nav-mobile-btn-cat">
+                <div class="categories-section__img-container">
+                    <img src="{% static 'img/categories/' %}add.svg" alt="Categories Icon" class="categories-section__item">
+                </div>
+                <p class="categories-section__item-txt" >Categories</p>
+            </div>
+
             <a href="/" class="categories-section__item-container {% if request.resolver_match.url_name == 'index' %}categories-section__item-container--active {% endif %}">
                 <div class="categories-section__img-container">
                     <img src="{% static 'img/categories/' %}add.svg" alt="Category All Icon" class="categories-section__item {% if request.resolver_match.url_name == 'index' %}categories-section__item--active {% endif %}">

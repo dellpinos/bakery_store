@@ -14,7 +14,7 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"].lower()
         password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username = username, password = password)
 
         # Check if authentication successful
         if user is not None:
@@ -25,7 +25,9 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "auth/login.html")
+        return render(request, "auth/login.html", {
+            "no_cat": True
+        })
 
 
 def logout_view(request):
@@ -65,7 +67,9 @@ def register(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auth/register.html")
+        return render(request, "auth/register.html", {
+            "no_cat": True
+        })
 
 ## API ##
 

@@ -70,6 +70,7 @@
         async function addToCart(productId) {
             
             const url = `/orders/api/cart/create/${productId}/`;
+
             try {
                 const response = await fetch(url, {
                     headers: {
@@ -89,6 +90,8 @@
         async function getCart() {
 
             const counter = document.querySelector('#header-cart-icon');
+            const counterMobile = document.querySelector('#mobile-cart-counter');
+
             const url = `/orders/api/cart/`;
             try {
 
@@ -102,6 +105,7 @@
 
                 if (result.response > 0) {
                     counter.textContent = result.response;
+                    counterMobile.textContent = result.response;
                 }
 
                 cartFormat(result);
@@ -195,11 +199,32 @@
             });
 
             getNotifications();
+            
+            
+            // Mobile Notifications
+            const btnNotif = document.querySelector('#nav-mobile-btn-notif');
+            btnNotif.addEventListener('click', () => {
+                
+                // Mostrar ventana con notificaciones
+                document.querySelector('#notif-mobile-menu').classList.remove('d-none');
+                getNotifications();
+                
+
+            //     <div class="popup d-none" id="notif-mobile-menu">
+            //     <h3 class="popup__heading">Your notifications</h3>
+            //     <ul class="popup__list" id="notif-mobile-list"></ul>
+            // </div>
+
+
+            });
+
         }
         async function getNotifications() {
 
 
             const counter = document.querySelector('#header-notif-icon');
+            const counterMobile = document.querySelector('#mobile-notif-counter');
+
 
             const url = `/users/api/notifications/`;
             try {
@@ -214,8 +239,10 @@
 
                 if (result.response > 0) {
                     counter.textContent = result.response;
+                    counterMobile.textContent = result.response;
                 } else {
                     counter.textContent = '';
+                    counterMobile.textContent = '';
                 }
 
                 notifFormat(result);
@@ -230,6 +257,7 @@
         function notifFormat(data) {
             
             const list = document.querySelector('#notif-header-list');
+            const listMobile = document.querySelector('#notif-mobile-list');
             
             if (data.notifications.length > 0) {
                 
@@ -237,6 +265,8 @@
                 
                 // Deletes previous elements
                 list.innerHTML = '';
+                listMobile.innerHTML = '';
+
                 if (cart.querySelector('.btn')) {
                     cart.querySelector('.btn').remove();
                 }
@@ -244,17 +274,24 @@
                 data.notifications.forEach(notif => {
                     const item = formatNotifItem(notif);
                     list.appendChild(item);
+
+                    // Clone to mobile version
+                    const itemClone = formatNotifItem(notif);
+                    listMobile.appendChild(itemClone);
+
                 });
                 
             } else {
 
                 list.innerHTML = `
-                <p class="popup__msg-empty">There are no notifications to show</p>
-            `;
+                    <p class="popup__msg-empty">There are no notifications to show</p>
+                `;
+                listMobile.innerHTML = `
+                    <p class="popup__msg-empty">There are no notifications to show</p>
+                `;
             }
         }
         function formatNotifItem(notif) {
-
             
             const item = document.createElement('LI');
             item.classList.add("popup__item");
@@ -324,6 +361,8 @@
 
             btn.addEventListener('click', async () => {
 
+                console.log('!click!')
+
                 const url = `/users/api/notification_delete/${notif.id}`;
                 try {
                     const response = await fetch(url, {
@@ -341,6 +380,43 @@
                 }
             })
             return item;
+        }
+
+        // Mobile Menu
+        if( document.querySelector('#nav-mobile-btn')){
+
+            const btnMenu = document.querySelector('#nav-mobile-btn');
+            const menuMobile = document.querySelector('#menu-mobile');
+            
+            btnMenu.addEventListener('click', () => {
+                
+                if( document.querySelector('#notif-mobile-menu') ) {
+                    // Authenticated user
+                    document.querySelector('#notif-mobile-menu').classList.add('d-none');
+                }
+                
+                document.querySelector('body').classList.toggle('no-scroll');
+                menuMobile.classList.toggle('menu-mobile--active');
+                
+                btnMenu.classList.toggle('menu-mobile__btn--rotate');
+                
+            });
+        }
+        
+        if( document.querySelector('#nav-mobile-btn-cat') ) {
+            
+            const btnCat = document.querySelector('#nav-mobile-btn-cat');
+
+            btnCat.addEventListener('click', () => {
+
+                // Show Categories
+                const containers = document.querySelectorAll('.categories-section__item-container');
+
+                containers.forEach( cont => {
+                    cont.classList.toggle('categories-section__item-container--visible');
+                    document.querySelector('.categories-section').classList.toggle('categories-section--visible');
+                });
+            });
         }
     });
 })();
