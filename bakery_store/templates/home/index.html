@@ -30,7 +30,7 @@
                     {% if item.image %}
                         <img src="{{ item.image }}" alt="{{item.name}} Image" width="500" class="product-card__img">
                     {% else %}
-                        <img src="{% static 'img/empty-picture.svg' %}" alt="Empty Image" width="200" class="product-card__img">
+                        <img src="{% static 'img/empty-picture.svg' %}" alt="Empty Image" width="300" class="product-card__img--empty">
                     {% endif %}
                 </div>
                 <div class="flex-col">

@@ -65,17 +65,41 @@ def checkout(request):
 
     max_prod_per_day = seller_user.max_prod_capacity
 
-    # Calculates total quantities
+    # # Calculates total quantities
+    order_products_summary = []
+
     for order in prev_orders:
-        product_orders = order.products.filter(deleted_at = None)
-        order.total_quantity = 0
+        # Sum all the products from each order
+        total_quantity = order.products.aggregate(total = Sum('quantity'))
+        total_quantity = total_quantity['total'] or 0 # Assign 0 instead of None
 
-        for prod_order in product_orders:
-            order.total_quantity += prod_order.quantity
+        order_products_summary.append({
+            'order_id': order.id,
+            'total_products': total_quantity,
+            'date' : order.delivery_date
+        })
 
-        # Adds the dates where the quantity received in this request exceeds the maximum products per day
-        if ( order.total_quantity + total_cart_quantity ) > max_prod_per_day:
-            disabled_days.append(order.delivery_date)
+    # Groups orders by date with total quantity
+    grouped_by_date = {}
+    
+    # Iterates the list to obtain a dictionary of dates with their quantities
+    for entry in order_products_summary:
+        date = entry['date']
+
+        # If it doesn't exist, it assigns a value of 0 to accumulate later
+        if date not in grouped_by_date:
+            grouped_by_date[date] = 0
+
+        # If it exists, it adds its value to 'total_products'
+        grouped_by_date[date] += entry['total_products']
+
+    # Convert the dictionary into a list of dictionaries
+    result_summary = [{'date': date, 'total_products': total} for date, total in grouped_by_date.items()]
+
+    # Adds the dates where the quantity received in this request exceeds the maximum products per day
+    for summary in result_summary:
+        if ( summary['total_products'] + total_cart_quantity ) > max_prod_per_day:
+            disabled_days.append(summary['date'])
 
     # Removes any duplicates
     disabled_days = list(set(disabled_days))
@@ -98,7 +122,7 @@ def checkout(request):
 @login_required
 def pending_orders(request):
     
-    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False).order_by('-created_at')
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)
@@ -136,7 +160,7 @@ def pending_orders(request):
 @login_required
 def archived_orders(request):
     
-    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = True)
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = True).order_by('-created_at')
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)
@@ -177,7 +201,7 @@ def archived_orders(request):
 @login_required
 def pending_deliveries(request):
 
-    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = False)
+    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = False).order_by('-created_at')
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)
@@ -218,7 +242,7 @@ def pending_deliveries(request):
 @login_required
 def archived_deliveries(request):
 
-    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = True)
+    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = True).order_by('-created_at')
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)

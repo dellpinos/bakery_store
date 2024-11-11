@@ -11,13 +11,10 @@ from users.models import SellerTimeOff, User
 from products.models import Product, Ingredient
 
 
+# Dashboard Information view
 @login_required
 def index(request):
-
-    # TODO: This route is useless
-
     return render(request, "dashboard/index.html")
-
 
 # All products view
 @login_required

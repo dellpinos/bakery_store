@@ -1343,6 +1343,14 @@ footer {
     
 }
 
+.product-card__img--empty {
+
+    max-width: 100%;
+    max-height: fit-content;
+    object-fit: cover;
+    
+}
+
 .product-card__text {
 
     display: -webkit-box;

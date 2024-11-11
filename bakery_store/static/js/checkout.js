@@ -272,7 +272,7 @@
     });
 
     function formatPrice(price) {
-        return parseInt(price).toLocaleString('en-US', {
+        return parseFloat(price).toLocaleString('en-US', {
             style: 'currency', currency: 'USD'
         });
     }

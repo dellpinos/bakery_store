@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from django.utils import timezone
 import json, random
 from .models import Product, Category, Ingredient, ProductIngredient
 from orders.models import Cart, OrderProduct
@@ -19,11 +18,11 @@ def ingredient_validation(body, new):
     if len(body["description"]) > 550:
         errors.append('The description must be under 120 characters long.')
 
-    if float(body["size"]) <= 0 or float(body["size"]) > 999999:
+    if float(body["size"]) <= 1 or float(body["size"]) > 999999:
         errors.append('The size must be greater than 1 and less than 999,999.')
     
     if float(body["price"]) <= 0 or float(body["price"]) > 999999:
-        errors.append('The price must be greater than 1 and less than 999,999.')
+        errors.append('The price must be greater than 0.1 and less than 999,999.')
     
     if new:
         if len(body["measurement_unit"]) < 1 or len(body["measurement_unit"]) > 15:
@@ -48,6 +47,9 @@ def product_validation(body, ingredients):
 
     if int(body["prod_time"]) <= 0 or int(body["prod_time"]) > 99:
         errors.append('The production time must be greater than 1 and less than 99.')
+
+    if not ingredients:
+        errors.append('The product must have at least one ingredient.')
 
     for ingredient in ingredients:
         if float(ingredient["quantity"]) < 0 or float(ingredient["quantity"]) > 999999:
@@ -261,7 +263,6 @@ def show_product(request, product):
     })
 
 
-
 ## Dashboard Controllers ##
 
 # New product form
@@ -322,7 +323,7 @@ def new_product(request):
             categories_list_int = [int(category) for category in categories_list]
 
         if len(errors) != 0:
-            categories = Category.objects.filter(deleted_at = None)
+            categories = Category.objects.all()
             ingredients_all = Ingredient.objects.filter(seller_user = request.user, availability = True, deleted_at = None).order_by("name")
             return render(request, "dashboard/create_product.html", {
                 "errors": errors,
@@ -424,7 +425,7 @@ def edit_product(request, product):
 
         if len(errors) != 0:
 
-            categories = Category.objects.filter(deleted_at = None)
+            categories = Category.objects.all()
             ingredients_all = Ingredient.objects.filter(seller_user = request.user, availability = True, deleted_at = None).order_by("name")
             return render(request, "dashboard/create_product.html", {
                 "errors": errors,

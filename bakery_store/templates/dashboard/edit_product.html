@@ -36,7 +36,7 @@
         {% else %}
 
             <div class="form__container">
-                <form action="{% url 'edit_product' product.id %}" method="POST" class="form" novalidate>
+                <form action="{% url 'edit_product' product.id %}" method="POST" class="form">
                 {% csrf_token %}
                     <div class="form__field">
                         <label for="name">Name</label>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="form__field">
                         <label for="prod_time">Production Time (days)</label>
-                        <input type="number" placeholder="5" class="form__input" name="prod_time" value="{{ product.production_time }}" id="prod_time" min="1" max="99" required>
+                        <input type="number" placeholder="5" class="form__input" name="prod_time" value="{{ product.production_time }}" id="prod_time" min="1" max="99" step="1" required>
                     </div>
                     <div class="form__field">
                         <label for="image">Image</label>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="form__field">
                         <label for="price">Custom Price Adjustment (profit, labor, etc.)</label>
-                        <input type="number" placeholder="1400" class="form__input" name="price" value="{{ product.subtotal_price }}" id="price" min="1" max="999999" required>
+                        <input type="number" placeholder="200" class="form__input" name="price" value="{{ product.subtotal_price }}" id="price" min="1" max="999999" step="0.01" required>
                     </div>
 
                     <div id="inputs-hidden-container">
@@ -94,7 +94,7 @@
                                 {% endfor %}
                             </select>
                             <div class="product-ingredient__measure-field">
-                                <input type="number" class="form__input form__input--ingredients" placeholder="1400" id="create-product-quantity" min="1" max="999999" required>
+                                <input type="number" class="form__input form__input--ingredients" placeholder="100" id="create-product-quantity" min="1" max="999999" step="0.01">
                                 <p id="create-product-unit-measurement">empty</p>
                             </div>
                         </div>
