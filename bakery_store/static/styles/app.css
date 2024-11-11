@@ -395,6 +395,11 @@ textarea {
     background-color: var(--mediumSilver);
 }
 
+/* Library FlatPickr */
+.flatpickr-day.selected {
+    background-color: var(--orange)!important;
+    border: 1px solid var(--yellow)!important;
+}
 
 /* Header */
 .header {
