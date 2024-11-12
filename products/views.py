@@ -60,7 +60,7 @@ def product_validation(body, ingredients):
 ## Public Controllers ##
 
 # Index view
-def home(request):
+def home(request, message = None):
 
     # User Cart
     cart_seller = None
@@ -93,7 +93,8 @@ def home(request):
     return render(request, "home/index.html", {
         "products": products,
         "cart_seller": cart_seller,
-        "categories": categories
+        "categories": categories,
+        "message": message
     })
 
 # Index filtered by category
@@ -102,9 +103,8 @@ def home_filtered(request, category):
     category_db = Category.objects.filter(pk = category).first()
 
     if not category:
-        return HttpResponseRedirect(reverse("index", {
-                "message": "Invalid category"
-        }))
+        return home(request, message = "Invalid Category.")
+
     
     # User Cart
     cart_seller = None
@@ -152,9 +152,7 @@ def random_product(request):
         # Random ID select
         random_id = random.choice(product_ids)
     else:
-        return HttpResponseRedirect(reverse("index", {
-                "message": "There are no products"
-        }))
+        return home(request, message = "There are no products yet.")
 
     product = Product.objects.filter(pk = random_id, deleted_at = None).first()
 
@@ -619,13 +617,13 @@ def product_availability(request, product):
     # Look for pendient orders with this product
     order_products = OrderProduct.objects.filter(product = product_db, deleted_at = None)
 
-
     for order_prod in order_products:
         order = order_prod.order
         # Only active orders
-        if order.deleted_at == None:
+        if order.deleted_at == None and order.archived == False:
+            print(order)
             return JsonResponse(
-                {"error" : "There are open orders with this product; you should confirm or close them first."}, status=403
+                {"error" : "There are open orders with this product; you should confirm, close or archive them first."}, status=403
             )
 
     if product_db.availability:

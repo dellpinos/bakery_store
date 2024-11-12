@@ -282,7 +282,8 @@ textarea {
 
 .msg-error {
     margin: 5rem 0;
-    padding: .5rem;
+    padding: 1rem;
+    border-radius: .5rem;
     text-align: center;
     color: var(--white);
     background-color: var(--redAlert);
@@ -298,12 +299,13 @@ textarea {
 
 .msg-empty {
     margin: 15rem 0 25rem 0;
-    padding: 2rem 4rem;
+    padding: 1rem 4rem;
     text-align: center;
-    border-radius: 2rem;
+    border-radius: .5rem;
     color: var(--white);
-    background-color: var(--orange);
-    font-size: 2rem;
+    background-color: rgba(var(--orangeRgb), 0.3);
+    width: 100%;
+
 }
 
 .g-alert {
@@ -342,7 +344,7 @@ textarea {
     font-weight: 700;
     color: var(--white);
     font-size: 2rem;
-    border-radius: 1.5rem;
+    border-radius: 1rem;
     cursor: pointer;
     transition: background-color .8s ease, color .8s ease, box-shadow .5s ease;
 }
@@ -1107,8 +1109,6 @@ footer {
         flex-direction: row;
         gap: 0;
     }
-
-
 }
 
 .dashboard__actions-btn {
@@ -1121,6 +1121,8 @@ footer {
     padding: 1rem;
     min-width: 15%;
     font-size: 1.8rem;
+    text-transform: uppercase;
+    font-weight: 700;
     background-color: var(--orange);
     color: var(--white);
     transition: background-color .5s ease;
