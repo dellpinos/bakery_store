@@ -138,38 +138,40 @@
                 disabledDates = JSON.parse(document.querySelector('#hidden-checkout-prev-dates').value);
             }
 
-            flatpickrInstance = flatpickr("#hidden-datepicker", {
-                dateFormat: "Y-m-d", // Date format
-                inline: true,
-                minDate: minDay,
-                maxDate: maxDate,
-                positionElement: markedDay,
-                disable: [
-                    function (date) {
-                        return date.getDay() === 0; // Disabled sundays
-                    },
-                    function (date) {
-                        // Disable previous dates
-                        if (Array.isArray(disabledDates)) {
-                            return disabledDates.some(prev_date => {
-                                const formattedDate = date.toISOString().split('T')[0]; // ISO Format
-                                return disabledDates.includes(formattedDate);
-                            });
+            setTimeout(() => {
+                flatpickrInstance = flatpickr("#hidden-datepicker", {
+                    dateFormat: "Y-m-d", // Date format
+                    inline: true,
+                    minDate: minDay,
+                    maxDate: maxDate,
+                    positionElement: markedDay,
+                    disable: [
+                        function (date) {
+                            return date.getDay() === 0; // Disabled sundays
+                        },
+                        function (date) {
+                            // Disable previous dates
+                            if (Array.isArray(disabledDates)) {
+                                return disabledDates.some(prev_date => {
+                                    const formattedDate = date.toISOString().split('T')[0]; // ISO Format
+                                    return disabledDates.includes(formattedDate);
+                                });
+                            }
+                            return false; // If disabledDates isn't an array, don't disable any date
                         }
-                        return false; // If disabledDates isn't an array, don't disable any date
-                    }
-                ],
+                    ],
 
-                onChange: function (disabledDates) {
+                    onChange: function (disabledDates) {
 
-                    // Update hidden input with selected dates 
-                    const formattedDates = disabledDates.map(date => {
-                        return date.toISOString().split('T')[0]; // ISO Format
-                    });
+                        // Update hidden input with selected dates 
+                        const formattedDates = disabledDates.map(date => {
+                            return date.toISOString().split('T')[0]; // ISO Format
+                        });
 
-                    deliveryDate = formattedDates.join(', ');
-                },
-            });
+                        deliveryDate = formattedDates.join(', ');
+                    },
+                });
+            }, 10); // 10 ms para asegurar que esté en el DOM
         }
 
         // Removes cart item
@@ -234,8 +236,15 @@
                     } else {
                         console.error('Something went wrong');
 
-                        const response = await result.json()
+                        const response = await result.json();
+
                         alert(`${response.message}. You'll be redirected.`);
+
+                        // Safari PATCH
+
+                        const dates = response.prev_invalid_dates.replace(/[\[\]]/g, "")
+                        
+                        alert(`Some browsers may have problems with the date picker. We strongly recommend trying another browser for a better experience. That said, these dates cannot be used for the current quantity: ${dates}`)
 
                         setTimeout(() => {
                             location.reload()

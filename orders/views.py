@@ -13,6 +13,8 @@ from products.models import Product, Category
 from users.models import Notification
 from .utils import generate_unique_token
 
+from dashboard.views import check_dates
+
 # Checkout view
 @login_required
 def checkout(request):
@@ -506,7 +508,28 @@ def create_order(request):
 
         # Validates the quantitites for this day
         if count_previous_products + order_total_quantity > max_prod_per_day:
-            return JsonResponse({'status': 'error', 'message': 'Invalid quantity'}, status = 400)
+
+
+            # NOTE: Patch for Safari
+
+            invalid_dates_response = check_dates(request, order_total_quantity, seller_user.id)
+
+            invalid_dates = json.loads(invalid_dates_response.content.decode('utf-8'))
+
+            # response = JsonResponse(invalid_dates_response)
+
+            # invalid_dates = response.content.decode('utf-8')
+
+            print('------')
+            print(invalid_dates['disabled_days'])
+            print('------')
+
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Invalid quantity',
+                'prev_invalid_dates': invalid_dates['disabled_days']
+
+            }, status = 400)
         
         # Generates unique token
         token = generate_unique_token()
