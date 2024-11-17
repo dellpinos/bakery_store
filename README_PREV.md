@@ -39,7 +39,7 @@ Esta aplicación supuso varios desafios, pruebas y la necesidad de diferentes en
 
 "Siempre intento prácticar las nuevas tecnologias con proyectos personales elaborados, BakeryStore es una idea que tenia en mente como un organizador para los pequeños emprendimientos caseros que son tan comunes hoy en dia."
 
-## Retos
+### Retos
 
 Uno de los retos más díficiles de esta aplicación fue la sincronización en la disponibilidad de fechas, que una fecha se encuentre disponible depende de:
 
@@ -67,7 +67,7 @@ Tanto el código como los estilos de esta libreria se utilizan mediante CDN, no 
 
 ## Pasos para ejecutar el proyecto
 
-El proyecto utiliza Django con SQLite en el backend y Vanilla Javascript con CSS en el frontend, no requiere una configuración especifica. Python y Pip deben estar presentes en la máquina:
+El proyecto utiliza Django con SQLite en el backend y Vanilla Javascript con CSS en el frontend, no requiere una configuración especifica. Versiones actualizadas de Python y Pip deben estar presentes en la máquina:
 
 - Crear VE - `python3 -m venv venv`
 - Activar VE - `source venv/bin/activate`
@@ -78,7 +78,7 @@ El proyecto utiliza Django con SQLite en el backend y Vanilla Javascript con CSS
 
 ## Issues
 
-La apliación tiene un "issue conocido" en la implementación de la libreria Flipkr (JavaScript), esta libreria tiene problemas con Safari únicamente (en los navegadores Chrome y Firefox esto no ocurre y el usuario tiene un flujo de navegación normal). Al hacer pruebas con Safari es evidente un error que interrumpe la ejecución del código, esto impide a la aplicación mostrar los "disabled days" cada vez que cambia la "cantidad" de productos que desea ordenar.
+La apliación tiene un "issue conocido" en la implementación de la libreria Flipkr (JavaScript), esta libreria tiene problemas con Safari y con iOS (en los navegadores Chrome y Firefox esto no ocurre y el usuario tiene un flujo de navegación normal, ocurre lo mismo con Android). Al hacer pruebas con Safari es evidente un error que interrumpe la ejecución del código, esto impide a la aplicación mostrar los "disabled days" cada vez que cambia la "cantidad" de productos que desea ordenar.
 
 De todas formas el backend comprueba las fechas escogidas por el usuario antes de almacenar la orden, esto permite informar el error al usuario y sugerirle el uso de otro navegador para mejorar su experiencia. Este error no impide el flujo de navegación del comprador ya que puede concretar la orden correctamente y sin escoger fechas que deberian estar deshabilitadas.
 
@@ -90,6 +90,7 @@ A pesar de probar diferentes enfoques Safari sigue dando el mismo error, la solu
 
 Este proyecto tiene un desarrollo avanzado y con ciertos ajustes podría estar listo para producción, de todas formas hay varios puntos a mejorar o funcionalidades que me gustaría integrar para obtener una aplicación más completa y viable para los usuarios:
 
+- Cambiar la libreria Flipkr para corregir "issues conocidos"
 - Agregar calificaciones y comentarios sobre los vendedores.
 - Agregar mensajeria interna entre comprador y vendedor.
 - Mejorar la seguridad de la aplicación integrando verificación por email y Captcha para la creación de cuentas.
@@ -172,8 +173,6 @@ La aplicación cuenta con 8 modelos/entidades y 3 modelos/pivote que facilitan l
 Este proyecto cuenta con multiples aplicaciones: Dashboard donde se encuentra la lógica para el manejo del panel de vendedor y la mayoria de sus vistas, Orders donde se encuentra el código correspondiente a las ordenes, Products para la lógica de los productos y por último Users donde se maneja la autenticación del usuario y la notificación.
 
 Dentro de la aplicación principal "Bakery Store" se encuentran todos los assets (imagenes, Js y CSS de todo el proyecto) y las vistas (templates). Estructura de carpetas:
-
-
 
 ```
 |- devenv -> Enviroment

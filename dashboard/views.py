@@ -107,6 +107,13 @@ def calendar_update(request):
         body = request.POST
         str_dates = body["dates"]
         obj_dates = []
+        pending_dates = []
+
+        orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
+
+        # Look for pending orders
+        for order in orders:
+            pending_dates.append(order.delivery_date)
 
         if str_dates:
             dates = str_dates.split(", ")
@@ -125,6 +132,19 @@ def calendar_update(request):
                     }
                 })
 
+            # Validates if the dates don't have pending orders
+            for pen_date in pending_dates:
+                for date in obj_dates:
+
+                    if pen_date == date:
+
+                        return render(request, "dashboard/index.html", {
+                            "message": {
+                                "type": "error",
+                                "txt": "Invalid date"
+                            }
+                        })
+                    
             # Deletes previous days off
             prev_dates = request.user.days_off.all()
 
@@ -132,27 +152,20 @@ def calendar_update(request):
                 prev_date.delete()
 
             for date in obj_dates:
+
                 new_date = SellerTimeOff(
                     user = request.user,
                     date = date
                 )
 
                 new_date.save()
+
         else:
             # Deletes previous days off
             prev_dates = request.user.days_off.all()
 
             for prev_date in prev_dates:
                 prev_date.delete()
-
-
-        orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
-        
-        pending_dates = []
-
-        # Look for pending orders
-        for order in orders:
-            pending_dates.append(order.delivery_date)
 
         # ISO Format
         pending_dates_list = [day.strftime('%Y-%m-%d') for day in pending_dates]

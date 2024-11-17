@@ -8,6 +8,7 @@ from django.urls import reverse
 import re
 from users.models import User, Notification
 
+
 def login_view(request):
     if request.method == "POST":
 

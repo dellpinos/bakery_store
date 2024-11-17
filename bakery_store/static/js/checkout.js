@@ -26,46 +26,53 @@
             const qInputs = document.querySelectorAll('.checkout__quantity');
 
             qInputs.forEach(input => {
-                total += parseInt(input.value);
-                let value = parseInt(input.value);
 
+                total += parseInt(input.value) || 0;
+                let value = parseInt(input.value) || 0;
+        
                 input.addEventListener('input', async e => {
-
-                    // doesn't allow negative numbers
-                    if (parseInt(e.target.value) <= 0) {
-                        e.target.value = 1
+                    let currentValue = e.target.value;
+        
+                    // Allows to delete the value
+                    if (currentValue === '') {
+                        return;
                     }
-
-                    if (value > parseInt(input.value)) {
-                        // Substracting
-
-                        total -= value - parseInt(input.value);
-                        value = parseInt(input.value);
-
+        
+                    currentValue = parseInt(currentValue);
+        
+                    // doesn't allow negative numbers
+                    if (currentValue <= 0) {
+                        e.target.value = 1;
+                        currentValue = 1;
+                    }
+        
+                    if (value > currentValue) {
+                        // Subtracting
+                        total -= value - currentValue;
+                        value = currentValue;
+        
                         const response = await updateDates(total);
                         const new_dates = JSON.parse(response.disabled_days);
-
+        
                         setCalendar(new_dates);
                         priceCalculates();
-
                     } else {
                         // Adding
-                        if (total + (parseInt(input.value) - value) <= maxSellerQuantity) {
-                            total += parseInt(input.value) - value;
-                            value = parseInt(input.value);
-
+                        if (total + (currentValue - value) <= maxSellerQuantity) {
+                            total += currentValue - value;
+                            value = currentValue;
+        
                             const response = await updateDates(total);
                             const new_dates = JSON.parse(response.disabled_days);
-
+        
                             setCalendar(new_dates);
-                            priceCalculates()
+                            priceCalculates();
                         } else {
-
                             input.value = value;
-                            console.log('You cannot add more products in this order.')
+                            console.log('You cannot add more products in this order.');
                         }
                     }
-                })
+                });
             });
 
             async function updateDates(quantity) {
