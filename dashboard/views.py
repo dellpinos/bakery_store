@@ -77,6 +77,7 @@ def all_ingredients(request):
 def settings(request):
 
     orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
+
     pending_dates = []
 
     # Look for pending orders
@@ -101,7 +102,7 @@ def settings(request):
 # Update calendar in the settings view
 @login_required
 def calendar_update(request):
- 
+
     if (request.POST):
         body = request.POST
         str_dates = body["dates"]
@@ -117,7 +118,7 @@ def calendar_update(request):
                     date_obj = timezone.make_aware(date_obj, timezone.get_current_timezone())
                     obj_dates.append(date_obj)
             except:
-                return render(request, "dashboard/settings.html", {
+                return render(request, "dashboard/index.html", {
                     "message": {
                         "type": "error",
                         "txt": "Invalid date"
@@ -144,6 +145,18 @@ def calendar_update(request):
             for prev_date in prev_dates:
                 prev_date.delete()
 
+
+        orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
+        
+        pending_dates = []
+
+        # Look for pending orders
+        for order in orders:
+            pending_dates.append(order.delivery_date)
+
+        # ISO Format
+        pending_dates_list = [day.strftime('%Y-%m-%d') for day in pending_dates]
+
         capacity = request.user.max_prod_capacity
         days_off = request.user.days_off.values_list('date', flat=True)
         days_off_list = [day.strftime('%Y-%m-%d') for day in days_off]  # ISO Format
@@ -154,7 +167,8 @@ def calendar_update(request):
                 "txt": "Days off updated"
             },
             "days_off": json.dumps(days_off_list),
-            "capacity": capacity
+            "capacity": capacity,
+            "pending_dates": json.dumps(pending_dates_list)
         })
 
 # Update the user's maximum daily production in the settings view
@@ -169,6 +183,21 @@ def capacity_update(request):
         days_off = request.user.days_off.values_list('date', flat=True)
         days_off_list = [day.strftime('%Y-%m-%d') for day in days_off]  # ISO Format
 
+
+        orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False)
+
+        pending_dates = []
+
+        # Look for pending orders
+        for order in orders:
+            pending_dates.append(order.delivery_date)
+
+        # Look for previous days off
+        days_off = request.user.days_off.values_list('date', flat=True)
+
+        # ISO Format
+        pending_dates_list = [day.strftime('%Y-%m-%d') for day in pending_dates]
+
         try:
             int(new_capacity)
             if int(new_capacity) < 1 or int(new_capacity) > 10:
@@ -180,7 +209,8 @@ def capacity_update(request):
                     "txt": "Invalid production capacity"
                 },
                 "days_off": json.dumps(days_off_list),
-                "capacity": capacity
+                "capacity": capacity,
+                "pending_dates": json.dumps(pending_dates_list)
             })
 
         user = request.user
@@ -194,7 +224,8 @@ def capacity_update(request):
                 "txt": "Capacity updated"
             },
             "days_off": json.dumps(days_off_list),
-            "capacity": new_capacity
+            "capacity": new_capacity,
+            "pending_dates": json.dumps(pending_dates_list)
         })
     
 @login_required

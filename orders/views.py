@@ -124,7 +124,7 @@ def checkout(request):
 @login_required
 def pending_orders(request):
     
-    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False).order_by('-created_at')
+    orders = Order.objects.filter(seller_user = request.user, deleted_at = None, archived = False).order_by('delivery_date')
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)
@@ -203,7 +203,7 @@ def archived_orders(request):
 @login_required
 def pending_deliveries(request):
 
-    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = False).order_by('-created_at')
+    orders = Order.objects.filter(buyer_user = request.user, deleted_at = None, archived = False).order_by('delivery_date')
 
     for order in orders:
         order_products = order.products.filter(deleted_at = None)
@@ -509,20 +509,10 @@ def create_order(request):
         # Validates the quantitites for this day
         if count_previous_products + order_total_quantity > max_prod_per_day:
 
-
-            # NOTE: Patch for Safari
+            # NOTE: Patch for Safari, it has problems with the day picker library
 
             invalid_dates_response = check_dates(request, order_total_quantity, seller_user.id)
-
             invalid_dates = json.loads(invalid_dates_response.content.decode('utf-8'))
-
-            # response = JsonResponse(invalid_dates_response)
-
-            # invalid_dates = response.content.decode('utf-8')
-
-            print('------')
-            print(invalid_dates['disabled_days'])
-            print('------')
 
             return JsonResponse({
                 'status': 'error',

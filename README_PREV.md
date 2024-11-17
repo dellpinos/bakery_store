@@ -173,6 +173,9 @@ Este proyecto cuenta con multiples aplicaciones: Dashboard donde se encuentra la
 
 Dentro de la aplicación principal "Bakery Store" se encuentran todos los assets (imagenes, Js y CSS de todo el proyecto) y las vistas (templates). Estructura de carpetas:
 
+
+
+```
 |- devenv -> Enviroment
 |- bakery_store
 	|- static
@@ -230,3 +233,4 @@ Dentro de la aplicación principal "Bakery Store" se encuentran todos los assets
 	|- models.py -> User, SellerTimeOff and Notification models.
 	|- urls.py -> Authentication and Notification routes.
 	|- views.py - Routes Controllers.
+```

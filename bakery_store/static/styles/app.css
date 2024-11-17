@@ -25,9 +25,6 @@
     --redAlert: #ee3d42;
     --redAlertDark: #c43338;
 
-
-
-
     --yellow: #ffff51;
     --darkYellow: #edef47;
     --darkYellowRgb: 237, 239, 71;
@@ -37,26 +34,6 @@
     --orangeRgb: 255, 115, 96;
 
 }
-
-/* Scrollbar Styles WebKit (Chrome, Safari, Edge) */
-/* ::-webkit-scrollbar {
-    width: 6px;
-    margin: 2rem 0;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 6px;
-    background-color: #888;
-    border: 3px solid #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-} */
 
 /* Scrollbar Styles Firefox */
 * {
@@ -93,7 +70,7 @@ main {
     flex-direction: column;
     justify-content: center;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         
         padding: 0 2rem 15rem 2rem;
     }
@@ -189,7 +166,13 @@ textarea {
     position: relative;
     padding-top: 86px;
 
-    @media (min-width: 768px) {
+
+    @media (min-width: 480px) {
+        padding-top: 113px;
+        
+    }
+
+    @media (min-width: 769px) {
         padding-top: 221px;
     }
 }
@@ -234,7 +217,7 @@ textarea {
     justify-content: center;
     align-items: center;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         justify-content: flex-end;
         
     }
@@ -259,7 +242,7 @@ textarea {
     text-transform: capitalize;
     font-size: clamp(2.5rem, 4vw + 1rem, 4rem);
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         margin: 5rem 0;
         
     }
@@ -421,7 +404,7 @@ textarea {
     right: 0;
     z-index: 9; /*      << << << << <<      */
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: block;
         padding: 2rem 4rem;
     }
@@ -435,7 +418,7 @@ textarea {
     padding: 0 2rem;
 
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         padding: 0;
     }
 
@@ -448,7 +431,7 @@ textarea {
     transition: color .3s ease;
     display: none;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: block;
     }
 }
@@ -459,7 +442,7 @@ textarea {
     align-items: center;
     /* margin-bottom: 3rem; */
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         margin: 0;
     }
 }
@@ -471,7 +454,7 @@ textarea {
     gap: 2rem;
     padding: 2rem 0;
     
-    @media(min-width: 768px) {
+    @media(min-width: 769px) {
         display: flex;
     }
 }
@@ -485,7 +468,7 @@ textarea {
     gap: 2rem;
     padding: 2rem 0; */
     
-    @media(min-width: 768px) {
+    @media(min-width: 769px) {
         display: none; /* hidden on small screen */
     }
 }
@@ -518,7 +501,7 @@ textarea {
     justify-content: space-between;
     width: 100%;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         justify-content: center;
         
     }
@@ -670,7 +653,7 @@ textarea {
     width: 100%;
     padding: .5rem;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: none;
     }
 }
@@ -688,7 +671,7 @@ textarea {
     max-height: 5.6rem;
     transition: max-height .8s ease;
 
-     @media (min-width: 768px) {
+     @media (min-width: 769px) {
          flex-direction: row;
      }
 
@@ -708,7 +691,7 @@ textarea {
     width: 100%;
     padding: 1rem 2rem;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: flex;
     }
 }
@@ -791,7 +774,7 @@ footer {
     font-size: 1.8rem;
     text-align: center;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         
         padding: 3rem 0 6rem 0;
     }
@@ -849,11 +832,11 @@ footer {
     font-size: 7rem;
     margin: 0;
     transition: all 1s ease;
+    text-align: center;
 }
 
 .common-section__heading:hover {
     color: var(--yellow);
-
     text-shadow: 0 0 15px var(--orange);
 
 }
@@ -908,7 +891,7 @@ footer {
     gap: 2rem;
     width: 90%;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         width: 60%;
         
     }
@@ -950,7 +933,7 @@ footer {
     flex-direction: column;
     width: 100%;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         flex-direction: row;
         justify-content: space-between;
     }
@@ -1008,7 +991,7 @@ footer {
     display: flex;
     justify-content: center;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         justify-content: flex-end;
         
     }
@@ -1038,7 +1021,12 @@ footer {
     gap: 2rem;
     margin-bottom: 3rem;
     
-    @media (min-width: 768px) {
+    @media (min-width: 480px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @media (min-width: 769px) {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         
@@ -1047,7 +1035,12 @@ footer {
 
 .banner-grid {
 
-    grid-column: span 3;
+    grid-column: span 2;
+    
+    @media (min-width: 769px) {
+        grid-column: span 3;
+        
+    }
 
 }
 
@@ -1073,13 +1066,13 @@ footer {
     justify-content: space-between;
 
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         flex-direction: column;
         
     }
     > h1 {
         font-size: 3rem;
-        @media (min-width: 768px) {
+        @media (min-width: 769px) {
             
             font-size: 6rem;
         }
@@ -1093,7 +1086,7 @@ footer {
     justify-content: flex-start;
     padding: 1rem;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         padding: 4rem;
         
     }
@@ -1106,7 +1099,7 @@ footer {
     justify-content: space-between;
     margin: 4rem 0;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         flex-direction: row;
         gap: 0;
     }
@@ -1143,7 +1136,7 @@ footer {
 
     display: none; /* Mobile */
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1204,11 +1197,7 @@ footer {
     padding: 2rem;
     text-align: center;
 
-    /* @media (min-width: 768px) {
-
-    } */
-
-    @media (min-width: 768px) {
+    @media (min-width: 480px) {
         flex-direction: row;
         gap: 0;
 
@@ -1250,7 +1239,7 @@ footer {
     width: 100%;
     margin-top: 2rem;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         padding: 0 5rem;
         
     }
@@ -1265,7 +1254,7 @@ footer {
     color: var(--white);
     font-weight: 700;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         padding: .5rem 1rem;
 
         
@@ -1312,7 +1301,7 @@ footer {
     border-radius: 1rem;
     transition: border .5s ease;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         
         max-height: none;
         min-height: 75rem;
@@ -1427,7 +1416,7 @@ footer {
     flex-direction: column;
     gap: 2rem;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
@@ -1496,7 +1485,7 @@ footer {
     flex-direction: column;
     align-items: center;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -1513,7 +1502,12 @@ footer {
     height: 23rem;
     overflow: hidden;
 
-    @media (min-width: 768px) {
+    @media (min-width: 480px) {
+        width: 50rem;
+        height: 38rem;
+    }
+
+    @media (min-width: 769px) {
         width: 60rem;
         height: 45rem;
     }
@@ -1532,7 +1526,7 @@ footer {
     margin: 2rem 0;
     font-size: clamp(5rem, 6vw + 1rem, 6rem);
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         margin: 4rem 0 2rem 0;
         
     }
@@ -1561,7 +1555,13 @@ footer {
     gap: 2rem;
     padding: 1rem;
     
-    @media (min-width: 768px) {
+    @media (min-width: 480px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @media (min-width: 769px) {
+        display: flex;
         flex-direction: row;
         padding: 5rem;
     }
@@ -1584,7 +1584,7 @@ footer {
     border-radius: 1rem;
     transition: border .5s ease;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         width: 25%;
         padding: 2rem 5rem 5rem 5rem;
     }
@@ -1633,7 +1633,7 @@ footer {
 
     /* overflow: scroll; */
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         min-width: 45rem;
         min-height: 0;
         
@@ -1759,7 +1759,7 @@ footer {
     background-color: var(--white);
     box-shadow: 0 0 10px var(--silver);
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         margin: 0 8rem;
         
     }
@@ -1786,7 +1786,7 @@ footer {
     text-align: center;
     border: 2px solid var(--ivory);
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         flex-direction: row;
         max-height: 33rem;
         text-align: start;
@@ -1820,7 +1820,7 @@ footer {
     flex-direction: column;
     gap: 2rem;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: grid;
         grid-template-columns: 2fr 4fr;
     }
@@ -1908,7 +1908,7 @@ footer {
     gap: 6rem;
     padding: 4rem 0;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: grid;
         grid-template-columns: 2fr 1fr;
         gap: 0;
@@ -1934,7 +1934,7 @@ footer {
     font-weight: 700;
     color: var(--orange);
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         font-size: 4.5rem;
         
     }
@@ -1965,7 +1965,7 @@ footer {
 
     width: 100%;
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
@@ -1982,7 +1982,7 @@ footer {
         font-size: clamp(1.6rem, 2.5vw + 1rem, 2.5rem);
         margin-bottom: 1rem;
         
-        @media (min-width: 768px) {
+        @media (min-width: 769px) {
             margin-bottom: 2rem;
             
         }
@@ -2037,7 +2037,7 @@ footer {
 /* Btn - "anchor" to archive orders */
 /* .archive-action {
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         
     }
 } */
@@ -2047,7 +2047,7 @@ footer {
 .deliveries__container {
     margin: 0rem;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         margin: 0 15rem;
     }
 }
@@ -2072,7 +2072,7 @@ footer {
     flex-direction: column;
     gap: 2rem;
     
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
         display: grid;
         grid-template-columns: 1fr 1fr;
         padding: 0 4rem;
