@@ -14,17 +14,17 @@ The buyer user has access to the full "Product list" on the app and can use **ca
 
 At "Checkout", the user can adjust the quantities of each product (while considering the seller's maximum production limit) and select a **delivery date**. The selectable dates are those not disabled by the seller and do not exceed the seller’s daily production **capacity**.
 
-Once the order is completed, both the buyer and the seller are notified. When the seller accepts the order, the buyer can mark it as "delivered" to finalize it. Afterward, the seller can also archive the order so it becomes available in "Archived Deliveries."
+Once the order is completed, both the buyer and the seller are notified. When the seller accepts the order, the buyer can mark it as "delivered" to finalize it. Afterward, the seller can also archive the order so it becomes available in "Archived Deliveries".
 
 ## User's Workflow
 
 Seller Workflow:
 
-* Create an account and access the "Seller Panel."
-* Create one or more *ingredients* with their price and quantity per package (the quantity is used to calculate the fractional value).
+* Create an account and access the "Seller Panel".
+* Create one or more ingredients with their price and quantity per package (the quantity is used to calculate the fractional value).
 * Create a product with a base price, ingredients, and production time.
 * Optional: set up "days off" and/or a daily production limit.
-* When a buyer places an order, the seller gets a notification and a new item in "Pendings."
+* When a buyer places an order, the seller gets a notification and a new item in "Pendings".
 * In "Pendings," the seller can confirm or reject an order, with full details of the order and the delivery date requested by the buyer.
 * Once the buyer confirms the delivery, the seller receives a notification and can archive the order.
 
@@ -34,7 +34,6 @@ Buyer Workflow:
 * Go to checkout to adjust quantities and choose a delivery date.
 * After submitting the order, the user receives a notification and later another one depending on whether the seller confirms or cancels the order.
 * Finally, the buyer can confirm receipt of an order to mark it as completed.
-
 
 ## Distinctiveness and Complexity
 
@@ -68,7 +67,6 @@ I’ve included the Flatpickr JavaScript library via CDN. It’s a useful tool f
 
 Both the code and styles of this library are used directly through the CDN, so no installation is required.
 
-
 ## Run application
 
 The project uses Django with SQLite for the backend and Vanilla JavaScript with CSS for the frontend, requiring no specific setup. Updated versions of Python and Pip should be present on the machine:
@@ -80,7 +78,6 @@ The project uses Django with SQLite for the backend and Vanilla JavaScript with 
 * Create a superuser - `python3 manage.py createsuperuser` (optional for accessing Django Admin)
 * Run the development server - `python3 manage.py runserver`
 
-
 ## Issues
 
 The application has a "known issue" with the implementation of the Flipkr library (JavaScript). This library has issues with Safari and iOS (this doesn't occur in Chrome and Firefox browsers, and the user experience is normal in those, as well as on Android). When testing with Safari, a noticeable error occurs that interrupts the execution of the code, preventing the application from displaying the "disabled days" whenever the user changes the "quantity" of products they want to order.
@@ -89,8 +86,7 @@ However, the backend checks the selected dates before storing the order, which a
 
 ### Solutions
 
-Despite trying different approaches, Safari continues to show the same error. The most viable solution is to switch the library for the date picker and integrate it using a module bundler like Webpack or similar.
-
+Despite trying different approaches, Safari and iOS continue to show the same error. The most viable solution is to switch the library for the date picker and integrate it using a module bundler like Webpack or similar.
 
 ## How I would continue this project
 
@@ -105,11 +101,9 @@ This project is at an advanced stage of development and, with some adjustments, 
 * Implement a favorites list.
 * Change the app's name and categories to make it suitable for all types of products, not just food or baked goods.
 
-
 ## Explanation of Models/Entities
 
 The application has 8 models/entities and 3 pivot models that facilitate the relationship between the entities.
-
 
 - Order: It corresponds to each order placed.
   - buyer_user -> Buyer User (FK - User)
@@ -176,9 +170,7 @@ The application has 8 models/entities and 3 pivot models that facilitate the rel
   - is_read -> Notification's status
   - created_at -> Creation date
 
-
 ## File listing
-
 
 This project has multiple applications: Dashboard, which contains the logic for managing the seller panel and most of its views; Orders, which holds the code related to orders; Products, for product logic; and finally, Users, which handles user authentication and notifications.
 
