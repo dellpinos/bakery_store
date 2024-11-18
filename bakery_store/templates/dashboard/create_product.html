@@ -1,0 +1,115 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    New Product
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/newProduct.js' %}" type="module"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading">New Product</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
+
+        <div class="dashboard__actions">
+            <a href="{% url 'dashboard_products' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+        </div>
+
+        {% if not ingredients %}
+            <div class="msg-empty">You need to create some ingredients first</div>
+        {% else %}
+
+            <div class="form__container" >
+                <form action="{% url 'new_product' %}" method="POST" class="form">
+                {% csrf_token %}
+                    <div class="form__field">
+                        <label for="name">Name</label>
+                        <input type="text" placeholder="Product Name" class="form__input" name="name" value="{{ body.name }}" id="name" minlength="3" maxlength="120" required>
+                    </div>
+                    <div class="form__field">
+                        <label for="prod_time">Production Time (days)</label>
+                        <input type="number" placeholder="5" class="form__input" name="prod_time" value="{{ body.prod_time }}" id="prod_time" min="1" max="99" step="1" required>
+                    </div>
+                    <div class="form__field">
+                        <label for="image">Image</label>
+                        <input type="url" placeholder="https://example.com/image.jpg" class="form__input" name="image" value="{{ body.image }}" id="image" minlength="3" maxlength="240">
+                    </div>
+                    <div class="form__field">
+                        <label for="categories">Categories - Hold Ctrl (Cmd on Mac) and click to select one or more options</label>
+                        <select multiple class="form__input" name="categories" id="categories" required>
+                            {% for category in categories %}
+                                <option value="{{ category.id}}"
+                                {% if category.id in categories_list %} selected {% endif %}>
+                                {{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form__field">
+                        <label for="description">Description</label>
+                        <textarea type="text" placeholder="Product Description" class="form__input" rows="6" name="description" id="description" maxlength="550">{{ body.description }}</textarea>
+                    </div>
+                    <div class="form__field">
+                        <label for="price">Custom Price Adjustment (profit, labor, etc.)</label>
+                        <input type="number" placeholder="200" class="form__input" name="price" value="{{ body.price }}" id="price" min="1" max="999999" step="0.01" required>
+                    </div>
+
+                    <div id="inputs-hidden-container">
+                        {% for input in ingredient_list %}
+
+                                <input type="hidden" 
+                                    value='{"id":"{{ input.id }}","quantity":"{{ input.quantity }}"}' 
+                                    data-previous-items='{{ input.name }}'
+                                    data-size="{{ input.size }}" 
+                                    data-measurement-unit="{{ input.measurement_unit }}" 
+                                    data-price="{{ input.price }}"
+                                    name="ingredient_data"
+                                >
+                        {% endfor %}
+                    </div>
+
+                    <div class="product-ingredient__form">
+                        <h4>Ingredients</h4>
+                        <div class="product-ingredient__inputs">
+                            <select id="create-product-ingredient" class="form__input form__input--ingredients">
+                                <option value="" disabled selected>-- Select --</option>
+                                {% for ingredient in ingredients %}
+                                    <option value="{{ ingredient.id }}" data-size="{{ ingredient.size }}" data-measurement-unit="{{ ingredient.measurement_unit }}" data-price="{{ ingredient.price }}">{{ ingredient.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="product-ingredient__measure-field">
+                                <input type="number" class="form__input form__input--ingredients" placeholder="100" id="create-product-quantity" min="1" max="999999" step="0.01">
+                                <p id="create-product-unit-measurement">empty</p>
+                            </div>
+                        </div>
+                        <div class="product-ingredient__btn-container">
+                            <input type="button" class="btn btn-disabled" value="Add" id="create-product-add">
+                        </div>
+                        <ul class="product-ingredient__items" id="create-product-items-list"></ul>
+                    </div>
+                    <div class="product-create__price-container">
+                        <p class="product-create__price" id="create-product-total"></p>
+                        <p class="product-create__price-text">Final Price</p>
+                    </div>
+                    
+                    <input type="submit" value="Submit" class="btn d-none" id="create-product-submit">
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}

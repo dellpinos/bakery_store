@@ -3,3 +3,6 @@ devenv
 .vscode/
 __pycache__/
 node_modules
+db.sqlite3
+NOTAS.md
+README_PREV.md

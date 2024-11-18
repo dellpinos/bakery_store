@@ -1,0 +1,62 @@
+{% extends "layouts/layout.html" %}
+{% load static %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+
+    <h3 class="heading">
+    {% if cart_seller %} 
+        {{ cart_seller.username }} Products
+
+    {% elif category_db %}
+        {{ category_db.name }}
+    {% else %}
+        All Products
+    {% endif %}</h3>
+
+    {% if message %}
+        <div class="msg-error">{{ message }}</div>
+    {% endif %}
+
+    <div class="home__grid">
+        {% for item in products %}
+
+            <a href="{% url 'show_product' item.id %}" class="product-card">
+                <h4>{{ item.name }}</h4>
+                <div class="product-card__img-container">
+                    {% if item.image %}
+                        <img src="{{ item.image }}" alt="{{item.name}} Image" width="500" class="product-card__img">
+                    {% else %}
+                        <img src="{% static 'img/empty-picture.svg' %}" alt="Empty Image" width="300" class="product-card__img--empty">
+                    {% endif %}
+                </div>
+                <div class="flex-col">
+                    <p class="product-card__text">{{ item.description }}</p>
+                    <p class="product-card__price format-price">{{ item.total_price }}</p>
+                    <p>Production time: {{ item.production_time }} days</p>
+                </div>
+            </a>
+            {% if forloop.counter|divisibleby:6 %}
+                <div class="common-section banner-grid common-section__w-img common-section__img-1"></div>
+            {% endif %}
+            
+        {% endfor %}
+    </div>
+
+    {% if not products %}
+        <p class="msg-empty mb-6">There are no products to show.
+            {% if category_db %}
+                <a href=" {% url 'index' %}" class="c-yel">Back to all products.</a>
+            {% endif %}
+        </p>
+    {% endif %}
+    <div class="common-section common-section__w-img common-section__img-3">
+        <a href="{% url 'random_product' %}">
+            <h3 class="common-section__heading">Surprise Me with Something New</h3>
+        </a>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    All Ingredients
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3 class="heading">All Ingredients</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        <div class="dashboard__actions">
+            <a href="{% url 'dashboard' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+            <a href="{% url 'new_ingredient' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/plus.svg' %}" alt="Plus Icon" width="30">
+                <p>New Ingredient</p>
+            </a>
+        </div>
+
+        <ul class="content__list" id="dashboard-ingredient-list">
+            {% for ingredient in page %}
+            <li class="content__item">
+                <p>{{ ingredient.name }} - ${{ ingredient.price }}</p>
+
+                <div class="content__item-btns">
+                    <a href="{% url 'edit_ingredient' ingredient.id %}">
+                        <img src="{% static 'img/edit-white.svg' %}" class="content__edit" alt="Edit Icon">
+                    </a>
+                </div>
+            </li>
+
+            {% empty %}
+                <p class="msg-empty">There are no ingredients to show</p>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if page.paginator.num_pages > 1 %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page.has_previous %}
+                    <a href="?page=1">
+                        <img  src="{% static 'img/track-back.svg'%}" class="pagination__icon" width="100px" alt="First">
+                    </a>
+                    <a href="?page={{ page.previous_page_number }}">
+                        <img  src="{% static 'img/arrow-left.svg'%}" class="pagination__icon" width="100px" alt="Previuos">
+                    </a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}
+                </span>
+        
+                {% if page.has_next %}
+                    <a href="?page={{ page.next_page_number }}">
+                        <img  src="{% static 'img/arrow-right.svg'%}" class="pagination__icon" width="100px" alt="Next">
+                    </a>
+                    <a href="?page={{ page.paginator.num_pages }}">
+                        <img  src="{% static 'img/track-next.svg'%}" class="pagination__icon" width="100px" alt="Last">
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    
+{% endblock %}

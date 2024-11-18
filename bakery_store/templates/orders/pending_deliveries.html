@@ -1,0 +1,117 @@
+{% extends "layouts/layout.html" %}
+{% load static %}
+
+{% block title %}
+    Pending deliveries
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/deliveries.js' %}" type="module"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div class="deliveries__container">
+        <h3 class="heading">Pending deliveries</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+
+        {% for error in errors %}
+            <div class="msg-error">{{ error }}</div>
+        {% endfor %}
+
+        <div class="dashboard__actions">
+            <a href="{% url 'index' %}" class="dashboard__actions-btn">
+                <img src="{% static 'img/back.svg' %}" alt="Back Icon" width="30">
+                <p>Back</p>
+            </a>
+        </div>
+
+        <div class="flex-end">
+            <a href="{% url 'archived_deliveries' %}" class="btn btn-gray">View Archived Orders</a>
+        </div>
+
+        <ul class="content__list">
+
+            {% for order in page %}
+
+                <li class="content__item dir-col">
+                    <div class="pending-card__grid">
+                        <div class="pending-card__info">
+                            <h4>Delivery Date: {{ order.delivery_date_formated }}</h4>
+                            <ul>
+                                <li><span class="bold">Username:</span> {{ order.seller_user.username }}</li>
+                                <li><span class="bold">Contact:</span> {{ order.seller_user.email }}</li>
+                                <li><span class="bold">Purchase Date:</span> {{ order.purchance_date_formated }}</li>
+                            </ul>
+                            <p><span class="bold">Total Amount:</span> <span class="format-price">{{ order.total_amount }}</span></p>
+                            <p><span class="bold">Order:</span> #{{ order.token }}</p>
+                        </div>
+
+                        <div class="pending-card__info">
+                            <h4>Total Products: {{ order.total_products }}</h4>
+                            <ul class="pending-card__info">
+                                {% for product in order.products_list %}
+                                    <li>
+                                        <a href="{% url 'show_product' product.id %}">{{ product.name }} - <span class="bold">{{ product.quantity }}u</span></a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p class="deliveries-card__status">Order Status: 
+                        {% if order.status and not order.recived %}
+                            <span class="c-yel bold">Confirmed</span>
+                        {% elif order.recived %}
+                            <span class="c-white bold">Recived</span>
+                        {% else %}
+                            <span class="c-black bold">Pending</span>
+                        {% endif %}
+                    </p>
+
+                    <div class=" content__btn-cont" id="recived-btn-container" {% if order.status %} style="justify-content: center;"{% endif %}>
+                        {% if order.status and not order.recived %}
+                            <button class="content__btn deliveries__recived" data-id="{{ order.id }}">Mark as Received</button>
+                        {% endif %}
+                    </div>
+                </li>
+
+            {% empty %}
+                <p class="msg-empty">There are no orders to show</p>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if page.paginator.num_pages > 1 %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page.has_previous %}
+                    <a href="?page=1">
+                        <img  src="{% static 'img/track-back.svg'%}" class="pagination__icon" width="100px" alt="First">
+                    </a>
+                    <a href="?page={{ page.previous_page_number }}">
+                        <img  src="{% static 'img/arrow-left.svg'%}" class="pagination__icon" width="100px" alt="Previuos">
+                    </a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}
+                </span>
+        
+                {% if page.has_next %}
+                    <a href="?page={{ page.next_page_number }}">
+                        <img  src="{% static 'img/arrow-right.svg'%}" class="pagination__icon" width="100px" alt="Next">
+                    </a>
+                    <a href="?page={{ page.paginator.num_pages }}">
+                        <img  src="{% static 'img/track-next.svg'%}" class="pagination__icon" width="100px" alt="Last">
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    </div>
+
+{% endblock %}

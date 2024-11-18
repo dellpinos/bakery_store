@@ -1,0 +1,37 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block title %}
+    Seller Panel
+{% endblock %}
+
+{% block body %}
+
+    <h3 class="heading">Seller Panel</h3>
+
+    {% if message %}
+        <div class="msg-error">{{ message }}</div>
+    {% endif %}
+        <p class="docs__legend">This is the Seller Panel. Here, you can manage your products for sale, ingredients, and orders.</p>
+
+    <div class="docs">
+        <div class="docs__section">
+            <h4>My Products</h4>
+            <p>In this section, you can view all your products, edit them, and add new ones. You can also change the availability of these products.</p>
+            <p>Note: <span class="bold">Production Time</span> is the period needed to prepare a product. Buyers can't place an order for the product until this period has passed.</p>
+            <p>Note: The final price of a product changes when its ingredients' prices change.</p>
+        </div>
+        <div class="docs__section">
+            <h4>My Ingredients</h4>
+            <p>In this section, you can view all your ingredients, edit them, and add new ones. Keep in mind that these ingredients are necessary to create products, and the ingredient price is used to calculate the final <span class="bold">product price</span>.</p>
+        </div>
+        <div class="docs__section">
+            <h4>Pendings</h4>
+            <p>In this section, you can view all your pending orders. You can also cancel, confirm, and archive each one.</p>
+        </div>
+        <div class="docs__section">
+            <h4>Settings</h4>
+            <p>In this section, you can adjust settings for your store. Set your <span class="bold">days off</span> and change the maximum number of products you can deliver per day. This information will update the available dates for buyers.</p>
+        </div>
+    </div>
+
+{% endblock %}

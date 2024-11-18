@@ -1,0 +1,24 @@
+{% extends "layouts/layout.html" %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block body %}
+
+    <h3 class="heading">Login</h3>
+
+    {% if message %}
+        <div class="msg-error">{{ message }}</div>
+    {% endif %}
+    <div class="form__container--auth">
+        <form action="{% url 'login' %}" method="post" class="form">
+            {% csrf_token %}
+                <input class="form__input" type="text" name="username" placeholder="Username">
+                <input class="form__input" type="password" name="password" placeholder="Password">
+            <input class="btn" type="submit" value="Login">
+            <p class="form__opts">Don't have an account? <a href="{% url 'register' %}"> Register here.</a></p>
+        </form>
+    </div>
+    
+{% endblock %}
