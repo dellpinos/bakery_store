@@ -28,12 +28,13 @@ DEBUG = True
 ALLOWED_HOSTS = [
     # '8c8e-2800-810-4b4-2a0-1c8f-12c3-f32-4025.ngrok-free.app',
     # 'localhost'
-    'bakerystore.dellpinos.com',
-    'www.bakerystore.dellpinos.com'
+    'store.dellpinos.com',
+    'www.store.dellpinos.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     # "https://8c8e-2800-810-4b4-2a0-1c8f-12c3-f32-4025.ngrok-free.app"
+
 ]
 
 
