@@ -11,7 +11,6 @@ export default defineConfig({
     base: process.env.STATIC_URL,
     build: {
         outDir: resolve("./bakery_store/static/dist"),
-        
         manifest: true,
         rollupOptions: {
             input: {
@@ -24,8 +23,8 @@ export default defineConfig({
         viteStaticCopy({
           targets: [
             {
-              src: 'img/*',
-              dest: 'assets/img',
+                src: 'img/*',
+                dest: 'assets/img',
             },
           ],
         }),

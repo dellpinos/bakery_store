@@ -107,27 +107,6 @@ USE_TZ = True
 
 
 
-
-
-# if config('DJANGO_VITE_DEV_MODE', default=True, cast=bool):
-#     # En desarrollo, usa Vite para servir los archivos estáticos.
-#     STATICFILES_DIRS = [
-#         BASE_DIR / "static",  # Directorio de tus archivos estáticos en desarrollo
-
-#     ]
-#     STATIC_ROOT = None  # No necesitas STATIC_ROOT en desarrollo
-# else:
-#     # En producción, usa collectstatic para recopilar los archivos estáticos.
-#     STATICFILES_DIRS = [
-#         BASE_DIR / "static/dist",  # Archivos generados por Vite en desarrollo
-#         BASE_DIR / 'static/dist/.vite',
-#     ]
-#     # STATIC_ROOT = BASE_DIR / "staticfiles"  # Ruta donde collectstatic guardará los archivos
-#     STATIC_ROOT = BASE_DIR / config('STATIC_ROOT', default='staticfiles')
-
-
-
-
 STATIC_URL = config('STATIC_URL', default='static/')
 
 # STATIC_URL = BASE_DIR.parent / 'public' / 'static'
@@ -135,10 +114,19 @@ STATIC_URL = config('STATIC_URL', default='static/')
 STATIC_ROOT = BASE_DIR.parent / 'public' / 'static'
 
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static/dist",  # Archivos generados por Vite en desarrollo
-    BASE_DIR / 'static/dist/.vite',
-]
+# Static files, this changes becaouse in dev there aren't "dist"
+if config('DJANGO_VITE_DEV_MODE', default=True, cast=bool):
+
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",  # Assets before build
+    ]
+
+else:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static/dist",  # Assets after build
+        BASE_DIR / 'static/dist/.vite',
+    ]
+
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
