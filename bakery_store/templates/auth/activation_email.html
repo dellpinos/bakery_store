@@ -1,0 +1,5 @@
+Hi {{ user.username }},
+
+Please click the link below to activate your account:
+
+http://{{ domain }}{% url 'verify_email' uidb64=uid token=token %}

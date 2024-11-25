@@ -2,11 +2,21 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 import re
 from users.models import User, Notification
+
+
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+
+
 
 
 def login_view(request):
@@ -19,6 +29,10 @@ def login_view(request):
 
         # Check if authentication successful
         if user is not None:
+            if not user.is_active:
+                return render(request, "auth/login.html", {
+                    "message": "Please activate your account via the email we sent."
+                })
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
@@ -60,17 +74,50 @@ def register(request):
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
+            user.is_active = False
             user.save()
         except IntegrityError:
             return render(request, "auth/register.html", {
                 "message": "Username already taken."
             })
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        
+
+        # Send confirmation email
+        current_site = get_current_site(request)
+        mail_subject = 'Activate your account'
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        message = render_to_string('auth/activation_email.html', {
+            'user': user,
+            'domain': current_site.domain,
+            'uid': uid,
+            'token': token,
+        })
+        send_mail(mail_subject, message, 'store@dellpinos.com', [email])
+
+        return render(request, "auth/register.html", {
+            "message": "Please confirm your email to complete registration."
+        })
+
     else:
         return render(request, "auth/register.html", {
             "no_cat": True
         })
+    
+def verify_email(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        return HttpResponse("Your account has been activated successfully!")
+    else:
+        return HttpResponse("Activation link is invalid!")
 
 ## API ##
 

@@ -5,6 +5,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', views.logout_view, name='logout'),
+    path('verify_email/<uidb64>/<token>/', views.verify_email, name='verify_email'),
 
     # API
     path('api/notifications/', views.get_notifications, name="get_notifications"),
