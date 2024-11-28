@@ -5,7 +5,7 @@
 <html lang="en">
   <head>
     <title>
-      BakeryStore -{% block title %}
+      {{ app_name }} -{% block title %}
       {% endblock %}
     </title>
     <link rel="icon" href="{% static 'img/cupcake.svg' %}" type="image/x-icon">
@@ -80,10 +80,9 @@
                 </nav>
             </div>
             <div class="header__icon-container">
-                <a class="header__icon" href="/">
+                <a class="header__icon" href="{% url 'index' %}">
                     <p>Bakery<span class="logo-font">Store</span></p>
                 </a>
-
                 <img src="{% static 'img/nav.svg' %}" alt="Mobile Icon" width="30" class="header__nav-mobile-icon" id="nav-mobile-btn">
             </div>
         

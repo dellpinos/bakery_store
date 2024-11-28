@@ -1,24 +1,29 @@
+{% load django_vite %}
 {% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <title>
-      BakeryStore -{% block title %}{% endblock %}
+      {{ app_name }} -{% block title %}{% endblock %}
     </title>
     <link rel="icon" href="{% static 'img/cupcake.svg' %}" type="image/x-icon">
-    <link rel="preload" href="{% static 'styles/app.css' %}" as="style">
+
+    <link rel="preload" href="{% vite_asset_url 'src/styles/app.css' %}" as="style">
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
-    <link href="{% static 'styles/app.css' %}" rel="stylesheet" />
-    <script src="{% static 'js/app.js' %}" type="module"></script>
+
+    {% vite_hmr_client %}
+    {% vite_asset 'src/js/main.js' %}
+    <link rel="stylesheet" href="{% vite_asset_url 'src/styles/app.css' %}">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
     {% block head %}
-    
     {% endblock %}
 
     {% block script %}
@@ -29,7 +34,7 @@
     <header class="dashboard__header">
 
         <div class="dashboard__header-container">
-            <h1>BakeryStore</h1>
+            <h1>{{ app_name }}</h1>
             <img src="{% static 'img/nav.svg' %}" alt="Mobile Icon" width="30" class="header__nav-mobile-icon" id="nav-mobile-btn">    
 
 
@@ -41,8 +46,6 @@
 
         <div class="menu-mobile" id="menu-mobile">
 
-
-
             <div class="menu-mobile__container">
                 <p class="menu-mobile__item menu-mobile__username">Hello {{ user.username }}</p>
 
@@ -51,27 +54,6 @@
                 <a href="{% url 'dashboard_ingredients' %}" class="menu-mobile__item">My Ingredients</a>
                 <a href="{% url 'pending_orders' %}" class="menu-mobile__item">Pendings</a>
                 <a href="{% url 'dashboard_settings' %}" class="menu-mobile__item">Settings</a>
-
-
-
-
-
-
-
-                {% comment %} <buttom class="menu-mobile__item relative">
-                    <a href="{% url 'checkout' %}" >Checkout</a>
-                    <p id="mobile-cart-counter" class="icon-counter"></p>
-                </buttom>
-
-                <a href="{% url 'dashboard' %}" class="menu-mobile__item" >Seller Panel</a>
-                <buttom class="menu-mobile__item relative" id="nav-mobile-btn-notif" >
-                    <p>Notifications</p>
-                    <p id="mobile-notif-counter" class="icon-counter"></p>
-                </buttom>
-                <div class="popup d-none" id="notif-mobile-menu">
-                    <h3 class="popup__heading">Your notifications</h3>
-                    <ul class="popup__list" id="notif-mobile-list"></ul>
-                </div> {% endcomment %}
 
             </div>
 
@@ -115,5 +97,3 @@
     </div>
   </body>
 </html>
-
-
