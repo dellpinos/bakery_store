@@ -958,8 +958,21 @@ footer {
     outline: none;
 }
 
+.form__opts-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 3rem;
+    margin-top: 2rem;
+
+    @media (min-width: 768px) {
+        flex-direction: row;
+        margin-top: 5rem;
+    }
+}
+
 .form__opts {
-    margin-top: 5rem;
+    /* margin-top: 5rem; */
     text-align: center;
     > a {
         color: var(--orange);
@@ -986,6 +999,30 @@ footer {
     > p {
         color: var(--redAlert)
     }
+}
+
+.form__pass-val {
+    display: grid;
+    grid-template-columns: 1fr;
+    
+    @media (min-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.form__pass-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p {
+        font-size: 1.4rem;
+    }
+}
+
+.form__pass-icon {
+    width: 4rem;
+    padding: 1rem;
 }
 
 /* Pagination */

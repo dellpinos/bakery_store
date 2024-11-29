@@ -12,10 +12,9 @@
         {% if message %}
             <div class="msg-error">{{ message }}</div>
         {% endif %}
-        <p>{{ content }}</p>
+        <p class="msg-empty">{{ content }}. <a href="{% url 'index' %}" class="c-yel">Back to home page</a></p>
     {% else %}
-        <p>Oops, nothing here!</p>
+        <p class="msg-empty">Oops, nothing here!</p>
     {% endif %}
-        <a href="{% url 'index' %}">Back to home page</a>
     
 {% endblock %}

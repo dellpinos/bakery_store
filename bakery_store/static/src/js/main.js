@@ -9,3 +9,4 @@ import './deliveries';
 import './newProduct';
 import './orders';
 import './settings';
+import './password_validation';

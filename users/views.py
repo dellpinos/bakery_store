@@ -14,8 +14,27 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
+from products.views import home
 
+# User's data validation
+def validate_user(body):
+    errors = []
+    if len(body["first_name"]) < 3 or len(body["first_name"]) > 30 :
+        errors.append('The First Name must be between 3 and 30 characters long.')
 
+    if len(body["last_name"]) < 3 or len(body["last_name"]) > 30 :
+        errors.append('The Last Name must be between 3 and 30 characters long.')
+
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_regex, body["email"]):
+        errors.append('Invalid email format.')
+
+    # Verify that it is a valid username
+    if not re.match("^[a-z0-9]*$", body["username"].lower()):
+        errors.append('Invalid username format.')
+    return errors
+
+# Password format validation
 def validate_password(password):
     if len(password) < 8:
         raise ValueError("Password must be at least 8 characters long")
@@ -39,13 +58,15 @@ def login_view(request):
         if user is not None:
             if not user.is_active:
                 return render(request, "auth/login.html", {
-                    "message": "Please activate your account via the email we sent"
+                    "message": "Please activate your account via the email we sent",
+                    "no_cat": True
                 })
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auth/login.html", {
-                "message": "Invalid username and/or password"
+                "message": "Invalid username and/or password",
+                "no_cat": True
             })
     else:
         return render(request, "auth/login.html", {
@@ -62,21 +83,29 @@ def logout_view(request):
 def register(request):
     if request.method == "POST":
         
-        username = request.POST["username"].lower()
-        # Verify that it is a valid username
-        if not re.match("^[a-z0-9]*$", username):
-            return render(request, "auth/register.html", {
-                "message": "Username must contain only letters and numbers"
-            })
-        
-        email = request.POST["email"]
+        # Validates email, username, first_name and last_name
+        errors = validate_user(request.POST)
 
-        # Ensure password matches confirmation
+        if len(errors) != 0:
+            return render(request, "auth/register.html", {
+                "errors": errors,
+                "body": request.POST,
+                "no_cat": True
+            })
+
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
+        email = request.POST["email"].lower()
+        username = request.POST["username"].lower()
+        first_name = request.POST["first_name"].lower()
+        last_name = request.POST["last_name"].lower()
+
+        # Ensure password matches confirmation
         if password != confirmation:
             return render(request, "auth/register.html", {
-                "message": "Passwords must match."
+                "message": "Passwords must match.",
+                "body": request.POST,
+                "no_cat": True
             })
 
         try:
@@ -84,17 +113,23 @@ def register(request):
             validate_password(password)
         except ValueError as e:
             return render(request, "auth/register.html", {
-                "message": str(e)
+                "message": str(e),
+                "body": request.POST,
+                "no_cat": True
             })
         
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
+            user.first_name = first_name
+            user.last_name = last_name
             user.is_active = False
             user.save()
         except IntegrityError:
             return render(request, "auth/register.html", {
-                "message": "Username already taken."
+                "message": "Username already taken.",
+                "body": request.POST,
+                "no_cat": True
             })
         
         # Send confirmation email
@@ -112,7 +147,8 @@ def register(request):
 
         return render(request, "auth/message.html", {
             "title": "Email Confirm",
-            "content": "We have sent an email to your inbox. Please check it to proceed"
+            "content": "We have sent an email to your inbox. Please check it to proceed",
+            "no_cat": True
         })
 
     else:
@@ -134,24 +170,27 @@ def verify_email(request, uidb64, token):
     
         return render(request, "auth/message.html", {
             "title": "Email Verified",
-            "content": "Your email has been successfully verified. Please continue to home page"
+            "content": "Your email has been successfully verified. Please continue to home page",
+            "no_cat": True
         })
     else:
         return render(request, "auth/message.html", {
             "title": "Invalid Token",
-            "content": "Activation link is invalid!"
+            "content": "Activation link is invalid!",
+            "no_cat": True
         })
     
 
 def forgot_password(request):
 
     if request.method == "POST":
-        user = User.objects.filter(email = request.POST['email']).first()
+        user = User.objects.filter(email = request.POST['email'], is_active = True).first()
 
         if not user:
             return render(request, "auth/message.html", {
                 "title": "Invalid Email",
-                "content": "Email address is invalid!"
+                "content": "Email address is invalid",
+                "no_cat": True
             })
 
         # Send confirmation email
@@ -170,11 +209,14 @@ def forgot_password(request):
 
         return render(request, "auth/message.html", {
             "title": "Email Confirm",
-            "content": "We have sent an email to your inbox. Please check it to proceed"
+            "content": "We have sent an email to your inbox. Please check it to proceed",
+            "no_cat": True
         })
     
     else:
-        return render(request, "auth/forgot_password.html")
+        return render(request, "auth/forgot_password.html", {
+            "no_cat": True
+        })
 
 
 
@@ -185,18 +227,24 @@ def password_verify_email(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
+
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
     if user is not None and default_token_generator.check_token(user, token):
-        login(request, user)
 
-        return reset_password(request, user)
+        # Sends the token to the view
+        return render(request, "auth/reset_password.html", {
+        "no_cat": True,
+        "uidb64": uidb64,
+        "token": token
+    })
     
     else:
         return render(request, "auth/message.html", {
             "title": "Invalid Token",
-            "content": "Activation link is invalid!"
+            "content": "The reset password link is invalid or has expired",
+            "no_cat": True
         })
     
 
@@ -219,12 +267,14 @@ def verify_email(request, uidb64, token):
     
         return render(request, "auth/message.html", {
             "title": "Email Verified",
-            "content": "Your email has been successfully verified. Please continue to home page"
+            "content": "Your email has been successfully verified. Please continue to home page",
+            "no_cat": True
         })
     else:
         return render(request, "auth/message.html", {
             "title": "Invalid Token",
-            "content": "Activation link is invalid!"
+            "content": "Activation link is invalid!",
+            "no_cat": True
         })
     
 
@@ -234,38 +284,74 @@ def verify_email(request, uidb64, token):
 
 
 # Request password 
+
 def reset_password(request):
+
 
     if request.method == "POST":
 
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
+        email = request.POST["email"]
+
+        uidb64 = request.POST["uidb64"]
+        token = request.POST["token"]
 
         if password != confirmation:
-            return render(request, "auth/register.html", {
-                "message": "Passwords must match."
+            return render(request, "auth/reset_password.html", {
+                "message": "Passwords must match",
+                "no_cat": True,
+                "uidb64": uidb64,
+                "token": token
             })
 
         try:
             # Custom password validator
             validate_password(password)
         except ValueError as e:
-            return render(request, "auth/register.html", {
-                "message": str(e)
+            return render(request, "auth/reset_password.html", {
+                "message": str(e),
+                "no_cat": True,
+                "uidb64": uidb64,
+                "token": token
             })
 
-        # Attempt to create new user
+
         try:
-            user = User.objects.filter(email = request.user.email).first()
-            user.password = password
-            user.save()
-        except IntegrityError:
-            return render(request, "auth/forgot_password.html", {
-                "message": "Invalid password"
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user.email != email:
+            return render(request, "auth/reset_password.html", {
+                "message": "The email address does not match",
+                "no_cat": True,
+                "uidb64": uidb64,
+                "token": token
             })
+
+        if user is not None and default_token_generator.check_token(user, token):
+            # Attempt to save new password
+            try:
+                user = User.objects.filter(email = request.user.email).first()
+                user.password = password
+                user.save()
+
+            except IntegrityError:
+                return render(request, "auth/message.html", {
+                    "title": "Invalid Token",
+                    "content": "The reset password link is invalid or has expired",
+                    "no_cat": True
+                })
+
+            
+            return login_view(request)
+    
     else:
-        return render(request, "auth/forgot_password.html")
+        return login_view(request)
 
 
 ## API ##
