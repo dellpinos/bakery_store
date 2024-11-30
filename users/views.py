@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
-from products.views import home
+from datetime import datetime
 
 # User's data validation
 def validate_user(body):
@@ -45,7 +45,7 @@ def validate_password(password):
     if not re.search(r'[0-9]', password):
         raise ValueError("Password must contain at least one number")
 
-
+# Login view
 def login_view(request):
     if request.method == "POST":
 
@@ -73,13 +73,13 @@ def login_view(request):
             "no_cat": True
         })
 
-
+# Logout
 def logout_view(request):
     logout(request)
     
     return HttpResponseRedirect(reverse("index"))
 
-
+# Register view
 def register(request):
     if request.method == "POST":
         
@@ -125,6 +125,7 @@ def register(request):
             user.last_name = last_name
             user.is_active = False
             user.save()
+
         except IntegrityError:
             return render(request, "auth/register.html", {
                 "message": "Username already taken.",
@@ -133,17 +134,25 @@ def register(request):
             })
         
         # Send confirmation email
-        current_site = get_current_site(request)
         mail_subject = 'Activate your account'
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
+
         message = render_to_string('emails/activation_email.html', {
-            'user': user,
-            'domain': current_site.domain,
+            'app_url': config('APP_URL'),
+            'app_name': config('APP_NAME'),
+            'current_year': datetime.now().year,
             'uid': uid,
             'token': token,
         })
-        send_mail(mail_subject, message, config('APP_EMAIL'), [email])
+
+        send_mail(
+            mail_subject,
+            '',
+            config('APP_EMAIL'), 
+            [email],
+            html_message=message
+        )
 
         return render(request, "auth/message.html", {
             "title": "Email Confirm",
@@ -156,6 +165,8 @@ def register(request):
             "no_cat": True
         })
     
+
+# Handles user redirection and token validation after email confirmation
 def verify_email(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
@@ -180,7 +191,7 @@ def verify_email(request, uidb64, token):
             "no_cat": True
         })
     
-
+# Handles the password reset request form and email submission validation
 def forgot_password(request):
 
     if request.method == "POST":
@@ -193,19 +204,29 @@ def forgot_password(request):
                 "no_cat": True
             })
 
+
         # Send confirmation email
-        current_site = get_current_site(request)
         mail_subject = 'Reset your password'
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
         message = render_to_string('emails/forgot_password_email.html', {
-            'user': user,
-            'domain': current_site.domain,
+            'app_url': config('APP_URL'),
+            'app_name': config('APP_NAME'),
+            'current_year': datetime.now().year,
             'uid': uid,
             'token': token,
+            'user': user
         })
-        send_mail(mail_subject, message, config('APP_EMAIL'), [user.email])
+
+        send_mail(
+            mail_subject,
+            '',
+            config('APP_EMAIL'), 
+            [user.email],
+            html_message=message
+        )
+
 
         return render(request, "auth/message.html", {
             "title": "Email Confirm",
@@ -218,12 +239,10 @@ def forgot_password(request):
             "no_cat": True
         })
 
-
-
-
-#####
+# Handles user redirection and token validation after email confirmation
 def password_verify_email(request, uidb64, token):
 
+    logout(request)
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -247,46 +266,8 @@ def password_verify_email(request, uidb64, token):
             "no_cat": True
         })
     
-
-
-
-
-
-
-def verify_email(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-
-    if user is not None and default_token_generator.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-    
-        return render(request, "auth/message.html", {
-            "title": "Email Verified",
-            "content": "Your email has been successfully verified. Please continue to home page",
-            "no_cat": True
-        })
-    else:
-        return render(request, "auth/message.html", {
-            "title": "Invalid Token",
-            "content": "Activation link is invalid!",
-            "no_cat": True
-        })
-    
-
-
-        
-
-
-
-# Request password 
-
+# Handles the form for setting a new password, including validation and saving the new password
 def reset_password(request):
-
 
     if request.method == "POST":
 
@@ -294,7 +275,6 @@ def reset_password(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         email = request.POST["email"]
-
         uidb64 = request.POST["uidb64"]
         token = request.POST["token"]
 
@@ -317,7 +297,6 @@ def reset_password(request):
                 "token": token
             })
 
-
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
@@ -335,9 +314,10 @@ def reset_password(request):
 
         if user is not None and default_token_generator.check_token(user, token):
             # Attempt to save new password
+
             try:
-                user = User.objects.filter(email = request.user.email).first()
-                user.password = password
+                user = User.objects.filter(email = email).first()
+                user.set_password(password)
                 user.save()
 
             except IntegrityError:
@@ -347,9 +327,14 @@ def reset_password(request):
                     "no_cat": True
                 })
 
-            
-            return login_view(request)
-    
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+
+        return render(request, "auth/message.html", {
+            "title": "Invalid Token",
+            "content": "The reset password link is invalid or has expired",
+            "no_cat": True
+        })
     else:
         return login_view(request)
 

@@ -15,6 +15,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=lambda v: v.sp
 
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='localhost', cast=lambda v: v.split(','))
 
+PASSWORD_RESET_TIMEOUT = 86400  # 1 day
 
 # Application definition
 

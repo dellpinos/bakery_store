@@ -51,7 +51,7 @@ import imgEmptyCheck from '../../img/empty-check.svg';
                     changeStatus('num', false);
                 }
 
-                if( value === inputConf.value ) {
+                if( value === inputConf.value && value !== '' ) {
                     changeStatus('equal', true);
                 } else {
                     changeStatus('equal', false);
@@ -64,7 +64,7 @@ import imgEmptyCheck from '../../img/empty-check.svg';
             inputConf.addEventListener('input', e => {
 
                 const value = e.target.value;
-                if( value === inputPass.value ) {
+                if( value === inputPass.value && value !== '' ) {
                     changeStatus('equal', true);
                 } else {
                     changeStatus('equal', false);
