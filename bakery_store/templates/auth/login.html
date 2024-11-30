@@ -8,6 +8,10 @@
 
     <h3 class="heading">Login</h3>
 
+    {% if succ_message %}
+        <div class="msg-success">{{ succ_message }}</div>
+    {% endif %}
+    
     {% if message %}
         <div class="msg-error">{{ message }}</div>
     {% endif %}

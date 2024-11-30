@@ -3,13 +3,12 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from users.models import User, Notification
 from decouple import config # Environment Variables (.env) - Python Decouple
 from django.core.mail import send_mail
-from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -187,7 +186,7 @@ def verify_email(request, uidb64, token):
     else:
         return render(request, "auth/message.html", {
             "title": "Invalid Token",
-            "content": "Activation link is invalid!",
+            "content": "Activation link is invalid",
             "no_cat": True
         })
     
@@ -203,7 +202,6 @@ def forgot_password(request):
                 "content": "Email address is invalid",
                 "no_cat": True
             })
-
 
         # Send confirmation email
         mail_subject = 'Reset your password'
@@ -226,7 +224,6 @@ def forgot_password(request):
             [user.email],
             html_message=message
         )
-
 
         return render(request, "auth/message.html", {
             "title": "Email Confirm",
@@ -327,8 +324,10 @@ def reset_password(request):
                     "no_cat": True
                 })
 
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return render(request, "auth/login.html", {
+                "succ_message": "Password updated",
+                "no_cat": True
+            })
 
         return render(request, "auth/message.html", {
             "title": "Invalid Token",
