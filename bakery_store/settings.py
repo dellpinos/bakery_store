@@ -13,7 +13,9 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=lambda v: v.split(','))
 
+
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='localhost', cast=lambda v: v.split(','))
+
 
 PASSWORD_RESET_TIMEOUT = 86400  # 1 day
 
@@ -121,6 +123,7 @@ if config('DJANGO_VITE_DEV_MODE', default=True, cast=bool):
         BASE_DIR / "static",  # Assets before build
     ]
 
+
 else:
     STATICFILES_DIRS = [
         BASE_DIR / "static/dist",  # Assets after build
@@ -130,6 +133,7 @@ else:
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 AUTH_USER_MODEL = 'users.User'
 
