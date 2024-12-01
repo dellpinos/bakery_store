@@ -265,7 +265,7 @@ textarea {
 }
 
 .msg-error {
-    margin: 5rem 0;
+    margin: 2rem 0;
     padding: 1rem;
     border-radius: .5rem;
     text-align: center;
@@ -385,6 +385,10 @@ textarea {
 .flatpickr-day.selected {
     background-color: var(--orange)!important;
     border: 1px solid var(--yellow)!important;
+}
+
+.flatpickr-day.today {
+    border: 1px solid var(--mediumSilver)!important;
 }
 
 /* Header */
@@ -859,15 +863,15 @@ footer {
 
 /* Common section backgrounds */
 .common-section__img-1 {
-    background-image: url('../img/baking.jpg');
+    background-image: url('../../img/baking.jpg');
 }
 
 .common-section__img-2 {
-    background-image: url('../img/baking2.jpg');
+    background-image: url('../../img/baking2.jpg');
 }
 
 .common-section__img-3 {
-    background-image: url('../img/baking3.jpg');
+    background-image: url('../../img/baking3.jpg');
 }
 
 /* Form - Post & Auth */
@@ -954,8 +958,21 @@ footer {
     outline: none;
 }
 
+.form__opts-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 3rem;
+    margin-top: 2rem;
+
+    @media (min-width: 768px) {
+        flex-direction: row;
+        margin-top: 5rem;
+    }
+}
+
 .form__opts {
-    margin-top: 5rem;
+    /* margin-top: 5rem; */
     text-align: center;
     > a {
         color: var(--orange);
@@ -982,6 +999,30 @@ footer {
     > p {
         color: var(--redAlert)
     }
+}
+
+.form__pass-val {
+    display: grid;
+    grid-template-columns: 1fr;
+    
+    @media (min-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.form__pass-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p {
+        font-size: 1.4rem;
+    }
+}
+
+.form__pass-icon {
+    width: 4rem;
+    padding: 1rem;
 }
 
 /* Pagination */

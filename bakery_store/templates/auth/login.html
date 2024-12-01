@@ -8,6 +8,10 @@
 
     <h3 class="heading">Login</h3>
 
+    {% if succ_message %}
+        <div class="msg-success">{{ succ_message }}</div>
+    {% endif %}
+    
     {% if message %}
         <div class="msg-error">{{ message }}</div>
     {% endif %}
@@ -17,7 +21,11 @@
                 <input class="form__input" type="text" name="username" placeholder="Username">
                 <input class="form__input" type="password" name="password" placeholder="Password">
             <input class="btn" type="submit" value="Login">
-            <p class="form__opts">Don't have an account? <a href="{% url 'register' %}"> Register here.</a></p>
+
+            <div class="form__opts-container">
+                <p class="form__opts">Don't have an account? <a href="{% url 'register' %}"> Register here</a></p>
+                <p class="form__opts">Forgot your password? <a href="{% url 'forgot_password' %}"> Reset it here</a></p>
+            </div>
         </form>
     </div>
     

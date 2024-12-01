@@ -1,0 +1,20 @@
+{% extends "layouts/layout.html" %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block body %}
+
+    {% if content %}
+        <h3 class="heading">{{ title }}</h3>
+
+        {% if message %}
+            <div class="msg-error">{{ message }}</div>
+        {% endif %}
+        <p class="msg-empty">{{ content }}. <a href="{% url 'index' %}" class="c-yel">Back to home page</a></p>
+    {% else %}
+        <p class="msg-empty">Oops, nothing here!</p>
+    {% endif %}
+    
+{% endblock %}

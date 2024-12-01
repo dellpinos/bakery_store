@@ -110,8 +110,6 @@
                     btn.removeEventListener('click', listener);
                 }
             }
-
         }
-
     });
 })();

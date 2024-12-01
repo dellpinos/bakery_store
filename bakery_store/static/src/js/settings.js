@@ -2,7 +2,7 @@
     // Calendar & Settings
 
     document.addEventListener('DOMContentLoaded', () => {
-        if (document.querySelector('#hidden-datepicker')) {
+        if (document.querySelector('#hidden-prev-dates')) {
 
             let prev_dates
             let pending_dates // Pending orders
@@ -25,7 +25,6 @@
                 dateFormat: "Y-m-d", // Date format
                 inline: true,
                 minDate: "today",
-                maxDate: maxDate,
                 mode: "multiple", // Enable multiple selection
                 positionElement: "today",
                 disable: [

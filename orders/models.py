@@ -11,7 +11,7 @@ class Order(models.Model):
     deleted_at = models.DateTimeField(null = True, blank = True)
     status = models.BooleanField(default = False)
     archived = models.BooleanField(default = False)
-    token = models.CharField(max_length = 8, unique = True)
+    token = models.CharField(max_length = 64, unique = True)
     recived = models.BooleanField(default = False)
 
     def serialize(self):

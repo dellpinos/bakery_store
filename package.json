@@ -1,0 +1,21 @@
+{
+  "name": "bakery_store",
+  "version": "1.0.0",
+  "description": "This app is a marketplace where users can order homemade dishes, and at the same time, access a \"Seller Panel\" to create and offer their own products. The app is focused on homemade food businesses but could be expanded to other areas.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": "Martin del Pino",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "vite": "^5.4.11",
+    "vite-plugin-static-copy": "^2.1.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "flatpickr": "^4.6.13"
+  }
+}

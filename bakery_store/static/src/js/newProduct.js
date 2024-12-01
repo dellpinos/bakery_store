@@ -1,13 +1,5 @@
 (function () {
     // Dashboard New product
-
-    console.log('Probando')
-    const quantity = '0.1';
-    const price = '20.5';
-    const size = '7.0';
-
-    // console.log(parseFloat(((data.quantity * data.price) / data.size).toFixed(2)))
-    console.log(parseFloat(((quantity * price) / size).toFixed(2)))
     
     document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('#create-product-ingredient')) {
@@ -128,21 +120,6 @@
             }
 
             function formatItem(data, hidden) {
-
-                console.log('Tipos de datos')
-                console.log(typeof(data.quantity))
-                console.log('Quantity up |')
-
-
-                console.log(typeof(data.price))
-                console.log('Price up |')
-
-
-                console.log(typeof(data.size))
-                console.log('Size up |')
-
-
-
 
                 const actualCost = parseFloat(((data.quantity * data.price) / data.size).toFixed(2));
                 const item = document.createElement('LI');

@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='token',
-            field=models.CharField(default=django.utils.timezone.now, max_length=8, unique=True),
+            field=models.CharField(max_length=64, unique=True),
             preserve_default=False,
         ),
     ]

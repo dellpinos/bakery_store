@@ -209,18 +209,10 @@
                 document.querySelector('#notif-mobile-menu').classList.remove('d-none');
                 getNotifications();
                 
-
-            //     <div class="popup d-none" id="notif-mobile-menu">
-            //     <h3 class="popup__heading">Your notifications</h3>
-            //     <ul class="popup__list" id="notif-mobile-list"></ul>
-            // </div>
-
-
             });
 
         }
         async function getNotifications() {
-
 
             const counter = document.querySelector('#header-notif-icon');
             const counterMobile = document.querySelector('#mobile-notif-counter');
@@ -360,8 +352,6 @@
             }
 
             btn.addEventListener('click', async () => {
-
-                console.log('!click!')
 
                 const url = `/users/api/notification_delete/${notif.id}`;
                 try {
