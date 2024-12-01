@@ -2,6 +2,7 @@ asgiref==3.8.1
 certifi==2024.8.30
 Django==5.1.1
 django-vite==3.0.5
+psycopg2-binary==2.9.10
 python-decouple==3.8
 sqlparse==0.5.1
 wheel

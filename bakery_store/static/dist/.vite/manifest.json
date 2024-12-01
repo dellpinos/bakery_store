@@ -1,0 +1,28 @@
+{
+  "img/baking.jpg": {
+    "file": "assets/baking-Drqyrb5-.jpg",
+    "src": "img/baking.jpg"
+  },
+  "img/baking2.jpg": {
+    "file": "assets/baking2-BpZJp0HV.jpg",
+    "src": "img/baking2.jpg"
+  },
+  "img/baking3.jpg": {
+    "file": "assets/baking3-uq6VZtdi.jpg",
+    "src": "img/baking3.jpg"
+  },
+  "src/js/main.js": {
+    "file": "assets/main-UZCQSltl.js",
+    "name": "main",
+    "src": "src/js/main.js",
+    "isEntry": true,
+    "css": [
+      "assets/main-CksuuEqD.css"
+    ]
+  },
+  "src/styles/app.css": {
+    "file": "assets/styles-D1Joid-y.css",
+    "src": "src/styles/app.css",
+    "isEntry": true
+  }
+}
