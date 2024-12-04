@@ -11,8 +11,8 @@ jobs:
         - name: Set up environment variables
           run: |
             echo "DB_ENGINE=django.db.backends.postgresql" >> $GITHUB_ENV
-            echo "DB_NAME=test_db" >> $GITHUB_ENV
-            echo "DB_USER=test_user" >> $GITHUB_ENV
+            echo "DB_DATABASE=test_db" >> $GITHUB_ENV
+            echo "DB_USERNAME=test_user" >> $GITHUB_ENV
             echo "DB_PASSWORD=test_password" >> $GITHUB_ENV
             echo "DB_HOST=localhost" >> $GITHUB_ENV
             echo "DB_PORT=5432" >> $GITHUB_ENV
