@@ -220,7 +220,7 @@ def forgot_password(request):
         send_mail(
             mail_subject,
             '',
-            config('APP_EMAIL'), 
+            f"{config('APP_NAME')} <{config('APP_EMAIL')}>",
             [user.email],
             html_message=message
         )

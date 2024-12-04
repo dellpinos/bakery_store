@@ -18,8 +18,8 @@ def ingredient_validation(body, new):
     if len(body["description"]) > 550:
         errors.append('The description must be under 120 characters long.')
 
-    if float(body["size"]) <= 1 or float(body["size"]) > 999999:
-        errors.append('The size must be greater than 1 and less than 999,999.')
+    if float(body["size"]) < 1 or float(body["size"]) > 999999:
+        errors.append('The size must be greater than or equal to 1 and less than 999,999.')
     
     if float(body["price"]) <= 0 or float(body["price"]) > 999999:
         errors.append('The price must be greater than 0.1 and less than 999,999.')
@@ -105,7 +105,6 @@ def home_filtered(request, category):
     if not category:
         return home(request, message = "Invalid Category.")
 
-    
     # User Cart
     cart_seller = None
     if request.user.is_authenticated:

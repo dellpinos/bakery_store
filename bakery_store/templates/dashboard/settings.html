@@ -5,12 +5,6 @@
     Settings
 {% endblock %}
 
-{% block head %}
-{% endblock %}
-
-{% block script %}
-{% endblock %}
-
 {% block body %}
 
     <div>
@@ -46,23 +40,20 @@
                 </div>
             </form>
 
+            <form action="{% url 'capacity_update' %}" method="POST" class="settings__section">
+                {% csrf_token %}
+                <h4>Your maximum daily orders </h4>
+                <legend>Here you can choose the maximum number of products you can deliver per day. This number is the same as the maximum number of products a user can purchase in a single order (max items in an order).</legend>
+                <div class="flex">
 
-                <form action="{% url 'capacity_update' %}" method="POST" class="settings__section">
-                    {% csrf_token %}
-                    <h4>Your maximum daily orders </h4>
-                    <legend>Here you can choose the maximum number of products you can deliver per day. This number is the same as the maximum number of products a user can purchase in a single order (max items in an order).</legend>
-                    <div class="flex">
-
-                        <input type="number" max="10" min="1" class="form__input center" name="capacity" value="{{ capacity }}">
-                    </div>
-                    <p>Select a number between 1 and 10 and press submit.</p>
-                    <div class="btn-container">
-                        <input type="submit" class="btn btn-white" value="Submit">
-                    </div>
-                </form>
+                    <input type="number" max="10" min="1" class="form__input center" name="capacity" value="{{ capacity }}">
+                </div>
+                <p>Select a number between 1 and 10 and press submit.</p>
+                <div class="btn-container">
+                    <input type="submit" class="btn btn-white" value="Submit">
+                </div>
+            </form>
             
-
-
             <form action="{% url 'disable_all' %}" method="POST" class="settings__section settings__section--wider">
                 {% csrf_token %}
                 <h4>Disable all your products</h4>
@@ -71,18 +62,9 @@
                 <div class="btn-container">
                     <input type="submit" class="btn btn-white" value="Disable">
                 </div>
-
             </form>
 
         </div>
+    </div>
 
-            
-
-
-
-
-
-
-
-    
 {% endblock %}
