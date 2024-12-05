@@ -8,5 +8,5 @@ def current_year(request):
 
 def app_name(request):
     return {
-        'app_name': config('APP_NAME')
+        'app_name': config('APP_NAME', default='testApp')
     }

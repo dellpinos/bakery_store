@@ -138,8 +138,8 @@ def register(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
         message = render_to_string('emails/activation_email.html', {
-            'app_url': config('APP_URL'),
-            'app_name': config('APP_NAME'),
+            'app_url': config('APP_URL', default='localhost'),
+            'app_name': config('APP_NAME', default='testApp'),
             'current_year': datetime.now().year,
             'uid': uid,
             'token': token,
@@ -148,7 +148,7 @@ def register(request):
         send_mail(
             mail_subject,
             '',
-            config('APP_EMAIL'), 
+            config('APP_EMAIL', default='test@test.com'),
             [email],
             html_message=message
         )
@@ -209,8 +209,8 @@ def forgot_password(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
         message = render_to_string('emails/forgot_password_email.html', {
-            'app_url': config('APP_URL'),
-            'app_name': config('APP_NAME'),
+            'app_url': config('APP_URL', default='localhost'),
+            'app_name': config('APP_NAME', default='testApp'),
             'current_year': datetime.now().year,
             'uid': uid,
             'token': token,
@@ -220,7 +220,7 @@ def forgot_password(request):
         send_mail(
             mail_subject,
             '',
-            f"{config('APP_NAME')} <{config('APP_EMAIL')}>",
+            f"{config('APP_NAME', default='testApp')} <{config('APP_EMAIL', default='test@test.com')}>",
             [user.email],
             html_message=message
         )

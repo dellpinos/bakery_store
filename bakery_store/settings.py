@@ -69,12 +69,12 @@ WSGI_APPLICATION = 'bakery_store.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE'),
-        'NAME': config('DB_DATABASE'),
-        'USER': config('DB_USERNAME'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT')
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': config('DB_DATABASE', default='test_db'),
+        'USER': config('DB_USERNAME', default='test_user'),
+        'PASSWORD': config('DB_PASSWORD', default='test_password'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default=5432)
     }
 }
 
@@ -151,8 +151,10 @@ EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.conso
 EMAIL_HOST = config('EMAIL_HOST', default='sandbox.smtp.mailtrap.io')
 EMAIL_PORT = config('EMAIL_PORT', default=255, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='test@test.com')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='1234')
+
+
 
 
 
