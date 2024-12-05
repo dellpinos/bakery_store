@@ -14,7 +14,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=lambda v: v.split(','))
 
 
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='localhost', cast=lambda v: v.split(','))
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost:5173', cast=lambda v: v.split(','))
 
 
 PASSWORD_RESET_TIMEOUT = 86400  # 1 day
