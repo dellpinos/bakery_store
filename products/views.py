@@ -162,7 +162,8 @@ def random_product(request):
         product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
     # Looks for related products by the same seller (limit: 3)
-    products = list(Product.objects.filter(seller_user = product.seller_user).exclude(pk=product.id).order_by('-created_at')[:3])
+    products = list(Product.objects.filter(seller_user = product.seller_user, availability = True, deleted_at = None).exclude(pk=product.id).order_by('-created_at')[:3])
+
 
     # Initialize with excluded IDs
     excluded_ids = [product.id for product in products]
@@ -173,7 +174,7 @@ def random_product(request):
     while missing_products > 0:
             
         # Find a product that does not appear in the excluded list.
-        new_product = Product.objects.exclude(pk__in=excluded_ids).filter(deleted_at=None).order_by('-created_at').first()
+        new_product = Product.objects.exclude(pk__in=excluded_ids).filter(availability = True, deleted_at = None).order_by('-created_at').first()
 
         # Break if there are no more products
         if not new_product:
@@ -207,7 +208,7 @@ def show_product(request, product):
         product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
     # Looks for related products by the same seller (limit: 3)
-    products = list(Product.objects.filter(seller_user = product.seller_user, availability = True).exclude(pk=product.id).order_by('-created_at')[:3])
+    products = list(Product.objects.filter(seller_user = product.seller_user, availability = True, deleted_at = None).exclude(pk=product.id).order_by('-created_at')[:3])
 
     # Initialize with excluded IDs
     excluded_ids = [product.id for product in products]

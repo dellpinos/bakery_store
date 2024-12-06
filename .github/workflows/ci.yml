@@ -1,25 +1,3 @@
-# name: Testing
-# on: push
-
-# jobs:
-#     test_project:
-#         runs-on: ubuntu-latest
-#         steps:
-#         - uses: actions/checkout@v2
-
-#         # Install dependencies
-#         - name: Install dependencies
-#           run: pip3 install -r requirements.txt
-
-#         # Run tests
-#         - name: Run Django unit tests
-#           run: |
-#             pip3 install --user django
-#             python3 manage.py test
-
-
-
-
 name: Django CI
 on: push
 
@@ -45,11 +23,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-
-      # - name: Set up Python
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: '3.10'
 
       - name: Install dependencies
         run: |

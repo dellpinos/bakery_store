@@ -117,6 +117,16 @@ def register(request):
                 "no_cat": True
             })
         
+        exists_username = User.objects.filter(username = username).exists()
+        exists_email = User.objects.filter(email = email).exists()
+        
+        if( exists_email or exists_username):
+            return render(request, "auth/register.html", {
+                "message": "Username already taken.",
+                "body": request.POST,
+                "no_cat": True
+            })
+        
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
