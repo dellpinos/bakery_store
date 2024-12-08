@@ -234,6 +234,21 @@ textarea {
 }
 
 /* Components */
+
+.link-name {
+    color: var(--yellow);
+    cursor: grabbing;
+    text-shadow: none;
+    transition: all .5s ease;
+    
+}
+
+.link-name:hover {
+    color: var(--darkYellow);
+    text-shadow: 0 0 8px var(--yellow);
+
+}
+
 .heading { 
     font-size: 4rem;
     text-align: center;
@@ -775,7 +790,7 @@ footer {
     padding: 2rem;
     background-color: var(--orange);
     color: var(--white);
-    font-size: 1.8rem;
+    font-size: 2rem;
     text-align: center;
     
     @media (min-width: 769px) {
