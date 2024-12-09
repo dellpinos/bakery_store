@@ -117,6 +117,16 @@ def register(request):
                 "no_cat": True
             })
         
+        exists_username = User.objects.filter(username = username).exists()
+        exists_email = User.objects.filter(email = email).exists()
+        
+        if( exists_email or exists_username):
+            return render(request, "auth/register.html", {
+                "message": "Username already taken.",
+                "body": request.POST,
+                "no_cat": True
+            })
+        
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
@@ -138,8 +148,8 @@ def register(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
         message = render_to_string('emails/activation_email.html', {
-            'app_url': config('APP_URL'),
-            'app_name': config('APP_NAME'),
+            'app_url': config('APP_URL', default='localhost'),
+            'app_name': config('APP_NAME', default='testApp'),
             'current_year': datetime.now().year,
             'uid': uid,
             'token': token,
@@ -148,7 +158,7 @@ def register(request):
         send_mail(
             mail_subject,
             '',
-            config('APP_EMAIL'), 
+            config('APP_EMAIL', default='test@test.com'),
             [email],
             html_message=message
         )
@@ -209,8 +219,8 @@ def forgot_password(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
         message = render_to_string('emails/forgot_password_email.html', {
-            'app_url': config('APP_URL'),
-            'app_name': config('APP_NAME'),
+            'app_url': config('APP_URL', default='localhost'),
+            'app_name': config('APP_NAME', default='testApp'),
             'current_year': datetime.now().year,
             'uid': uid,
             'token': token,
@@ -220,7 +230,7 @@ def forgot_password(request):
         send_mail(
             mail_subject,
             '',
-            config('APP_EMAIL'), 
+            f"{config('APP_NAME', default='testApp')} <{config('APP_EMAIL', default='test@test.com')}>",
             [user.email],
             html_message=message
         )

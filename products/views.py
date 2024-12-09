@@ -18,8 +18,8 @@ def ingredient_validation(body, new):
     if len(body["description"]) > 550:
         errors.append('The description must be under 120 characters long.')
 
-    if float(body["size"]) <= 1 or float(body["size"]) > 999999:
-        errors.append('The size must be greater than 1 and less than 999,999.')
+    if float(body["size"]) < 1 or float(body["size"]) > 999999:
+        errors.append('The size must be greater than or equal to 1 and less than 999,999.')
     
     if float(body["price"]) <= 0 or float(body["price"]) > 999999:
         errors.append('The price must be greater than 0.1 and less than 999,999.')
@@ -105,7 +105,6 @@ def home_filtered(request, category):
     if not category:
         return home(request, message = "Invalid Category.")
 
-    
     # User Cart
     cart_seller = None
     if request.user.is_authenticated:
@@ -163,7 +162,8 @@ def random_product(request):
         product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
     # Looks for related products by the same seller (limit: 3)
-    products = list(Product.objects.filter(seller_user = product.seller_user).exclude(pk=product.id).order_by('-created_at')[:3])
+    products = list(Product.objects.filter(seller_user = product.seller_user, availability = True, deleted_at = None).exclude(pk=product.id).order_by('-created_at')[:3])
+
 
     # Initialize with excluded IDs
     excluded_ids = [product.id for product in products]
@@ -174,7 +174,7 @@ def random_product(request):
     while missing_products > 0:
             
         # Find a product that does not appear in the excluded list.
-        new_product = Product.objects.exclude(pk__in=excluded_ids).filter(deleted_at=None).order_by('-created_at').first()
+        new_product = Product.objects.exclude(pk__in=excluded_ids).filter(availability = True, deleted_at = None).order_by('-created_at').first()
 
         # Break if there are no more products
         if not new_product:
@@ -208,7 +208,7 @@ def show_product(request, product):
         product.total_price += (productIngredient.quantity * float(productIngredient.ingredient.price)) / productIngredient.ingredient.size
 
     # Looks for related products by the same seller (limit: 3)
-    products = list(Product.objects.filter(seller_user = product.seller_user, availability = True).exclude(pk=product.id).order_by('-created_at')[:3])
+    products = list(Product.objects.filter(seller_user = product.seller_user, availability = True, deleted_at = None).exclude(pk=product.id).order_by('-created_at')[:3])
 
     # Initialize with excluded IDs
     excluded_ids = [product.id for product in products]
