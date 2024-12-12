@@ -19,7 +19,7 @@ jobs:
           data: >
             {
               "commands": [
-                "git pull origin main",
+                "git pull",
                 "pip install -r requirements.txt || pip install django",
                 "python manage.py migrate",
                 "python manage.py collectstatic --noinput"
