@@ -1,5 +1,7 @@
-name: Django CI
-on: push
+name: Django & Testing
+on:
+  workflow_dispatch: {}
+  push:
 
 jobs:
   test:
