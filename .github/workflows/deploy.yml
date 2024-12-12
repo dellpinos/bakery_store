@@ -16,4 +16,13 @@ jobs:
           webhook_url: https://my.domcloud.co/api/githubdeploy
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
           webhook_auth: ${{ secrets.WEBHOOK_AUTH }}
-          data: '{"commands":[null]}'
+          data: >
+            {
+              "commands": [
+                "pip install -r requirements.txt || pip install django",
+                "python manage.py migrate",
+                "python manage.py collectstatic --noinput"
+              ]
+            }
+          
+          
